@@ -36,3 +36,7 @@ Object.defineProperty(Array.prototype, "first", {
         return this[0];
     }
 })
+
+Array.prototype.extend = function (array) {
+    array.forEach(this.push, this);
+}
