@@ -19,7 +19,8 @@
   "dependencies": {
     "cheerio": "^1.0.0-rc.12",
     "glob": "^8.0.3",
-    "jest": "^28.1.2"
+    "jest": "^28.1.2",
+    "urijs": "^1.19.11"
   },
   "jest": {
     "verbose": true
