@@ -55,7 +55,7 @@ describe("Links test", () => {
         const options = {typhoeus: {followlocation: false}}
         const broken_hash_internal_filepath = path.join(FIXTURES_DIR, "links", "implicit_internal")
         const proofer = run_proofer(broken_hash_internal_filepath, 'directory', options)
-        expect(proofer.failed_checks.count).toEqual(1)
+        expect(proofer.failed_checks.length).toEqual(1)
         expect(proofer.failed_checks.first.description).toMatch(/without trailing slash/)
     })
 
@@ -197,7 +197,7 @@ describe("Links test", () => {
     })
 
     it("ignores links via ignore_urls", () => {
-        const opts = {ignore_urls: [new RegExp("^http://"), new RegExp(/sdadsad/), "../whaadadt.html"]}
+        const opts = {ignore_urls: [/^http:\/\//, /sdadsad/, "../whaadadt.html"]}
         const ignorable_links = path.join(FIXTURES_DIR, "links", "ignorable_links_via_options.html")
         const proofer = run_proofer(ignorable_links, 'file', opts)
         expect(proofer.failed_checks).toEqual([])
@@ -493,7 +493,7 @@ describe("Links test", () => {
         it("can be turned off", () => {
             // Default behaviour does not change
             const proofer = run_proofer(context.fixture, 'file', {assume_extension: ""})
-            expect(proofer.failed_checks.count).toBeGreaterThanOrEqual(3)
+            expect(proofer.failed_checks.length).toBeGreaterThanOrEqual(3)
         })
 
         it("accepts extensionless file links by default", () => {
@@ -744,7 +744,7 @@ describe("Links test", () => {
     it("should not try reading PDFs", () => {
         const file = path.join(FIXTURES_DIR, "links", "pdfs.html")
         const proofer = run_proofer(file, 'file')
-        expect(proofer.failed_checks.count).toEqual(3)
+        expect(proofer.failed_checks.length).toEqual(3)
         expect(proofer.failed_checks.first.description).toMatch(/internally linking to exists.pdf#page=2; the file exists, but the hash 'page=2' does not/)
         expect(proofer.failed_checks.last.description).toMatch(/internally linking to missing.pdf#page=2, which does not exist/)
     })
