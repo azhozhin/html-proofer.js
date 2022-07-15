@@ -21,7 +21,9 @@
     "cheerio": "^1.0.0-rc.12",
     "glob": "^8.0.3",
     "jest": "^28.1.2",
-    "urijs": "^1.19.11"
+    "urijs": "^1.19.11",
+    "xmldom": "^0.6.0",
+    "xpath": "^0.0.32"
   },
   "jest": {
     "verbose": true
