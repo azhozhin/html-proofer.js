@@ -41,7 +41,7 @@ describe("Favicons test", () => {
 
     it("translates links via swap_urls", async () => {
         const opts = {
-            checks: ["Favicon"],
+            checks: [Favicon],
             swap_urls: {'/^asdadaskdalsdk.+/': "../resources/gpl.png"}
         }
         const translated_link = path.join(FIXTURES_DIR, "favicon", "internal_favicon_broken.html")

@@ -205,7 +205,7 @@ describe("Links test", () => {
 
     it("translates links via swap_urls", async () => {
         const translated_link = path.join(FIXTURES_DIR, "links", "link_translated_via_href_swap.html")
-        const proofer = await run_proofer(translated_link, 'file', {swap_urls: {'\A/articles/([\w-]+)': '\\1.html'}})
+        const proofer = await run_proofer(translated_link, 'file', {swap_urls: {'/^\/articles\/([\\w-]+)/': '$1.html'}})
         expect(proofer.failed_checks).toEqual([])
     })
 
