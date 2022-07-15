@@ -55,9 +55,9 @@ describe("HTMLProofer::Element", () => {
     })
 
     describe("ivar setting", () => {
-        it("does not explode if given a bad attribute", () => {
+        it("does not explode if given a bad attribute", async () => {
             const broken_attribute = path.join(FIXTURES_DIR, "html", "invalid_attribute.html")
-            const proofer = run_proofer(broken_attribute, 'file')
+            const proofer = await run_proofer(broken_attribute, 'file')
             expect(proofer.failed_checks.length).toEqual(0)
         })
     })

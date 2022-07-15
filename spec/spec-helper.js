@@ -15,12 +15,12 @@ let make_proofer = function (item, type, opts) {
     }
 }
 
-export function run_proofer(item, type, opts) {
+export async function run_proofer(item, type, opts) {
     const proofer = make_proofer(item, type, opts)
     //cassette_name = make_cassette_name(item, opts)
     //VCR.use_cassette(cassette_name, record: :new_episodes) do
     //    capture_stderr { proofer.run }
-    proofer.run()
+    await proofer.run()
     return proofer
 }
 
