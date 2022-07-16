@@ -41,7 +41,7 @@ describe("Scripts test", () => {
 
     it("ignores links via ignore_urls", async () => {
         const ignorable_links = path.join(FIXTURES_DIR, "scripts", "ignorable_links_via_options.html")
-        const proofer = await run_proofer(ignorable_links, 'file', {ignore_urls: ['/assets/.*(js|css|png|svg)']})
+        const proofer = await run_proofer(ignorable_links, 'file', {ignore_urls: ['/\/assets\/.*(js|css|png|svg)/']})
         expect(proofer.failed_checks).toEqual([])
     })
 
