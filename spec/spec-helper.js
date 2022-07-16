@@ -2,7 +2,7 @@ import {HTMLProofer} from "../lib/html-proofer";
 
 export let FIXTURES_DIR = 'spec/html-proofer/fixtures';
 
-let make_proofer = function (item, type, opts) {
+export function make_proofer(item, type, opts) {
     switch (type) {
         case 'file':
             return HTMLProofer.check_file(item, opts)
