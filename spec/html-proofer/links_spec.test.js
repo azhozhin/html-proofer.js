@@ -6,8 +6,8 @@ describe('Links test', () => {
     const broken_hash_external_filepath = path.join(FIXTURES_DIR, 'links', 'broken_hash_external_file.html')
     const proofer = await run_proofer(broken_hash_external_filepath, 'file')
     expect(proofer.failed_checks.last.description).
-        toMatch('internally linking to ../images/missing_image_alt.html#asdfasfdkafl;' +
-            'the file exists, but the hash \'asdfasfdkafl\' does not')
+        toMatch(
+            'internally linking to ../images/missing_image_alt.html#asdfasfdkafl; the file exists, but the hash \'asdfasfdkafl\' does not')
   })
 
   it('fails for broken hashes on the web when asked (even if the file exists)', async () => {
@@ -215,7 +215,7 @@ describe('Links test', () => {
   })
 
   it('translates links via swap_urls for list of links', async () => {
-    const proofer = await run_proofer(['www.garbalarba.com'], 'links', {swap_urls: {'/garbalarba/': 'github'}})
+    const proofer = await run_proofer(['http://www.garbalarba.com'], 'links', {swap_urls: {'/garbalarba/': 'github'}})
     expect(proofer.failed_checks).toEqual([])
   })
 
@@ -515,7 +515,7 @@ describe('Links test', () => {
   it('does check links with parameters multiple times', async () => {
     const fixture = path.join(FIXTURES_DIR, 'links', 'check_just_once.html')
     const proofer = await run_proofer(fixture, 'file')
-    expect(proofer.external_urls.length).toEqual(4)
+    expect(Object.keys(proofer.external_urls).length).toEqual(4)
   })
 
   it('does not explode on bad external links in files', async () => {
