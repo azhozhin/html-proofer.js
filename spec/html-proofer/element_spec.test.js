@@ -60,7 +60,7 @@ describe('HTMLProofer::Element', () => {
     it('does not explode if given a bad attribute', async () => {
       const broken_attribute = path.join(FIXTURES_DIR, 'html', 'invalid_attribute.html')
       const proofer = await run_proofer(broken_attribute, 'file')
-      expect(proofer.failed_checks.length).toEqual(0)
+      expect(proofer.failed_checks).toEqual([])
     })
   })
 
