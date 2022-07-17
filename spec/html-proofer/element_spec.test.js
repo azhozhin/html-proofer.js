@@ -16,7 +16,7 @@ describe('HTMLProofer::Element', () => {
   describe('#initialize', () => {
 
     it('accepts the xmlns attribute', () => {
-      const doc = create_nokogiri('<a docxmlns:cc="http://creativecommons.org/ns#">Creative Commons</a>')
+      const doc = create_nokogiri('<a xmlns:cc="http://creativecommons.org/ns#">Creative Commons</a>')
       const element = new Element(context.runner, doc, doc.css('a')[0])
       expect(element.node['xmlns:cc']).toEqual('http://creativecommons.org/ns#')
     })
@@ -55,6 +55,7 @@ describe('HTMLProofer::Element', () => {
 
   })
 
+  // todo: this should be in proofer_spec.test.js
   describe('ivar setting', () => {
     it('does not explode if given a bad attribute', async () => {
       const broken_attribute = path.join(FIXTURES_DIR, 'html', 'invalid_attribute.html')
