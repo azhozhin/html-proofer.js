@@ -16,21 +16,21 @@ describe('HTMLProofer::Element', () => {
   describe('#initialize', () => {
 
     it('accepts the xmlns attribute', () => {
-      const html = create_nokogiri('<a xmlns:cc="http://creativecommons.org/ns#">Creative Commons</a>')
-      const element = new Element(context.runner, html, html.css('a')[0])
+      const doc = create_nokogiri('<a docxmlns:cc="http://creativecommons.org/ns#">Creative Commons</a>')
+      const element = new Element(context.runner, doc, doc.css('a')[0])
       expect(element.node['xmlns:cc']).toEqual('http://creativecommons.org/ns#')
     })
 
     it('assigns the text node', () => {
-      const html = create_nokogiri('<p>One')
-      const element = new Element(context.runner, html, html.css('p')[0])
+      const doc = create_nokogiri('<p>One')
+      const element = new Element(context.runner, doc, doc.css('p')[0])
       expect(element.node.text).toEqual('One')
       expect(element.node.content).toEqual('One')
     })
 
     it('accepts the content attribute', () => {
-      const html = create_nokogiri('<meta name="twitter:card" content="summary">')
-      const element = new Element(context.runner, html, html.css('meta')[0])
+      const doc = create_nokogiri('<meta name="twitter:card" content="summary">')
+      const element = new Element(context.runner, doc, doc.css('meta')[0])
       expect(element.node['content']).toEqual('summary')
     })
 
@@ -38,8 +38,8 @@ describe('HTMLProofer::Element', () => {
 
   describe('#link_attribute', () => {
     it('works for src attributes', () => {
-      const html = create_nokogiri('<img src=image.png />')
-      const element = new Element(context.runner, html, html.css('img')[0])
+      const doc = create_nokogiri('<img src=image.png />')
+      const element = new Element(context.runner, doc, doc.css('img')[0])
       expect(element.url.toString()).toEqual('image.png')
 
     })
@@ -47,9 +47,9 @@ describe('HTMLProofer::Element', () => {
 
   describe('#ignore', () => {
     it('works for twitter cards', () => {
-      const html = create_nokogiri(
+      const doc = create_nokogiri(
           '<meta name="twitter:url" data-proofer-ignore content="http://example.com/soon-to-be-published-url">')
-      const element = new Element(context.runner, html, html.css('meta')[0])
+      const element = new Element(context.runner, doc, doc.css('meta')[0])
       expect(element.ignore()).toEqual(true)
     })
 
@@ -65,32 +65,50 @@ describe('HTMLProofer::Element', () => {
 
   describe('return content properly', () => {
     it('0', () => {
-      const html = create_nokogiri('<meta content="abc">')
-      const element = new Element(context.runner, html, html.css('meta')[0])
+      const doc = create_nokogiri('<meta content="abc">')
+      const element = new Element(context.runner, doc, doc.css('meta')[0])
       expect(element.content).toEqual('abc')
     })
 
     it('1', () => {
-      const html = create_nokogiri('<meta>')
-      const element = new Element(context.runner, html, html.css('meta')[0])
+      const doc = create_nokogiri('<meta>')
+      const element = new Element(context.runner, doc, doc.css('meta')[0])
       expect(element.content).toBeNull()
     })
 
     it('1.1', () => {
-      const html = create_nokogiri('<meta />')
-      const element = new Element(context.runner, html, html.css('meta')[0])
+      const doc = create_nokogiri('<meta />')
+      const element = new Element(context.runner, doc, doc.css('meta')[0])
+      expect(element.content).toBeNull()
+    })
+
+    it('1.2', () => {
+      const doc = create_nokogiri('<meta data-tag="a"/>')
+      const element = new Element(context.runner, doc, doc.css('meta')[0])
       expect(element.content).toBeNull()
     })
 
     it('2', () => {
-      const html = create_nokogiri(' <script />')
-      const element = new Element(context.runner, html, html.css('script')[0])
+      const doc = create_nokogiri(' <script />')
+      const element = new Element(context.runner, doc, doc.css('script')[0])
+      expect(element.content).toBeNull()
+    })
+
+    it('2.1', () => {
+      const doc = create_nokogiri(' <script data-tag="b"/>')
+      const element = new Element(context.runner, doc, doc.css('script')[0])
       expect(element.content).toBeNull()
     })
 
     it('3', () => {
-      const html = create_nokogiri(' <script></script>')
-      const element = new Element(context.runner, html, html.css('script')[0])
+      const doc = create_nokogiri(' <script></script>')
+      const element = new Element(context.runner, doc, doc.css('script')[0])
+      expect(element.content).toEqual('')
+    })
+
+    it('3.1', () => {
+      const doc = create_nokogiri(' <script data-tag="b"></script>')
+      const element = new Element(context.runner, doc, doc.css('script')[0])
       expect(element.content).toEqual('')
     })
   })
