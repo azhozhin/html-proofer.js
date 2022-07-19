@@ -2,6 +2,24 @@ import {HTMLProofer} from '../lib/html-proofer'
 
 export let FIXTURES_DIR = 'spec/html-proofer/fixtures'
 
+export const capture_stderr = async (block) => {
+  let output = ''
+  const fn = process.stderr.write;
+
+  function write(str, encoding, cb) {
+    fn.apply(process.stderr, arguments)
+    output += str
+  }
+
+  process.stderr.write = write;
+
+  await block()
+
+  process.stderr.write = fn
+
+  return output
+}
+
 export function make_proofer(item, type, opts) {
   switch (type) {
     case 'file':
@@ -23,6 +41,18 @@ export async function run_proofer(item, type, opts) {
   await proofer.run()
   return proofer
 }
+
+export const capture_proofer_output = async (file, type, opts = {}) => {
+  const proofer = make_proofer(file, type, opts)
+  //const cassette_name = make_cassette_name(file, opts)
+  //VCR.use_cassette(cassette_name, record: :new_episodes) do
+  const output = await capture_stderr(async () => {
+    await proofer.run()
+  })
+  return output
+  //end
+}
+
 
 // Simulation of Ruby
 Object.defineProperty(Array.prototype, 'last', {
