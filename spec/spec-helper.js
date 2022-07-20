@@ -1,4 +1,5 @@
 import {HTMLProofer} from '../lib/html-proofer'
+import {execSync} from 'node:child_process'
 
 export let FIXTURES_DIR = 'spec/html-proofer/fixtures'
 
@@ -51,6 +52,18 @@ export const capture_proofer_output = async (file, type, opts = {}) => {
   })
   return output
   //end
+}
+
+export const make_bin = (args) =>{
+  let captured_stdout = ''
+  let captured_stderr = ''
+  try{
+    captured_stdout = execSync(`node bin/htmlproofer.js ${args}`)
+  }catch(err){
+    captured_stderr = err.stderr.toString()
+  }
+
+  return `${captured_stdout}\n${captured_stderr}`
 }
 
 

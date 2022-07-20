@@ -112,10 +112,10 @@ program.
         'JSON-formatted string of cache config. Will override the html-proofer defaults.').
     command('scan [path]', {isDefault: true}).
     action(async () => {
-      console.log('action')
+      //console.log('action')
       const options = program.opts()
-      const path = program.args.length === 0 ? ['.'] : program.args[0]
-      console.debug(options)
+      const path = program.args.length === 0 ? '.' : program.args[0]
+      //console.debug(options)
 
       const checks = []
       for (const checkName of options.checks){
