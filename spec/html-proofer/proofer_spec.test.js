@@ -19,7 +19,7 @@ describe('HTMLProofer', () => {
 
   describe('#files', () => {
     it('works for directory that ends with .html', async () => {
-      const folder = path.join(FIXTURES_DIR, 'links', '_site/folder.html')
+      const folder = path.join(FIXTURES_DIR, 'links', '_site/folder.html').replace(/\\/g, '/')
       const proofer = HTMLProofer.check_directory(folder)
       expect(proofer.files).
           toEqual([{source: folder, path: `${folder}/index.html`}])
