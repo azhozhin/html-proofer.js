@@ -1,14 +1,15 @@
 #!/usr/bin/env node
 
-import {Option, program} from 'commander'
+import {program} from 'commander'
 import {VERSION} from '../lib/html-proofer/version.js'
+import {isDirectory} from '../lib/html-proofer/utils.js'
+import {HTMLProofer} from '../lib/html-proofer.js'
+import {all_checks} from '../lib/html-proofer/checks.js'
 
 program.
     version(VERSION).
-    usage('PATH [options]').
     description(`Test your rendered HTML files to make sure they're accurate.\n` +
         `Runs the HTML-Proofer suite on the files in PATH. For more details, see the README.`).
-    argument('<PATH>').
     option(
         '--allow-hash-href',
         'If `true`, assumes `href="#"` anchors are valid',
@@ -108,8 +109,34 @@ program.
         'JSON-formatted string of Parallel config. Will override the html-proofer defaults.').
     option(
         '--cache [config]',
-        'JSON-formatted string of cache config. Will override the html-proofer defaults.')
+        'JSON-formatted string of cache config. Will override the html-proofer defaults.').
+    command('scan [path]', {isDefault: true}).
+    action(async () => {
+      console.log('action')
+      const options = program.opts()
+      const path = program.args.length === 0 ? ['.'] : program.args[0]
+      console.debug(options)
 
-program.parse()
-console.debug(program.opts())
-console.log('done')
+      const checks = []
+      for (const checkName of options.checks){
+        if (all_checks[checkName]== null){
+          throw new Error(`Unknown check ${checkName}`)
+        }
+        checks.push(all_checks[checkName])
+      }
+
+      options.checks = checks
+
+      const paths = path.split(',')
+      if (options.asLinks) {
+        const links = path.split(',').map(e => e.trim())
+        await HTMLProofer.check_links(links, options).run()
+      } else if (isDirectory(paths.first)) {
+        await HTMLProofer.check_directories(paths, options).run()
+      } else {
+        await HTMLProofer.check_file(path, options).run()
+      }
+    })
+
+
+await program.parseAsync(process.argv)
