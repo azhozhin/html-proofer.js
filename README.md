@@ -9,21 +9,21 @@ Version: `4.0.1`
 
 | spec                     | progress | complete            |
 |--------------------------|----------|---------------------|
-| `attribute/url_spec`     | 2/2      | :heavy_check_mark:  | 
+| `attribute/url_spec`     | 2/2      | :heavy_check_mark:  |
 | `cache_spec`             | 0        |                     |
 | `check_spec`             | 1/1      | :heavy_check_mark:  |
 | `cli_reporter_spec`      | 0/2      |                     |
-| `command_spec`           |          |                     | 
-| `element_spec`           | 6/6      | :heavy_check_mark:  | 
-| `favicon_spec`           | 10/12    |                     | 
+| `command_spec`           |          |                     |
+| `element_spec`           | 6/6      | :heavy_check_mark:  |
+| `favicon_spec`           | 10/12    |                     |
 | `images_spec`            | 39/39    | :heavy_check_mark:  |
-| `links_spec`             | 110/118  |                     | 
+| `links_spec`             | 110/118  |                     |
 | `maliciousness_spec`     |          |                     |
-| `opengraph_spec`         | 11/11    | :heavy_check_mark:  | 
+| `opengraph_spec`         | 11/11    | :heavy_check_mark:  |
 | `parse_json_option_spec` |          |                     |
 | `proofer_spec`           | 7/11     |                     |
-| `reporter_spec`          |          |                     |    
-| `runner_spec`            |          |                     |
+| `reporter_spec`          | 0/1      |                     |
+| `runner_spec`            | 2/2      | :white_check_mark:  |
 | `scripts_spec`           | 13/13    | :heavy_check_mark:  |
 | `utils_spec`             | 3/3      | :heavy_check_mark:  |
 
