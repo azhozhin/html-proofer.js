@@ -39,7 +39,7 @@ program.
         'Check that "<link>" and "<script>" external resources use SRI (default: "false").',
         false).
     option(
-        '--directory-index-file [filename]',
+        '--directory-index-file [directory-index-file]',
         'Sets the file to look for when a link refers to a directory. (default: `index.html`)',
         'index.html').
     option(
@@ -59,9 +59,9 @@ program.
         'If `true`, ignores images with empty/missing alt tags (in other words, `<img alt>` and `<img alt="">` are valid; set this to `false` to flag those)',
         true).
     option(
-        '--ignore-files file1,[file2,...]',
+        '--ignore-files [ignore-files]',
         'A comma-separated list of Strings or RegExps containing file paths that are safe to ignore',
-        []).
+        '').
     option(
         '--ignore-empty-mailto',
         'If `true`, allows `mailto:` `href`s which do not contain an email address',
@@ -71,13 +71,13 @@ program.
         'If `true`, ignores images with missing alt tags',
         false).
     option(
-        '--ignore-status-codes [123, xxx, ...]',
+        '--ignore-status-codes [ignore-status-codes]',
         'A comma-separated list of numbers representing status codes to ignore.',
-        []).
+        '').
     option(
-        '--ignore-urls [link1, link2,...]',
+        '--ignore-urls [ignore-urls]',
         'A comma-separated list of Strings or RegExps containing URLs that are safe to ignore. This affects all HTML attributes, such as `alt` tags on images.',
-        []).
+        '').
     option(
         '--log-level [level]',
         'Sets the logging level, as determined by Yell. One of `debug`, `info`, `warn`, or `error`.',
@@ -95,7 +95,7 @@ program.
         'JSON-formatted config that maps element names to the preferred attribute to check.',
         '{}').
     option(
-        '--swap-urls [re:string, ...]',
+        '--swap-urls [swap-urls]',
         'A comma-separated list containing key-value pairs of `RegExp => String`. It transforms URLs that match `RegExp` into `String` via `gsub`. The escape sequences `\\:` should be used to produce literal `:`s.',
         '{}').
     option(
@@ -118,12 +118,12 @@ program.
       //console.debug(options)
 
       const checks = []
-      if (options.checks){
+      if (options.checks) {
         let checks_str = options.checks
         checks_str = checks_str.startsWith('\'') || checks_str.startsWith('\"') ? options.checks.slice(1) : checks_str
         checks_str = checks_str.endsWith('\'') || checks_str.endsWith('\"') ? checks_str.slice(0, -1) : checks_str
-        for (const checkName of checks_str.split(',')){
-          if (all_checks[checkName]== null){
+        for (const checkName of checks_str.split(',')) {
+          if (all_checks[checkName] == null) {
             throw new Error(`Unknown check ${checkName}`)
           }
           checks.push(all_checks[checkName])
@@ -131,15 +131,47 @@ program.
         options.checks = checks
       }
 
-      if (options.extensions){
-        if (options.extensions.constructor.name === 'String'){
+      if (options.extensions) {
+        if (options.extensions.constructor.name === 'String') {
           options.extensions = options.extensions.split(',')
         }
       }
 
+      if (options.directoryIndexFile) {
+        options['directory_index_file'] = options.directoryIndexFile
+      }
+
+      if (options.disableExternal) {
+        options['disable_external'] = options.disableExternal
+      }
+
+      if (options.ignoreFiles) {
+        options['ignore_files'] = options.ignoreFiles.split(',')
+      }
+
+      if (options.ignoreUrls) {
+        options['ignore_urls'] = options.ignoreUrls.split(',')
+      }
+
+      if (options.ignoreStatusCodes){
+        options['ignore_status_codes'] = options.ignoreStatusCodes.split(',')
+      }
+
+      if (options.only4xx){
+        options['only_4xx'] = options.only4xx
+      }
+
+      if (options.swapAttributes) {
+        options['swap_attributes'] = options.swapAttributes
+      }
+
+      if (options.swapUrls) {
+        options['swap_urls'] = options.swapUrls.split(',')
+      }
+
       const paths = path.split(',')
       if (options.asLinks) {
-        const links = options.asLinks.split(',').flatMap(e=>e.split(',')).map(e => e.trim())
+        const links = options.asLinks.split(',').flatMap(e => e.split(',')).map(e => e.trim())
         await HTMLProofer.check_links(links, options).run()
       } else if (isDirectory(paths.first)) {
         await HTMLProofer.check_directories(paths, options).run()
@@ -147,6 +179,5 @@ program.
         await HTMLProofer.check_file(path, options).run()
       }
     })
-
 
 await program.parseAsync(process.argv)

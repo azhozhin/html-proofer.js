@@ -97,11 +97,12 @@ describe('HTMLProofer', () => {
   })
 
   describe('multiple directories', () => {
+    // todo: this one works extremely slow without VCR
     it('works', async () => {
       const dirs = [path.join(FIXTURES_DIR, 'links'), path.join(FIXTURES_DIR, 'images')]
       const output = await capture_proofer_output(dirs, 'directories')
       expect(output).toMatch(path.join(FIXTURES_DIR, 'links'))
       expect(output).toMatch(path.join(FIXTURES_DIR, 'images'))
-    })
+    }, 10000)
   })
 })

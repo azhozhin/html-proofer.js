@@ -120,7 +120,7 @@ describe('Command test', () => {
     })
 
     it('supports hydra', async () => {
-      const http = await make_bin(`--hydra '{"max_concurrency": 5}' http://www.github.com --as-links`)
+      const http = await make_bin(`--hydra '{"max_concurrency": 5}' --as-links http://www.github.com`)
       expect(http.search(/max_concurrency is invalid/)).toEqual(-1)
     })
   })

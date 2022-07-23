@@ -454,7 +454,7 @@ describe('Links test', () => {
     const fixture = path.join(FIXTURES_DIR, 'links', 'punnycode.html')
     const proofer = await run_proofer(fixture, 'file')
     expect(proofer.failed_checks).toEqual([])
-  })
+  }, 30000)
 
   it('passes for broken *nix links', async () => {
     const fixture = path.join(FIXTURES_DIR, 'links', 'broken_unix_links.html')

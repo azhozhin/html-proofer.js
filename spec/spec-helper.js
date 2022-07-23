@@ -90,25 +90,3 @@ export const make_cassette_name = (file, opts) => {
 }
 
 
-// Simulation of Ruby
-Object.defineProperty(Array.prototype, 'last', {
-  get: function last() {
-    if (this.length === 0) {
-      return null
-    }
-    return this[this.length - 1]
-  },
-})
-
-Object.defineProperty(Array.prototype, 'first', {
-  get: function first() {
-    if (this.length === 0) {
-      return null
-    }
-    return this[0]
-  },
-})
-
-Array.prototype.unique = function() {
-  return [...new Set(this)]
-}
