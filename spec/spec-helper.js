@@ -8,6 +8,7 @@ import * as util from 'util'
 export let FIXTURES_DIR = 'spec/html-proofer/fixtures'
 
 export const capture_stderr = async (block) => {
+  // todo: this does not work with current logger configuration
   let stderr_output = ''
   let stdout_output = ''
   const stderr_write = process.stderr.write

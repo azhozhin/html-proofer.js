@@ -87,7 +87,7 @@ program.
         'Only reports errors for links that fall within the 4xx status code range',
         false).
     option(
-        '--root-dir [path]',
+        '--root-dir [root-dir]',
         'The absolute path to the directory serving your html-files.',
         '').
     option(
@@ -153,11 +153,11 @@ program.
         options['ignore_urls'] = options.ignoreUrls.split(',')
       }
 
-      if (options.ignoreStatusCodes){
+      if (options.ignoreStatusCodes) {
         options['ignore_status_codes'] = options.ignoreStatusCodes.split(',')
       }
 
-      if (options.only4xx){
+      if (options.only4xx) {
         options['only_4xx'] = options.only4xx
       }
 
@@ -167,6 +167,14 @@ program.
 
       if (options.swapUrls) {
         options['swap_urls'] = options.swapUrls.split(',')
+      }
+
+      if (options.rootDir) {
+        options['root_dir'] = options.rootDir
+      }
+
+      if (options.enforceHttps) {
+        options['enforce_https'] = options.enforceHttps
       }
 
       const paths = path.split(',')
