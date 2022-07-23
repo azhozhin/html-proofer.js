@@ -1,24 +1,36 @@
 import {HTMLProofer} from '../lib/html-proofer'
-import {execSync} from 'node:child_process'
+import {exec} from 'node:child_process'
+import * as VCR from 'axios-vcr'
+import * as path from 'path'
+import * as util from 'util'
+
 
 export let FIXTURES_DIR = 'spec/html-proofer/fixtures'
 
 export const capture_stderr = async (block) => {
-  let output = ''
-  const fn = process.stderr.write;
+  let stderr_output = ''
+  let stdout_output = ''
+  const stderr_write = process.stderr.write
+  const stdout_write = process.stdout.write
 
-  function write(str, encoding, cb) {
-    fn.apply(process.stderr, arguments)
-    output += str
+  function stderr_write_(str, encoding, cb) {
+    stderr_write.apply(process.stderr, arguments)
+    stderr_output += str
   }
 
-  process.stderr.write = write;
+  function stdout_write_(str, encoding, cb) {
+    stdout_write.apply(process.stderr, arguments)
+    stdout_output += str
+  }
+
+  process.stderr.write = stderr_write_
+  process.stdout.write = stdout_write_
 
   await block()
 
-  process.stderr.write = fn
+  process.stderr.write = stderr_write
 
-  return output
+  return stderr_output
 }
 
 export function make_proofer(item, type, opts) {
@@ -36,34 +48,45 @@ export function make_proofer(item, type, opts) {
 
 export async function run_proofer(item, type, opts) {
   const proofer = make_proofer(item, type, opts)
-  //cassette_name = make_cassette_name(item, opts)
-  //VCR.use_cassette(cassette_name, record: :new_episodes) do
+  //const cassette_name = make_cassette_name(item, opts)
+  // VCR.mountCassette(cassette_name/*, record: :new_episodes*/)
   //    capture_stderr { proofer.run }
   await proofer.run()
+  // VCR.ejectCassette(cassette_name)
   return proofer
 }
 
 export const capture_proofer_output = async (file, type, opts = {}) => {
   const proofer = make_proofer(file, type, opts)
   //const cassette_name = make_cassette_name(file, opts)
-  //VCR.use_cassette(cassette_name, record: :new_episodes) do
+  // VCR.mountCassette(cassette_name/*, record: :new_episodes*/)
+
   const output = await capture_stderr(async () => {
     await proofer.run()
   })
+  // VCR.ejectCassette(cassette_name)
   return output
   //end
 }
 
-export const make_bin = (args) =>{
-  let captured_stdout = ''
-  let captured_stderr = ''
-  try{
-    captured_stdout = execSync(`node bin/htmlproofer.js ${args}`)
-  }catch(err){
-    captured_stderr = err.stderr.toString()
-  }
+export const make_bin = async (args) => {
+  const pexec = util.promisify(exec)
+  const { stdout, stderr } = await pexec(`node bin/htmlproofer.js ${args}`)
+  return `${stdout}\n${stderr}`
+}
 
-  return `${captured_stdout}\n${captured_stderr}`
+export const make_cassette_name = (file, opts) => {
+  const cassette_library_dir = path.join(FIXTURES_DIR, "vcr_cassettes")
+  let filename
+  if (file.constructor.name === 'Array') {
+    filename = file.join('_')
+  } else {
+    filename = file.split(path.sep).slice(2).join(path.sep)
+  }
+  if (opts && Object.keys(opts).length>0) {
+    filename += JSON.stringify(opts).replaceAll('"', '').replaceAll(':', '=')
+  }
+  return path.join(cassette_library_dir, filename)
 }
 
 

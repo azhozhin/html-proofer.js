@@ -4,100 +4,100 @@ import * as fs from 'fs'
 import * as path from 'path'
 
 describe('Command test', () => {
-  it('works with as-links', () => {
-    const output = make_bin('--as-links www.github.com,foofoofoo.biz')
+  it('works with as-links', async () => {
+    const output = await make_bin('--as-links www.github.com,foofoofoo.biz')
     expect(output).toMatch('1 failure')
   })
 
-  it('works with checks', () => {
+  it('works with checks', async () => {
     const external = path.join(FIXTURES_DIR, 'links', 'file.foo') // this has a broken link
-    const output = make_bin(`--extensions .foo --checks \'Images,Scripts\' ${external}`)
+    const output = await make_bin(`--extensions .foo --checks 'Images,Scripts' ${external}`)
     expect(output).toMatch('successfully')
     expect(output).not.toMatch(/Running.+?Links/)
   })
 
-  it('works with check-external-hash', () => {
+  it('works with check-external-hash', async () => {
     const broken_hash_on_the_web = path.join(FIXTURES_DIR, 'links', 'broken_hash_on_the_web.html')
-    const output = make_bin(`--check-external-hash ${broken_hash_on_the_web}`)
+    const output = await make_bin(`--check-external-hash ${broken_hash_on_the_web}`)
     expect(output).toMatch('1 failure')
   })
 
-  it('works with directory-index-file', () => {
+  it('works with directory-index-file', async () => {
     const link_pointing_to_directory = path.join(FIXTURES_DIR, 'links', 'link_pointing_to_directory.html')
-    const output = make_bin(`--directory-index-file index.php ${link_pointing_to_directory}`)
+    const output = await make_bin(`--directory-index-file index.php ${link_pointing_to_directory}`)
     expect(output).toMatch('successfully')
   })
 
-  it('works with disable-external', () => {
+  it('works with disable-external', async () => {
     const external = path.join(FIXTURES_DIR, 'links', 'broken_link_external.html')
-    const output = make_bin(`--disable-external ${external}`)
+    const output = await make_bin(`--disable-external ${external}`)
     expect(output).toMatch('successfully')
   })
 
-  it('works with extensions', () => {
+  it('works with extensions', async () => {
     const external = path.join(FIXTURES_DIR, 'links', 'file.foo')
-    const output = make_bin(`--extensions .foo ${external}`)
+    const output = await make_bin(`--extensions .foo ${external}`)
     expect(output).toMatch('1 failure')
     expect(output).toMatch('Links')
   })
 
-  it('works with ignore-files', () => {
+  it('works with ignore-files', async () => {
     const external = path.join(FIXTURES_DIR, 'links', 'broken_hash_internal.html')
-    const output = make_bin(`--ignore-files ${external} ${external}`)
+    const output = await make_bin(`--ignore-files ${external} ${external}`)
     expect(output).toMatch('successfully')
   })
 
-  it('works with ignore-urls', () => {
+  it('works with ignore-urls', async () => {
     const ignorable_links = path.join(FIXTURES_DIR, 'links', 'ignorable_links_via_options.html')
-    const output = make_bin(`--ignore-urls /^http:\/\//,/sdadsad/,../whaadadt.html ${ignorable_links}`)
+    const output = await make_bin(`--ignore-urls /^http:\/\//,/sdadsad/,../whaadadt.html ${ignorable_links}`)
     expect(output).toMatch('successfully')
   })
 
-  it('works with swap-urls', () => {
+  it('works with swap-urls', async () => {
     const translated_link = path.join(FIXTURES_DIR, 'links', 'link_translated_via_href_swap.html')
-    const output = make_bin(`--swap-urls "/^/articles/([\\w-]+)/:$1.html" ${translated_link}`)
+    const output = await make_bin(`--swap-urls "/^/articles/([\\w-]+)/:$1.html" ${translated_link}`)
     expect(output).toMatch('successfully')
   })
 
-  it('works with swap-urls and colon', () => {
+  it('works with swap-urls and colon', async () => {
     const translated_link = path.join(FIXTURES_DIR, 'links', 'link_translated_via_href_swap2.html')
-    const output = make_bin(`--swap-urls "http\\://www.example.com:" ${translated_link}`)
+    const output = await make_bin(`--swap-urls "http\\://www.example.com:" ${translated_link}`)
     expect(output).toMatch('successfully')
   })
 
-  it('works with only-4xx', () => {
+  it('works with only-4xx', async () => {
     const broken_hash_on_the_web = path.join(FIXTURES_DIR, 'links', 'broken_hash_on_the_web.html')
-    const output = make_bin(`--only-4xx ${broken_hash_on_the_web}`)
+    const output = await make_bin(`--only-4xx ${broken_hash_on_the_web}`)
     expect(output).toMatch('successfully')
   })
 
-  it('works with check-favicon', () => {
+  it('works with check-favicon', async () => {
     const broken = path.join(FIXTURES_DIR, 'favicon', 'internal_favicon_broken.html')
-    const output = make_bin(`--checks Favicon ${broken}`)
+    const output = await make_bin(`--checks Favicon ${broken}`)
     expect(output).toMatch('1 failure')
   })
 
-  it('works with empty-alt-ignore', () => {
+  it('works with empty-alt-ignore', async () => {
     const broken = path.join(FIXTURES_DIR, 'images', 'empty_image_alt_text.html')
-    const output = make_bin(`--ignore-empty-alt ${broken}`)
+    const output = await make_bin(`--ignore-empty-alt ${broken}`)
     expect(output).toMatch('successfully')
   })
 
-  it('works with allow-hash-href', () => {
+  it('works with allow-hash-href', async () => {
     const broken = path.join(FIXTURES_DIR, 'links', 'hash_href.html')
-    const output = make_bin(`--allow-hash-href ${broken}`)
+    const output = await make_bin(`--allow-hash-href ${broken}`)
     expect(output).toMatch('successfully')
   })
 
-  it('works with swap-attributes', () => {
+  it('works with swap-attributes', async () => {
     const custom_data_src_check = path.join(FIXTURES_DIR, 'images', 'data_src_attribute.html')
-    const output = make_bin(`${custom_data_src_check}  --swap-attributes '{\"img\": [[\"src\", \"data-src\"]] }'`)
+    const output = await make_bin(`${custom_data_src_check}  --swap-attributes '{\"img\": [[\"src\", \"data-src\"]] }'`)
     expect(output).toMatch('successfully')
   })
 
-  it('navigates above itself in a subdirectory', () => {
+  it('navigates above itself in a subdirectory', async () => {
     const real_link = path.join(FIXTURES_DIR, 'links', 'root_folder/documentation-from-my-project/')
-    const output = make_bin(`--root-dir ${path.join(FIXTURES_DIR, 'links', 'root_folder/')} ${real_link}`)
+    const output = await make_bin(`--root-dir ${path.join(FIXTURES_DIR, 'links', 'root_folder/')} ${real_link}`)
     expect(output).toMatch('successfully')
   })
 
@@ -106,21 +106,21 @@ describe('Command test', () => {
   })
 
   describe('nested options', () => {
-    it('supports typhoeus', () => {
+    it('supports typhoeus', async () => {
       const link_with_redirect_filepath = path.join(FIXTURES_DIR, 'links', 'link_with_redirect.html')
-      const output = make_bin(`${link_with_redirect_filepath} --typhoeus '{ \"followlocation\": false }'`)
+      const output = await make_bin(`${link_with_redirect_filepath} --typhoeus '{ \"followlocation\": false }'`)
       expect(output).toMatch(/failed/)
     })
 
-    it('has only one UA', () => {
-      const http = make_bin(
+    it('has only one UA', async () => {
+      const http = await make_bin(
           `--typhoeus='{"verbose":true,"headers":{"User-Agent":"Mozilla/5.0 (Macintosh; My New User-Agent)"}}' --as-links https://linkedin.com`)
       expect(http.search(/User-Agent: Typhoeus/)).toEqual(-1)
       expect(http.scan(`User-Agent: Mozilla/5.0 \(Macintosh; My New User-Agent\)`).count).toEqual(2)
     })
 
-    it('supports hydra', () => {
-      const http = make_bin(`--hydra '{"max_concurrency": 5}' http://www.github.com --as-links`)
+    it('supports hydra', async () => {
+      const http = await make_bin(`--hydra '{"max_concurrency": 5}' http://www.github.com --as-links`)
       expect(http.search(/max_concurrency is invalid/)).toEqual(-1)
     })
   })

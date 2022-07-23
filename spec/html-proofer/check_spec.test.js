@@ -1,6 +1,7 @@
 import {Check} from '../../lib/html-proofer/check'
-import {FIXTURES_DIR, make_proofer} from '../spec-helper'
+import {FIXTURES_DIR, make_cassette_name, make_proofer} from '../spec-helper'
 import * as path from 'path'
+import * as VCR from 'axios-vcr'
 
 class MailToOctocat extends Check {
   run() {
@@ -28,9 +29,10 @@ describe('HTMLProofer::Reporter', () => {
     const file = path.join(FIXTURES_DIR, 'links', 'mailto_octocat.html')
     //const cassette_name = make_cassette_name(file, {})
 
-//VCR.use_cassette(cassette_name, record: :new_episodes) do
+    //VCR.mountCassette(cassette_name/*, record: :new_episodes*/)
     const proofer = make_proofer(file, 'file', {checks: [MailToOctocat]})
     await proofer.run()
+    //VCR.ejectCassette(cassette_name)
     //const output = capture_stderr { proofer.run }
     //expect(output).to(include("At #{file}:1"))
     const failure = proofer.failed_checks.last

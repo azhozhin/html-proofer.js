@@ -1,5 +1,5 @@
 import * as path from 'path'
-import {FIXTURES_DIR, make_proofer, run_proofer} from '../spec-helper'
+import {capture_proofer_output, FIXTURES_DIR, make_proofer, run_proofer} from '../spec-helper'
 import {HTMLProofer} from '../../lib/html-proofer'
 
 describe('HTMLProofer', () => {
@@ -99,7 +99,7 @@ describe('HTMLProofer', () => {
   describe('multiple directories', () => {
     it('works', async () => {
       const dirs = [path.join(FIXTURES_DIR, 'links'), path.join(FIXTURES_DIR, 'images')]
-      const output = capture_proofer_output(dirs, 'directories')
+      const output = await capture_proofer_output(dirs, 'directories')
       expect(output).toMatch(path.join(FIXTURES_DIR, 'links'))
       expect(output).toMatch(path.join(FIXTURES_DIR, 'images'))
     })

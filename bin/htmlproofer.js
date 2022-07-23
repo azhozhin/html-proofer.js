@@ -19,7 +19,7 @@ program.
         'If `true`, does not flag `a` tags missing `href`. In HTML5, this is technically allowed, but could also be human error.',
         false).
     option(
-        '--as-links',
+        '--as-links [links]',
         'Assumes that `PATH` is a comma-separated array of links to check.',
         false).
     option(
@@ -27,9 +27,9 @@ program.
         'Automatically add specified extension to files for internal links, to allow extensionless URLs (as supported by most servers) (default: `.html`).',
         '.html').
     option(
-        '--checks [check1, check2,...]',
-        'A comma-separated list of Strings indicating which checks you want to run (default: `["Links", "Images", "Scripts"]`)',
-        ['Links', 'Images', 'Scripts']).
+        '--checks [checks]',
+        'A comma-separated list of Strings indicating which checks you want to run (default: \'Links,Images,Scripts\')',
+        '\'Links,Images,Scripts\'').
     option(
         '--check-external-hash',
         'Checks whether external hashes exist (even if the webpage exists) (default: `true`).',
@@ -51,7 +51,7 @@ program.
         'Fails a link if it\'s not marked as `https` (default: `true`).',
         true).
     option(
-        '--extensions [ext1, ext2,...]',
+        '--extensions [extensions]',
         'A comma-separated list of Strings indicating the file extensions you would like to check (including the dot)',
         ['.html']).
     option(
@@ -118,18 +118,28 @@ program.
       //console.debug(options)
 
       const checks = []
-      for (const checkName of options.checks){
-        if (all_checks[checkName]== null){
-          throw new Error(`Unknown check ${checkName}`)
+      if (options.checks){
+        let checks_str = options.checks
+        checks_str = checks_str.startsWith('\'') || checks_str.startsWith('\"') ? options.checks.slice(1) : checks_str
+        checks_str = checks_str.endsWith('\'') || checks_str.endsWith('\"') ? checks_str.slice(0, -1) : checks_str
+        for (const checkName of checks_str.split(',')){
+          if (all_checks[checkName]== null){
+            throw new Error(`Unknown check ${checkName}`)
+          }
+          checks.push(all_checks[checkName])
         }
-        checks.push(all_checks[checkName])
+        options.checks = checks
       }
 
-      options.checks = checks
+      if (options.extensions){
+        if (options.extensions.constructor.name === 'String'){
+          options.extensions = options.extensions.split(',')
+        }
+      }
 
       const paths = path.split(',')
       if (options.asLinks) {
-        const links = path.split(',').map(e => e.trim())
+        const links = options.asLinks.split(',').flatMap(e=>e.split(',')).map(e => e.trim())
         await HTMLProofer.check_links(links, options).run()
       } else if (isDirectory(paths.first)) {
         await HTMLProofer.check_directories(paths, options).run()

@@ -1,6 +1,7 @@
-import {capture_stderr, FIXTURES_DIR, make_proofer} from '../spec-helper.js'
+import {capture_stderr, FIXTURES_DIR, make_cassette_name, make_proofer} from '../spec-helper.js'
 import * as fs from 'fs'
 import * as path from 'path'
+import * as VCR from 'axios-vcr'
 
 describe('HTMLProofer::Runner', () => {
   describe('#before_request', () => {
@@ -17,13 +18,12 @@ describe('HTMLProofer::Runner', () => {
         request = r
       })
 
-      //cassette_name = make_cassette_name(File.join(FIXTURES_DIR, "links", "check_just_once.html"), opts)
-      //VCR.use_cassette(cassette_name, record: :new_episodes) do
+      //const cassette_name = make_cassette_name(path.join(FIXTURES_DIR, "links", "check_just_once.html"), opts)
+      // VCR.mountCassette(cassette_name/*, record: :new_episodes*/)
       await capture_stderr(async () => {
         await proofer.run()
       })
-      //proofer
-      //end
+      // VCR.ejectCassette(cassette_name)
 
       expect(request).toEqual(expect.objectContaining({
         options: expect.any(Object),
@@ -60,13 +60,12 @@ describe('HTMLProofer::Runner', () => {
         request = r
       })
 
-//cassette_name = make_cassette_name(dir, opts)
-//VCR.use_cassette(cassette_name, record: :new_episodes) do
+      //const cassette_name = make_cassette_name(dir, opts)
+      //VCR.mountCassette(cassette_name/*, record: :new_episodes*/)
       await capture_stderr(async () => {
         await proofer.run()
       })
-//  proofer
-//end
+      //VCR.ejectCassette(cassette_name)
 
       expect(request).toEqual(expect.objectContaining({
         options: expect.any(Object),
