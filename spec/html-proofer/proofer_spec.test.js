@@ -103,6 +103,6 @@ describe('HTMLProofer', () => {
       const output = await capture_proofer_output(dirs, 'directories')
       expect(output).toMatch(path.join(FIXTURES_DIR, 'links'))
       expect(output).toMatch(path.join(FIXTURES_DIR, 'images'))
-    }, 10000)
+    }, 10000) // todo: can we make this test faster?
   })
 })

@@ -448,13 +448,13 @@ describe('Links test', () => {
     const fixture = path.join(FIXTURES_DIR, 'links', 'unicode_domain.html')
     const proofer = await run_proofer(fixture, 'file')
     expect(proofer.failed_checks).toEqual([])
-  })
+  }, 10000) // todo: can we make this test faster?
 
   it('allows punnycode domains', async () => {
     const fixture = path.join(FIXTURES_DIR, 'links', 'punnycode.html')
     const proofer = await run_proofer(fixture, 'file')
     expect(proofer.failed_checks).toEqual([])
-  }, 30000)
+  }, 30000) // todo: can we make this test faster?
 
   it('passes for broken *nix links', async () => {
     const fixture = path.join(FIXTURES_DIR, 'links', 'broken_unix_links.html')
@@ -478,7 +478,7 @@ describe('Links test', () => {
     const fixture = path.join(FIXTURES_DIR, 'links', 'redirected_error.html')
     const proofer = await run_proofer(fixture, 'file', {enforce_https: false})
     expect(proofer.failed_checks.first.description).toMatch('http://stackoverflow.com/asdadsads failed')
-  })
+  }, 10000) // todo: can we make this test faster?
 
   it('does not complain for files with attributes containing dashes', async () => {
     const fixture = path.join(FIXTURES_DIR, 'links', 'attribute_with_dash.html')
@@ -558,7 +558,7 @@ describe('Links test', () => {
     const hash_href = path.join(FIXTURES_DIR, 'links', 'ip_href.html')
     const proofer = await run_proofer(hash_href, 'file')
     expect(proofer.failed_checks.first.description).toMatch(/failed with something very wrong/)
-  })
+  }, 60000) // todo: can we make this test faster?
 
   it('works for internal links to weird encoding IDs', async () => {
     const hash_href = path.join(FIXTURES_DIR, 'links', 'encodingLink.html')
