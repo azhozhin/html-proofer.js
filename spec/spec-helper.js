@@ -10,26 +10,17 @@ export let FIXTURES_DIR = 'spec/html-proofer/fixtures'
 export const capture_stderr = async (block) => {
   // todo: this does not work with current logger configuration
   let stderr_output = ''
-  let stdout_output = ''
-  const stderr_write = process.stderr.write
-  const stdout_write = process.stdout.write
 
-  function stderr_write_(str, encoding, cb) {
-    stderr_write.apply(process.stderr, arguments)
-    stderr_output += str
+  // it seems that stderr and stdout are the same
+  let process_stderr_write = process.stderr.write
+
+  process.stderr.write = (data)=>{
+    stderr_output += data
   }
-
-  function stdout_write_(str, encoding, cb) {
-    stdout_write.apply(process.stderr, arguments)
-    stdout_output += str
-  }
-
-  process.stderr.write = stderr_write_
-  process.stdout.write = stdout_write_
 
   await block()
 
-  process.stderr.write = stderr_write
+  process.stderr.write = process_stderr_write
 
   return stderr_output
 }
