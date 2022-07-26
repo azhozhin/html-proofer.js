@@ -109,15 +109,16 @@ describe('Command test', () => {
   describe('nested options', () => {
     it('supports typhoeus', async () => {
       const link_with_redirect_filepath = path.join(FIXTURES_DIR, 'links', 'link_with_redirect.html')
-      const output = await make_bin(`--typhoeus "{\"followlocation\": false}" ${link_with_redirect_filepath}`)
+      const output = await make_bin(`--typhoeus "{'followlocation': false}" ${link_with_redirect_filepath}`)
       expect(output).toMatch(/failed/)
     })
 
     it('has only one UA', async () => {
       const http = await make_bin(
-          `--typhoeus="{\"verbose\":true,\"headers\":{\"User-Agent\":\"Mozilla/5.0 (Macintosh; My New User-Agent)\"}}" --as-links https://linkedin.com`)
-      expect(http.search(/User-Agent: Typhoeus/)).toEqual(-1)
-      expect(http.scan(`User-Agent: Mozilla/5.0 \(Macintosh; My New User-Agent\)`).count).toEqual(2)
+          `--typhoeus="{'verbose':true,'headers':{'User-Agent':'Mozilla/5.0 (Macintosh; My New User-Agent)'}}" --as-links https://linkedin.com`)
+      expect(http.search(/"User-Agent": "Typhoeus"/)).toEqual(-1)
+      expect(http.split('\n').filter(e => e.match(/"User-Agent": "Mozilla\/5.0 \(Macintosh; My New User-Agent\)"/)).length).
+          toEqual(2)
     })
 
     it('supports hydra', async () => {

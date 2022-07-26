@@ -1,5 +1,5 @@
 import * as path from 'path'
-import {capture_proofer_output, FIXTURES_DIR, make_proofer, run_proofer} from '../spec-helper'
+import {capture_proofer_http, capture_proofer_output, FIXTURES_DIR, make_proofer, run_proofer} from '../spec-helper'
 import {HTMLProofer} from '../../lib/html-proofer'
 
 describe('HTMLProofer', () => {
@@ -31,7 +31,7 @@ describe('HTMLProofer', () => {
       const folder = path.join(FIXTURES_DIR, 'links', '_site/folder.html')
       const proofer = HTMLProofer.check_file(folder, {verbose: true})
       expect(proofer.options['verbose']).toEqual(true)
-      expect(proofer.options['typhoeus']['verbose']).toEqual(null)
+      expect(proofer.options['typhoeus']['verbose']).toBeUndefined()
     })
 
     it('takes options for Parallel', async () => {
@@ -39,7 +39,7 @@ describe('HTMLProofer', () => {
       const options = {parallel: {in_processes: 3}}
       const proofer = HTMLProofer.check_file(folder, options)
       expect(proofer.options['parallel']['in_processes']).toEqual(3)
-      expect(proofer.options['typhoeus']['in_processes']).toBeNull()
+      expect(proofer.options['typhoeus']['in_processes']).toBeUndefined()
     })
 
     it('only has one UA with file', async () => {
@@ -50,8 +50,8 @@ describe('HTMLProofer', () => {
           headers: {'User-Agent': 'Mozilla/5.0 (compatible; My New User-Agent)'},
         },
       }
-      const http = capture_proofer_http(github_hash, 'file', options)
-      expect(http['request']['headers']['User-Agent']).toEqual(['Mozilla/5.0 (compatible; My New User-Agent)'])
+      const http = await capture_proofer_http(github_hash, 'file', options)
+      expect(http['request']['headers']['User-Agent']).toEqual('Mozilla/5.0 (compatible; My New User-Agent)')
     })
   })
 

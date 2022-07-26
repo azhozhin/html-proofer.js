@@ -448,7 +448,7 @@ describe('Links test', () => {
     const fixture = path.join(FIXTURES_DIR, 'links', 'unicode_domain.html')
     const proofer = await run_proofer(fixture, 'file')
     expect(proofer.failed_checks).toEqual([])
-  }, 10000) // todo: can we make this test faster?
+  }, 20000) // todo: can we make this test faster?
 
   it('allows punnycode domains', async () => {
     const fixture = path.join(FIXTURES_DIR, 'links', 'punnycode.html')

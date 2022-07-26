@@ -30,7 +30,7 @@ program.
     option(
         '--checks [checks]',
         'A comma-separated list of Strings indicating which checks you want to run (default: \'Links,Images,Scripts\')',
-        '\'Links,Images,Scripts\'').
+        'Links,Images,Scripts').
     option(
         '--check-external-hash',
         'Checks whether external hashes exist (even if the webpage exists) (default: `true`).',
@@ -111,82 +111,83 @@ program.
         'JSON-formatted string of cache config. Will override the html-proofer defaults.').
     command('scan [path]', {isDefault: true}).
     action(async () => {
-      //console.log('action')
-      const options = program.opts()
+      const opts = program.opts()
       const path = program.args.length === 0 ? '.' : program.args[0]
-      //console.debug(options)
+      //console.debug(opts)
 
+      const options = {}
       const checks = []
-      if (options.checks) {
-        let checks_str = options.checks
-        checks_str = checks_str.startsWith('\'') || checks_str.startsWith('\"') ? options.checks.slice(1) : checks_str
-        checks_str = checks_str.endsWith('\'') || checks_str.endsWith('\"') ? checks_str.slice(0, -1) : checks_str
+      if (opts.checks) {
+        let checks_str = opts.checks
         for (const checkName of checks_str.split(',')) {
           if (all_checks[checkName] == null) {
             throw new Error(`Unknown check ${checkName}`)
           }
           checks.push(all_checks[checkName])
         }
-        options.checks = checks
+        options['checks'] = checks
       }
 
-      if (options.extensions) {
-        if (options.extensions.constructor.name === 'String') {
-          options.extensions = options.extensions.split(',')
+      if (opts.extensions) {
+        if (opts.extensions.constructor.name === 'String') {
+          options['extensions'] = opts.extensions.split(',')
         }
       }
 
-      if (options.directoryIndexFile) {
-        options['directory_index_file'] = options.directoryIndexFile
+      if (opts.directoryIndexFile) {
+        options['directory_index_file'] = opts.directoryIndexFile
       }
 
-      if (options.disableExternal) {
-        options['disable_external'] = options.disableExternal
+      if (opts.disableExternal) {
+        options['disable_external'] = opts.disableExternal
       }
 
-      if (options.ignoreFiles) {
-        options['ignore_files'] = options.ignoreFiles.split(',')
+      if (opts.ignoreFiles) {
+        options['ignore_files'] = opts.ignoreFiles.split(',')
       }
 
-      if (options.ignoreUrls) {
-        options['ignore_urls'] = options.ignoreUrls.split(',').
+      if (opts.ignoreUrls) {
+        options['ignore_urls'] = opts.ignoreUrls.split(',').
             map(e => (e.startsWith('/') && e.endsWith('/')) ? new RegExp(e.slice(1, -1)) : e)
       }
 
-      if (options.ignoreStatusCodes) {
-        options['ignore_status_codes'] = options.ignoreStatusCodes.split(',')
+      if (opts.ignoreStatusCodes) {
+        options['ignore_status_codes'] = opts.ignoreStatusCodes.split(',')
       }
 
-      if (options.only4xx) {
-        options['only_4xx'] = options.only4xx
+      if (opts.only4xx) {
+        options['only_4xx'] = opts.only4xx
       }
 
-      if (options.swapAttributes) {
-        options['swap_attributes'] = Configuration.parse_json_option('swap_attributes', options.swapAttributes)
+      if (opts.swapAttributes) {
+        options['swap_attributes'] = Configuration.parse_json_option('swap_attributes', opts.swapAttributes)
       }
 
-      if (options.swapUrls) {
+      if (opts.typhoeus){
+        options['typhoeus'] =Configuration.parse_json_option('typhoeus', opts.typhoeus)
+      }
+
+      if (opts.swapUrls) {
         const map = {}
-        for (const i of options.swapUrls.split(',')) {
+        for (const i of opts.swapUrls.split(',')) {
           const sp = i.split(/(?<!\\):/, 2)
           const re = sp[0].replaceAll(/\\:/g, ':')
-          const replacement = sp[1].replaceAll(/\\:/g, ':')
-          map[re] = replacement
+          map[re] = sp[1].replaceAll(/\\:/g, ':')
         }
         options['swap_urls'] = map
       }
 
-      if (options.rootDir) {
-        options['root_dir'] = options.rootDir
+      if (opts.rootDir) {
+        options['root_dir'] = opts.rootDir
       }
 
-      if (options.enforceHttps) {
-        options['enforce_https'] = options.enforceHttps
+      if (opts.enforceHttps) {
+        options['enforce_https'] = opts.enforceHttps
       }
 
       const paths = path.split(',')
-      if (options.asLinks) {
-        const links = options.asLinks.split(',').flatMap(e => e.split(',')).map(e => e.trim())
+      if (opts.asLinks) {
+        const links = opts.asLinks.split(',').flatMap(e => e.split(',')).map(e => e.trim())
         await HTMLProofer.check_links(links, options).run()
       } else if (isDirectory(paths.first)) {
         await HTMLProofer.check_directories(paths, options).run()
