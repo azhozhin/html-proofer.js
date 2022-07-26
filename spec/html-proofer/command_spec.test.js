@@ -11,7 +11,7 @@ describe('Command test', () => {
 
   it('works with checks', async () => {
     const external = path.join(FIXTURES_DIR, 'links', 'file.foo') // this has a broken link
-    const output = await make_bin(`--extensions .foo --checks 'Images,Scripts' ${external}`)
+    const output = await make_bin(`--extensions .foo --checks "Images,Scripts" ${external}`)
     expect(output).toMatch('successfully')
     expect(output).not.toMatch(/Running.+?Links/)
   })
@@ -49,7 +49,7 @@ describe('Command test', () => {
 
   it('works with ignore-urls', async () => {
     const ignorable_links = path.join(FIXTURES_DIR, 'links', 'ignorable_links_via_options.html')
-    const output = await make_bin(`--ignore-urls /^http:\/\//,/sdadsad/,../whaadadt.html ${ignorable_links}`)
+    const output = await make_bin(`--ignore-urls "/^http:\/\//,/sdadsad/,../whaadadt.html" ${ignorable_links}`)
     expect(output).toMatch('successfully')
   })
 
@@ -73,7 +73,7 @@ describe('Command test', () => {
 
   it('works with check-favicon', async () => {
     const broken = path.join(FIXTURES_DIR, 'favicon', 'internal_favicon_broken.html')
-    const output = await make_bin(`--checks Favicon ${broken}`)
+    const output = await make_bin(`--checks "Favicon" ${broken}`)
     expect(output).toMatch('1 failure')
   })
 
@@ -91,13 +91,14 @@ describe('Command test', () => {
 
   it('works with swap-attributes', async () => {
     const custom_data_src_check = path.join(FIXTURES_DIR, 'images', 'data_src_attribute.html')
-    const output = await make_bin(`${custom_data_src_check}  --swap-attributes '{\"img\": [[\"src\", \"data-src\"]] }'`)
+    const output = await make_bin(`--swap-attributes "{'img': [['src', 'data-src']] }" ${custom_data_src_check}`)
     expect(output).toMatch('successfully')
   })
 
   it('navigates above itself in a subdirectory', async () => {
     const real_link = path.join(FIXTURES_DIR, 'links', 'root_folder/documentation-from-my-project/')
-    const output = await make_bin(`--root-dir ${path.join(FIXTURES_DIR, 'links', 'root_folder/')} ${real_link}`)
+    const root_dir = path.join(FIXTURES_DIR, 'links', 'root_folder/')
+    const output = await make_bin(`--root-dir ${root_dir} ${real_link}`)
     expect(output).toMatch('successfully')
   })
 
@@ -108,19 +109,19 @@ describe('Command test', () => {
   describe('nested options', () => {
     it('supports typhoeus', async () => {
       const link_with_redirect_filepath = path.join(FIXTURES_DIR, 'links', 'link_with_redirect.html')
-      const output = await make_bin(`${link_with_redirect_filepath} --typhoeus '{ \"followlocation\": false }'`)
+      const output = await make_bin(`--typhoeus "{\"followlocation\": false}" ${link_with_redirect_filepath}`)
       expect(output).toMatch(/failed/)
     })
 
     it('has only one UA', async () => {
       const http = await make_bin(
-          `--typhoeus='{"verbose":true,"headers":{"User-Agent":"Mozilla/5.0 (Macintosh; My New User-Agent)"}}' --as-links https://linkedin.com`)
+          `--typhoeus="{\"verbose\":true,\"headers\":{\"User-Agent\":\"Mozilla/5.0 (Macintosh; My New User-Agent)\"}}" --as-links https://linkedin.com`)
       expect(http.search(/User-Agent: Typhoeus/)).toEqual(-1)
       expect(http.scan(`User-Agent: Mozilla/5.0 \(Macintosh; My New User-Agent\)`).count).toEqual(2)
     })
 
     it('supports hydra', async () => {
-      const http = await make_bin(`--hydra '{"max_concurrency": 5}' --as-links http://www.github.com`)
+      const http = await make_bin(`--hydra "{\"max_concurrency\": 5}" --as-links http://www.github.com`)
       expect(http.search(/max_concurrency is invalid/)).toEqual(-1)
     })
   })
@@ -152,7 +153,7 @@ function match_command_help(config) {
       expect(help_output).toContain(description)
     }
 
-    if (!matched){
+    if (!matched) {
       try {
         expect(matched).toBeTruthy()
       } catch (e) {

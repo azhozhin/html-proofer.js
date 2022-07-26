@@ -5,6 +5,7 @@ import {VERSION} from '../lib/html-proofer/version.js'
 import {isDirectory} from '../lib/html-proofer/utils.js'
 import {HTMLProofer} from '../lib/html-proofer.js'
 import {all_checks} from '../lib/html-proofer/checks.js'
+import {Configuration} from '../lib/html-proofer/configuration.js'
 
 program.
     version(VERSION).
@@ -92,12 +93,10 @@ program.
         '').
     option(
         '--swap-attributes [config]',
-        'JSON-formatted config that maps element names to the preferred attribute to check.',
-        '{}').
+        'JSON-formatted config that maps element names to the preferred attribute to check.').
     option(
         '--swap-urls [swap-urls]',
-        'A comma-separated list containing key-value pairs of `RegExp => String`. It transforms URLs that match `RegExp` into `String` via `gsub`. The escape sequences `\\:` should be used to produce literal `:`s.',
-        '{}').
+        'A comma-separated list containing key-value pairs of `RegExp => String`. It transforms URLs that match `RegExp` into `String` via `gsub`. The escape sequences `\\:` should be used to produce literal `:`s.').
     option(
         '--typhoeus [config]',
         'JSON-formatted string of Typhoeus config. Will override the html-proofer defaults.').
@@ -150,7 +149,8 @@ program.
       }
 
       if (options.ignoreUrls) {
-        options['ignore_urls'] = options.ignoreUrls.split(',')
+        options['ignore_urls'] = options.ignoreUrls.split(',').
+            map(e => (e.startsWith('/') && e.endsWith('/')) ? new RegExp(e.slice(1, -1)) : e)
       }
 
       if (options.ignoreStatusCodes) {
@@ -162,11 +162,18 @@ program.
       }
 
       if (options.swapAttributes) {
-        options['swap_attributes'] = options.swapAttributes
+        options['swap_attributes'] = Configuration.parse_json_option('swap_attributes', options.swapAttributes)
       }
 
       if (options.swapUrls) {
-        options['swap_urls'] = options.swapUrls.split(',')
+        const map = {}
+        for (const i of options.swapUrls.split(',')) {
+          const sp = i.split(/(?<!\\):/, 2)
+          const re = sp[0].replaceAll(/\\:/g, ':')
+          const replacement = sp[1].replaceAll(/\\:/g, ':')
+          map[re] = replacement
+        }
+        options['swap_urls'] = map
       }
 
       if (options.rootDir) {
