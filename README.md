@@ -13,7 +13,7 @@ Version: `4.0.1`
 | `cache_spec`             | 0        |                     |
 | `check_spec`             | 1/1      | :heavy_check_mark:  |
 | `cli_reporter_spec`      | 2/2      | :heavy_check_mark:  |
-| `command_spec`           | 19/20    |                     |
+| `command_spec`           | 20/20    | :heavy_check_mark:  |
 | `element_spec`           | 6/6      | :heavy_check_mark:  |
 | `favicon_spec`           | 11/12    |                     |
 | `images_spec`            | 39/39    | :heavy_check_mark:  |
