@@ -15,7 +15,7 @@ Version: `4.0.1`
 | `cli_reporter_spec`      | 2/2      | :heavy_check_mark:  |
 | `command_spec`           | 20/20    | :heavy_check_mark:  |
 | `element_spec`           | 6/6      | :heavy_check_mark:  |
-| `favicon_spec`           | 11/12    |                     |
+| `favicon_spec`           | 12/12    | :heavy_check_mark:  |
 | `images_spec`            | 39/39    | :heavy_check_mark:  |
 | `links_spec`             | 115/118  |                     |
 | `maliciousness_spec`     | 4/4      | :heavy_check_mark:  |
