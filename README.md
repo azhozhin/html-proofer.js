@@ -21,7 +21,7 @@ Version: `4.0.1`
 | `maliciousness_spec`     | 4/4      | :heavy_check_mark:  |
 | `opengraph_spec`         | 11/11    | :heavy_check_mark:  |
 | `parse_json_option_spec` | 9/9      | :heavy_check_mark:  |
-| `proofer_spec`           | 10/11    |                     |
+| `proofer_spec`           | 11/11    | :heavy_check_mark:  |
 | `reporter_spec`          | 1/1      | :heavy_check_mark:  |
 | `runner_spec`            | 2/2      | :white_check_mark:  |
 | `scripts_spec`           | 13/13    | :heavy_check_mark:  |
