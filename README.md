@@ -12,17 +12,17 @@ Version: `4.0.1`
 | `attribute/url_spec`     | 2/2      | :heavy_check_mark:  |
 | `cache_spec`             | 0        |                     |
 | `check_spec`             | 1/1      | :heavy_check_mark:  |
-| `cli_reporter_spec`      | 0/2      |                     |
-| `command_spec`           | 7/20     |                     |
+| `cli_reporter_spec`      | 2/2      | :heavy_check_mark:  |
+| `command_spec`           | 19/20    |                     |
 | `element_spec`           | 6/6      | :heavy_check_mark:  |
-| `favicon_spec`           | 10/12    |                     |
+| `favicon_spec`           | 11/12    |                     |
 | `images_spec`            | 39/39    | :heavy_check_mark:  |
-| `links_spec`             | 110/118  |                     |
+| `links_spec`             | 115/118  |                     |
 | `maliciousness_spec`     | 4/4      | :heavy_check_mark:  |
 | `opengraph_spec`         | 11/11    | :heavy_check_mark:  |
 | `parse_json_option_spec` |          |                     |
-| `proofer_spec`           | 7/11     |                     |
-| `reporter_spec`          | 0/1      |                     |
+| `proofer_spec`           | 10/11    |                     |
+| `reporter_spec`          | 1/1      | :heavy_check_mark:  |
 | `runner_spec`            | 2/2      | :white_check_mark:  |
 | `scripts_spec`           | 13/13    | :heavy_check_mark:  |
 | `utils_spec`             | 3/3      | :heavy_check_mark:  |
