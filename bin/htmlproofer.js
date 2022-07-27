@@ -81,7 +81,7 @@ program.
         '').
     option(
         '--log-level [level]',
-        'Sets the logging level, as determined by Yell. One of `debug`, `info`, `warn`, or `error`.',
+        'Sets the logging level. One of `debug`, `info`, `warn`, or `error`',
         'info').
     option(
         '--only-4xx',
@@ -128,11 +128,40 @@ program.
         options['checks'] = checks
       }
 
+      if (opts.allowHashHref != null) {
+        options['allow_hash_href'] = opts.allowHashHref
+      }
+
+      if (opts.allowMissingHref != null) {
+        options['allow_missing_href'] = opts.allowMissingHref
+      }
+
+      if (opts.assumeExtension != null) {
+        options['assume_extension'] = opts.assumeExtension
+      }
+
+      if (opts.checkExternalHash != null) {
+        options['check_external_hash'] = opts.checkExternalHash
+      }
+
+      if (opts.ignoreEmptyAlt != null ) {
+        options['ignore_empty_alt'] = opts.ignoreEmptyAlt
+      }
+
+      if (opts.ignoreEmptyMailto != null) {
+        options['ignore_empty_mailto'] = opts.ignoreEmptyMailto
+      }
+
+      if (opts.ignoreMissingAlt != null) {
+        options['ignore_missing_alt'] = opts.ignoreMissingAlt
+      }
+
       if (opts.extensions) {
         if (opts.extensions.constructor.name === 'String') {
           options['extensions'] = opts.extensions.split(',')
         }
       }
+
 
       if (opts.directoryIndexFile) {
         options['directory_index_file'] = opts.directoryIndexFile
@@ -163,8 +192,8 @@ program.
         options['swap_attributes'] = Configuration.parse_json_option('swap_attributes', opts.swapAttributes)
       }
 
-      if (opts.typhoeus){
-        options['typhoeus'] =Configuration.parse_json_option('typhoeus', opts.typhoeus)
+      if (opts.typhoeus) {
+        options['typhoeus'] = Configuration.parse_json_option('typhoeus', opts.typhoeus)
       }
 
       if (opts.swapUrls) {
@@ -183,6 +212,10 @@ program.
 
       if (opts.enforceHttps) {
         options['enforce_https'] = opts.enforceHttps
+      }
+
+      if (opts.logLevel) {
+        options['log_level'] = opts.logLevel
       }
 
       const paths = path.split(',')

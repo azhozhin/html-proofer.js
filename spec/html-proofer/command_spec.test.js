@@ -102,8 +102,8 @@ describe('Command test', () => {
     expect(output).toMatch('successfully')
   })
 
-  it('has every option for proofer defaults', () => {
-    match_command_help(Configuration.PROOFER_DEFAULTS)
+  it('has every option for proofer defaults', async () => {
+    await match_command_help(Configuration.PROOFER_DEFAULTS)
   })
 
   describe('nested options', () => {
@@ -117,7 +117,8 @@ describe('Command test', () => {
       const http = await make_bin(
           `--typhoeus="{'verbose':true,'headers':{'User-Agent':'Mozilla/5.0 (Macintosh; My New User-Agent)'}}" --as-links https://linkedin.com`)
       expect(http.search(/"User-Agent": "Typhoeus"/)).toEqual(-1)
-      expect(http.split('\n').filter(e => e.match(/"User-Agent": "Mozilla\/5.0 \(Macintosh; My New User-Agent\)"/)).length).
+      expect(http.split('\n').
+          filter(e => e.match(/"User-Agent": "Mozilla\/5.0 \(Macintosh; My New User-Agent\)"/)).length).
           toEqual(2)
     })
 
@@ -128,18 +129,20 @@ describe('Command test', () => {
   })
 })
 
-function match_command_help(config) {
+async function match_command_help(config) {
   const config_keys = Object.keys(config)
   const bin_file = fs.readFileSync('bin/htmlproofer.js').toString()
-  const help_output = make_bin('--help')
+  const help_output = await make_bin('--help')
   const readme = fs.readFileSync('README.md').toString()
 
   for (const key of config_keys) {
+    const keyRe = new RegExp(key)
 // match options
-    expect(bin_file).toMatch(key)
+    expect(bin_file).toMatch(keyRe)
     let matched = false
     for (const line of readme.split('\n')) {
-      if (!line.match(/\| `${key}`/)) {
+      const re = new RegExp('^\\| `' + key + '`')
+      if (!re.test(line)) {
         continue
       }
 
@@ -147,7 +150,7 @@ function match_command_help(config) {
       let description = line.split('|')[2].trim()
       description = description.replaceAll('A hash', 'A comma-separated list')
       description = description.replaceAll('An array', 'A comma-separated list')
-      description = description.replaceAll(/\[(.+?)\]\(.+?\)/, '$1')
+      description = description.replaceAll(/\[(.+?)\]\(.+?\)/g, '$1')
       description = description.replace(/\.$/, '')
 
       // match README description for option
