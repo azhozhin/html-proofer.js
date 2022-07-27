@@ -1,6 +1,6 @@
 import {adapt_nokogiri_node, create_nokogiri} from '../../lib/html-proofer/utils'
 import * as path from 'path'
-import {FIXTURES_DIR} from '../spec-helper'
+import {FIXTURES_DIR} from '../spec-helper.js'
 
 describe('Utils', () => {
   describe('::create_nokogiri', () => {

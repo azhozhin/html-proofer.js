@@ -101,8 +101,8 @@ describe('HTMLProofer', () => {
     it('works', async () => {
       const dirs = [path.join(FIXTURES_DIR, 'links'), path.join(FIXTURES_DIR, 'images')]
       const output = await capture_proofer_output(dirs, 'directories')
-      expect(output).toMatch(path.join(FIXTURES_DIR, 'links'))
-      expect(output).toMatch(path.join(FIXTURES_DIR, 'images'))
+      expect(output).toMatch(path.join(FIXTURES_DIR, 'links').replaceAll('\\', '/'))
+      expect(output).toMatch(path.join(FIXTURES_DIR, 'images').replaceAll('\\', '/'))
     }, 120000) // todo: can we make this test faster?
   })
 })

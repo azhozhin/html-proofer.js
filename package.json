@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/azhozhin/html-proofer.js#readme",
   "dependencies": {
+    "@xmldom/xmldom": "^0.8.2",
     "axios": "^0.27.2",
     "cheerio": "^1.0.0-rc.12",
     "commander": "^9.4.0",
@@ -27,7 +28,6 @@
     "outdent": "^0.8.0",
     "urijs": "^1.19.11",
     "winston": "^3.8.1",
-    "xmldom": "^0.6.0",
     "xpath": "^0.0.32"
   },
   "jest": {
