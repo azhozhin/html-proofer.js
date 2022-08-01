@@ -13,7 +13,7 @@ class MailToOctocat extends Check {
       }
 
       if (this.mailto_octocat()) {
-        this.add_failure('Don\'t email the Octocat directly!', this.link.line)
+        this.add_failure(`Don't email the Octocat directly!`, this.link.line)
         return
       }
     })
@@ -36,7 +36,7 @@ describe('HTMLProofer::Reporter', () => {
     //const output = capture_stderr { proofer.run }
     //expect(output).to(include("At #{file}:1"))
     const failure = proofer.failed_checks.last
-    expect(failure.description).toEqual('Don\'t email the Octocat directly!')
+    expect(failure.description).toEqual(`Don't email the Octocat directly!`)
     expect(failure.line).toEqual(1)
 //end
   })
