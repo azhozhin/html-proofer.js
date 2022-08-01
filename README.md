@@ -17,7 +17,7 @@ Version: `4.0.1`
 | `element_spec`           | 6/6      | :heavy_check_mark:  |
 | `favicon_spec`           | 12/12    | :heavy_check_mark:  |
 | `images_spec`            | 39/39    | :heavy_check_mark:  |
-| `links_spec`             | 115/118  |                     |
+| `links_spec`             | 118/118  | :heavy_check_mark:  |
 | `maliciousness_spec`     | 4/4      | :heavy_check_mark:  |
 | `opengraph_spec`         | 11/11    | :heavy_check_mark:  |
 | `parse_json_option_spec` | 9/9      | :heavy_check_mark:  |
