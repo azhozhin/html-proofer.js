@@ -748,6 +748,7 @@ describe('Links test', () => {
   it('does not crash on badly formatted urls', async () => {
     const file = path.join(FIXTURES_DIR, 'links', 'bad_formatting.html')
     const proofer = await run_proofer(file, 'file')
+    expect(proofer.failed_checks.length).toEqual(1)
     expect(proofer.failed_checks.first.description).toMatch(/is an invalid URL/)
   })
 
