@@ -124,6 +124,19 @@ describe('Links test', () => {
     expect(proofer.failed_checks).toEqual([])
   })
 
+  it('succeeds for working root-link with hash', async () => {
+    const file = path.join(FIXTURES_DIR, 'links', 'root_folder', 'documentation-from-my-project' ,'root_link_with_hash.html')
+    const proofer = await run_proofer(file, 'file', {root_dir: 'spec/html-proofer/fixtures/links/root_folder'})
+    expect(proofer.failed_checks).toEqual([])
+  })
+
+  it('succeeds for working root-link with hash to index', async () => {
+    const file = path.join(FIXTURES_DIR, 'links', 'root_folder', 'documentation-from-my-project' ,'root_link_index_with_hash.html')
+    const proofer = await run_proofer(file, 'file', {root_dir: 'spec/html-proofer/fixtures/links/root_folder'})
+    expect(proofer.failed_checks).toEqual([])
+  })
+
+
   it('allows link with no href', async () => {
     const missing_link_href_filepath = path.join(FIXTURES_DIR, 'links', 'missing_link_href.html')
     const proofer = await run_proofer(missing_link_href_filepath, 'file', {allow_missing_href: true})
