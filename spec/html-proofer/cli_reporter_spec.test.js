@@ -81,7 +81,7 @@ HTML-Proofer found 13 failures!`
     })
 
     it('reports as-links accurately', async () => {
-      const output = await capture_proofer_output(['www.github.com', 'http://asdadsadsasdadaf.biz/'], 'links')
+      const output = await capture_proofer_output(['www.github.com', 'http://asdadsadsasdadaf.biz/'], 'links', {use_vcr: false})
 
       const msg = `For the Links > External check, the following failures were found:
 

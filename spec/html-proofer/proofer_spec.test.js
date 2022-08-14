@@ -100,7 +100,7 @@ describe('HTMLProofer', () => {
     // todo: this one works extremely slow without VCR
     it('works', async () => {
       const dirs = [path.join(FIXTURES_DIR, 'links'), path.join(FIXTURES_DIR, 'images')]
-      const output = await capture_proofer_output(dirs, 'directories')
+      const output = await capture_proofer_output(dirs, 'directories', {use_vcr: true})
       expect(output).toMatch(path.join(FIXTURES_DIR, 'links').replaceAll('\\', '/'))
       expect(output).toMatch(path.join(FIXTURES_DIR, 'images').replaceAll('\\', '/'))
     }, 120000) // todo: can we make this test faster?

@@ -50,15 +50,18 @@ export async function run_proofer(item, type, opts) {
 
 export const capture_proofer_output = async (file, type, opts = {}) => {
   const proofer = make_proofer(file, type, opts)
-  //const cassette_name = make_cassette_name(file, opts)
-  // VCR.mountCassette(cassette_name/*, record: :new_episodes*/)
+  const cassette_name = make_cassette_name(file, opts)
+  if (opts['use_vcr']){
+    VCR.mountCassette(cassette_name/*, record: :new_episodes*/)
+  }
 
   const output = await capture_stderr(async () => {
     await proofer.run()
   })
-  // VCR.ejectCassette(cassette_name)
+  if (opts['use_vcr']){
+    VCR.ejectCassette(cassette_name)
+  }
   return output
-  //end
 }
 
 export const capture_proofer_http = async (item, type, opts = {}) => {
@@ -108,7 +111,10 @@ export const make_cassette_name = (file, opts) => {
 }
 
 const sanitize_path = (path) => {
-  return path.replaceAll('"', '').replaceAll(':', '=').replaceAll('/', '_').replaceAll(' ', '_')
+  return path.replaceAll('"', '')
+             .replaceAll(':', '=')
+             .replaceAll('/', '_')
+             .replaceAll(' ', '_')
 }
 
 

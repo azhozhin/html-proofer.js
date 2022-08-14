@@ -1,0 +1,251 @@
+{
+  "110122dcf48fe6307e6cc5d986f70028": {
+    "meta": {
+      "url": "https://help.github.com/changing-author-info/",
+      "method": "head",
+      "headers": {
+        "Accept": "application/xml,application/xhtml+xml,text/html;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5",
+        "User-Agent": "Mozilla/5.0 (compatible; HTML Proofer/4.0.1; +https://github.com/gjtorikian/html-proofer)"
+      }
+    },
+    "fixture": true,
+    "originalResponseData": {
+      "status": 403,
+      "statusText": "Forbidden",
+      "headers": {
+        "connection": "close",
+        "x-azure-ref": "0/uv4YgAAAABw21e402P9RYFG0Ln0NSHXQVRMMzMxMDAwMTA5MDA5ADU5NmQ3OGEyLWNhNWYtNDc5ZC1iY2RjLTA4MzU4MzMxNzRiMg==",
+        "accept-ranges": "bytes",
+        "via": "1.1 varnish, 1.1 varnish",
+        "date": "Sun, 14 Aug 2022 12:35:10 GMT",
+        "x-served-by": "cache-iad-kjyo7100051-IAD, cache-lhr7370-LHR",
+        "x-cache": "MISS, MISS",
+        "x-cache-hits": "0, 0",
+        "x-timer": "S1660480511.663646,VS0,VE92",
+        "strict-transport-security": "max-age=31557600"
+      },
+      "data": "",
+      "config": {
+        "url": "https://help.github.com/changing-author-info/",
+        "method": "head",
+        "headers": {
+          "Accept": "application/xml,application/xhtml+xml,text/html;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5",
+          "User-Agent": "Mozilla/5.0 (compatible; HTML Proofer/4.0.1; +https://github.com/gjtorikian/html-proofer)"
+        }
+      }
+    }
+  },
+  "510e83ae9df464c4e41826f71c8b46d8": {
+    "meta": {
+      "url": "https://upload.wikimedia.org/wikipedia/en/thumb/not_here.png",
+      "method": "head",
+      "headers": {
+        "Accept": "application/xml,application/xhtml+xml,text/html;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5",
+        "User-Agent": "Mozilla/5.0 (compatible; HTML Proofer/4.0.1; +https://github.com/gjtorikian/html-proofer)"
+      }
+    },
+    "fixture": true,
+    "originalResponseData": {
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "date": "Sun, 14 Aug 2022 12:16:21 GMT",
+        "content-type": "text/html; charset=UTF-8",
+        "content-length": "62",
+        "server": "ATS/8.0.8",
+        "age": "1129",
+        "x-cache": "cp3051 miss, cp3057 hit/4",
+        "x-cache-status": "hit-front",
+        "server-timing": "cache;desc=\"hit-front\", host;desc=\"cp3057\"",
+        "strict-transport-security": "max-age=106384710; includeSubDomains; preload",
+        "report-to": "{ \"group\": \"wm_nel\", \"max_age\": 86400, \"endpoints\": [{ \"url\": \"https://intake-logging.wikimedia.org/v1/events?stream=w3c.reportingapi.network_error&schema_uri=/w3c/reportingapi/network_error/1.0.0\" }] }",
+        "nel": "{ \"report_to\": \"wm_nel\", \"max_age\": 86400, \"failure_fraction\": 0.05, \"success_fraction\": 0.0}",
+        "accept-ch": "Sec-CH-UA-Arch,Sec-CH-UA-Bitness,Sec-CH-UA-Full-Version-List,Sec-CH-UA-Model,Sec-CH-UA-Platform-Version",
+        "permissions-policy": "interest-cohort=(),ch-ua-arch=(self \"intake-analytics.wikimedia.org\"),ch-ua-bitness=(self \"intake-analytics.wikimedia.org\"),ch-ua-full-version-list=(self \"intake-analytics.wikimedia.org\"),ch-ua-model=(self \"intake-analytics.wikimedia.org\"),ch-ua-platform-version=(self \"intake-analytics.wikimedia.org\")",
+        "x-client-ip": "90.200.14.121",
+        "access-control-allow-origin": "*",
+        "access-control-expose-headers": "Age, Date, Content-Length, Content-Range, X-Content-Duration, X-Cache",
+        "timing-allow-origin": "*",
+        "connection": "close"
+      },
+      "data": "",
+      "config": {
+        "url": "https://upload.wikimedia.org/wikipedia/en/thumb/not_here.png",
+        "method": "head",
+        "headers": {
+          "Accept": "application/xml,application/xhtml+xml,text/html;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5",
+          "User-Agent": "Mozilla/5.0 (compatible; HTML Proofer/4.0.1; +https://github.com/gjtorikian/html-proofer)"
+        }
+      }
+    }
+  },
+  "ab412c0a7c8425d7e3476537ec9b77aa": {
+    "meta": {
+      "url": "https://upload.wikimedia.org/wikipedia/en/thumb/fooooof.png",
+      "method": "head",
+      "headers": {
+        "Accept": "application/xml,application/xhtml+xml,text/html;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5",
+        "User-Agent": "Mozilla/5.0 (compatible; HTML Proofer/4.0.1; +https://github.com/gjtorikian/html-proofer)"
+      }
+    },
+    "fixture": true,
+    "originalResponseData": {
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "date": "Sun, 14 Aug 2022 12:30:07 GMT",
+        "content-type": "text/html; charset=UTF-8",
+        "content-length": "61",
+        "server": "ATS/8.0.8",
+        "age": "303",
+        "x-cache": "cp3053 miss, cp3057 hit/4",
+        "x-cache-status": "hit-front",
+        "server-timing": "cache;desc=\"hit-front\", host;desc=\"cp3057\"",
+        "strict-transport-security": "max-age=106384710; includeSubDomains; preload",
+        "report-to": "{ \"group\": \"wm_nel\", \"max_age\": 86400, \"endpoints\": [{ \"url\": \"https://intake-logging.wikimedia.org/v1/events?stream=w3c.reportingapi.network_error&schema_uri=/w3c/reportingapi/network_error/1.0.0\" }] }",
+        "nel": "{ \"report_to\": \"wm_nel\", \"max_age\": 86400, \"failure_fraction\": 0.05, \"success_fraction\": 0.0}",
+        "accept-ch": "Sec-CH-UA-Arch,Sec-CH-UA-Bitness,Sec-CH-UA-Full-Version-List,Sec-CH-UA-Model,Sec-CH-UA-Platform-Version",
+        "permissions-policy": "interest-cohort=(),ch-ua-arch=(self \"intake-analytics.wikimedia.org\"),ch-ua-bitness=(self \"intake-analytics.wikimedia.org\"),ch-ua-full-version-list=(self \"intake-analytics.wikimedia.org\"),ch-ua-model=(self \"intake-analytics.wikimedia.org\"),ch-ua-platform-version=(self \"intake-analytics.wikimedia.org\")",
+        "x-client-ip": "90.200.14.121",
+        "access-control-allow-origin": "*",
+        "access-control-expose-headers": "Age, Date, Content-Length, Content-Range, X-Content-Duration, X-Cache",
+        "timing-allow-origin": "*",
+        "connection": "close"
+      },
+      "data": "",
+      "config": {
+        "url": "https://upload.wikimedia.org/wikipedia/en/thumb/fooooof.png",
+        "method": "head",
+        "headers": {
+          "Accept": "application/xml,application/xhtml+xml,text/html;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5",
+          "User-Agent": "Mozilla/5.0 (compatible; HTML Proofer/4.0.1; +https://github.com/gjtorikian/html-proofer)"
+        }
+      }
+    }
+  },
+  "5bb00fd817b9c514cdd990116d5e508e": {
+    "meta": {
+      "url": "https://help.github.com/changing-author-info/",
+      "method": "get",
+      "headers": {
+        "Accept": "application/xml,application/xhtml+xml,text/html;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5",
+        "User-Agent": "Mozilla/5.0 (compatible; HTML Proofer/4.0.1; +https://github.com/gjtorikian/html-proofer)"
+      }
+    },
+    "fixture": true,
+    "originalResponseData": {
+      "status": 403,
+      "statusText": "Forbidden",
+      "headers": {
+        "connection": "close",
+        "x-azure-ref": "0/+v4YgAAAADIbVPRnTBbQb/yhG6YND6kQVRMMzMxMDAwMTEwMDI5ADU5NmQ3OGEyLWNhNWYtNDc5ZC1iY2RjLTA4MzU4MzMxNzRiMg==",
+        "accept-ranges": "bytes",
+        "via": "1.1 varnish, 1.1 varnish",
+        "date": "Sun, 14 Aug 2022 12:35:11 GMT",
+        "x-served-by": "cache-iad-kjyo7100025-IAD, cache-lhr7351-LHR",
+        "x-cache": "MISS, MISS",
+        "x-cache-hits": "0, 0",
+        "x-timer": "S1660480511.143434,VS0,VE200",
+        "strict-transport-security": "max-age=31557600",
+        "transfer-encoding": "chunked"
+      },
+      "data": "<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Transitional//EN' 'http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd'><html xmlns='http://www.w3.org/1999/xhtml'><head><meta content='text/html; charset=utf-8' http-equiv='content-type'/><style type='text/css'>body { font-family:Arial; margin-left:40px; }img  { border:0 none; }#content { margin-left: auto; margin-right: auto }#message h2 { font-size: 20px; font-weight: normal; color: #000000; margin: 34px 0px 0px 0px }#message p  { font-size: 13px; color: #000000; margin: 7px 0px 0px 0px }#errorref { font-size: 11px; color: #737373; margin-top: 41px }</style><title>Microsoft</title></head><body><div id='content'><div id='message'><h2>The request is blocked.</h2></div><div id='errorref'><span>0/+v4YgAAAADIbVPRnTBbQb/yhG6YND6kQVRMMzMxMDAwMTEwMDI5ADU5NmQ3OGEyLWNhNWYtNDc5ZC1iY2RjLTA4MzU4MzMxNzRiMg==</span></div></div></body></html>",
+      "config": {
+        "url": "https://help.github.com/changing-author-info/",
+        "method": "get",
+        "headers": {
+          "Accept": "application/xml,application/xhtml+xml,text/html;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5",
+          "User-Agent": "Mozilla/5.0 (compatible; HTML Proofer/4.0.1; +https://github.com/gjtorikian/html-proofer)"
+        }
+      }
+    }
+  },
+  "c59cc286d7f4b97ba609c76eaaa0938b": {
+    "meta": {
+      "url": "https://upload.wikimedia.org/wikipedia/en/thumb/not_here.png",
+      "method": "get",
+      "headers": {
+        "Accept": "application/xml,application/xhtml+xml,text/html;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5",
+        "User-Agent": "Mozilla/5.0 (compatible; HTML Proofer/4.0.1; +https://github.com/gjtorikian/html-proofer)"
+      }
+    },
+    "fixture": true,
+    "originalResponseData": {
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "date": "Sun, 14 Aug 2022 12:35:10 GMT",
+        "content-type": "text/html; charset=UTF-8",
+        "content-length": "62",
+        "server": "ATS/8.0.8",
+        "age": "0",
+        "x-cache": "cp3051 miss, cp3057 hit/2",
+        "x-cache-status": "hit-front",
+        "server-timing": "cache;desc=\"hit-front\", host;desc=\"cp3057\"",
+        "strict-transport-security": "max-age=106384710; includeSubDomains; preload",
+        "report-to": "{ \"group\": \"wm_nel\", \"max_age\": 86400, \"endpoints\": [{ \"url\": \"https://intake-logging.wikimedia.org/v1/events?stream=w3c.reportingapi.network_error&schema_uri=/w3c/reportingapi/network_error/1.0.0\" }] }",
+        "nel": "{ \"report_to\": \"wm_nel\", \"max_age\": 86400, \"failure_fraction\": 0.05, \"success_fraction\": 0.0}",
+        "accept-ch": "Sec-CH-UA-Arch,Sec-CH-UA-Bitness,Sec-CH-UA-Full-Version-List,Sec-CH-UA-Model,Sec-CH-UA-Platform-Version",
+        "permissions-policy": "interest-cohort=(),ch-ua-arch=(self \"intake-analytics.wikimedia.org\"),ch-ua-bitness=(self \"intake-analytics.wikimedia.org\"),ch-ua-full-version-list=(self \"intake-analytics.wikimedia.org\"),ch-ua-model=(self \"intake-analytics.wikimedia.org\"),ch-ua-platform-version=(self \"intake-analytics.wikimedia.org\")",
+        "x-client-ip": "90.200.14.121",
+        "access-control-allow-origin": "*",
+        "access-control-expose-headers": "Age, Date, Content-Length, Content-Range, X-Content-Duration, X-Cache",
+        "timing-allow-origin": "*",
+        "connection": "close"
+      },
+      "data": "Regexp failed to match URI: \"/wikipedia/en/thumb/not_here.png\"",
+      "config": {
+        "url": "https://upload.wikimedia.org/wikipedia/en/thumb/not_here.png",
+        "method": "get",
+        "headers": {
+          "Accept": "application/xml,application/xhtml+xml,text/html;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5",
+          "User-Agent": "Mozilla/5.0 (compatible; HTML Proofer/4.0.1; +https://github.com/gjtorikian/html-proofer)"
+        }
+      }
+    }
+  },
+  "123a88b2967226de7da87399bf61fc6c": {
+    "meta": {
+      "url": "https://upload.wikimedia.org/wikipedia/en/thumb/fooooof.png",
+      "method": "get",
+      "headers": {
+        "Accept": "application/xml,application/xhtml+xml,text/html;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5",
+        "User-Agent": "Mozilla/5.0 (compatible; HTML Proofer/4.0.1; +https://github.com/gjtorikian/html-proofer)"
+      }
+    },
+    "fixture": true,
+    "originalResponseData": {
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "date": "Sun, 14 Aug 2022 12:30:07 GMT",
+        "content-type": "text/html; charset=UTF-8",
+        "content-length": "61",
+        "server": "ATS/8.0.8",
+        "age": "303",
+        "x-cache": "cp3053 miss, cp3057 hit/6",
+        "x-cache-status": "hit-front",
+        "server-timing": "cache;desc=\"hit-front\", host;desc=\"cp3057\"",
+        "strict-transport-security": "max-age=106384710; includeSubDomains; preload",
+        "report-to": "{ \"group\": \"wm_nel\", \"max_age\": 86400, \"endpoints\": [{ \"url\": \"https://intake-logging.wikimedia.org/v1/events?stream=w3c.reportingapi.network_error&schema_uri=/w3c/reportingapi/network_error/1.0.0\" }] }",
+        "nel": "{ \"report_to\": \"wm_nel\", \"max_age\": 86400, \"failure_fraction\": 0.05, \"success_fraction\": 0.0}",
+        "accept-ch": "Sec-CH-UA-Arch,Sec-CH-UA-Bitness,Sec-CH-UA-Full-Version-List,Sec-CH-UA-Model,Sec-CH-UA-Platform-Version",
+        "permissions-policy": "interest-cohort=(),ch-ua-arch=(self \"intake-analytics.wikimedia.org\"),ch-ua-bitness=(self \"intake-analytics.wikimedia.org\"),ch-ua-full-version-list=(self \"intake-analytics.wikimedia.org\"),ch-ua-model=(self \"intake-analytics.wikimedia.org\"),ch-ua-platform-version=(self \"intake-analytics.wikimedia.org\")",
+        "x-client-ip": "90.200.14.121",
+        "access-control-allow-origin": "*",
+        "access-control-expose-headers": "Age, Date, Content-Length, Content-Range, X-Content-Duration, X-Cache",
+        "timing-allow-origin": "*",
+        "connection": "close"
+      },
+      "data": "Regexp failed to match URI: \"/wikipedia/en/thumb/fooooof.png\"",
+      "config": {
+        "url": "https://upload.wikimedia.org/wikipedia/en/thumb/fooooof.png",
+        "method": "get",
+        "headers": {
+          "Accept": "application/xml,application/xhtml+xml,text/html;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5",
+          "User-Agent": "Mozilla/5.0 (compatible; HTML Proofer/4.0.1; +https://github.com/gjtorikian/html-proofer)"
+        }
+      }
+    }
+  }
+}
