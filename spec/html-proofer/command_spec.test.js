@@ -55,7 +55,7 @@ describe('Command test', () => {
 
   it('works with swap-urls', async () => {
     const translated_link = path.join(FIXTURES_DIR, 'links', 'link_translated_via_href_swap.html')
-    const output = await make_bin(`--swap-urls "/^/articles/([\\w-]+)/:\$1.html" ${translated_link}`)
+    const output = await make_bin(`--swap-urls "/^/articles/([\\w-]+)/:\\$1.html" ${translated_link}`)
     expect(output).toMatch('successfully')
   })
 
