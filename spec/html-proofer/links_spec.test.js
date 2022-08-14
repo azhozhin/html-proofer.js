@@ -762,4 +762,13 @@ describe('Links test', () => {
         toMatch(/internally linking to missing.pdf#page=2, which does not exist/)
   })
 
+  // validator.w3c.org consider this case as an error:
+  // Error: Bad value #let"s-go for attribute href on element a: Illegal character in fragment: " is not allowed.
+  // but browsers handle unescaped double quote in href properly
+  it('should not crash on double quoted ids', async ()=>{
+    const file = path.join(FIXTURES_DIR, 'links', 'quote_double.html')
+    const proofer = await run_proofer(file, 'file')
+    expect(proofer.failed_checks).toEqual([])
+  })
+
 })
