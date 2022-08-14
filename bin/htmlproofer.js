@@ -12,11 +12,11 @@ program.
     description(`Test your rendered HTML files to make sure they're accurate.\n` +
         `Runs the HTML-Proofer suite on the files in PATH. For more details, see the README.`).
     option(
-        '--allow-hash-href',
+        '--allow-hash-href [bool]',
         'If `true`, assumes `href="#"` anchors are valid',
         true).
     option(
-        '--allow-missing-href',
+        '--allow-missing-href [bool]',
         'If `true`, does not flag `a` tags missing `href`. In HTML5, this is technically allowed, but could also be human error.',
         false).
     option(
@@ -32,11 +32,11 @@ program.
         'A comma-separated list of Strings indicating which checks you want to run (default: \'Links,Images,Scripts\')',
         'Links,Images,Scripts').
     option(
-        '--check-external-hash',
+        '--check-external-hash [bool]',
         'Checks whether external hashes exist (even if the webpage exists) (default: `true`).',
         true).
     option(
-        '--check-sri',
+        '--check-sri [bool]',
         'Check that "<link>" and "<script>" external resources use SRI (default: "false").',
         false).
     option(
@@ -48,7 +48,7 @@ program.
         'If `true`, does not run the external link checker (default: `false`)',
         false).
     option(
-        '--enforce-https',
+        '--enforce-https [bool]',
         'Fails a link if it\'s not marked as `https` (default: `true`).',
         true).
     option(
@@ -56,7 +56,7 @@ program.
         'A comma-separated list of Strings indicating the file extensions you would like to check (including the dot)',
         ['.html']).
     option(
-        '--ignore-empty-alt',
+        '--ignore-empty-alt [bool]',
         'If `true`, ignores images with empty/missing alt tags (in other words, `<img alt>` and `<img alt="">` are valid; set this to `false` to flag those)',
         true).
     option(
@@ -64,11 +64,11 @@ program.
         'A comma-separated list of Strings or RegExps containing file paths that are safe to ignore',
         '').
     option(
-        '--ignore-empty-mailto',
+        '--ignore-empty-mailto [bool]',
         'If `true`, allows `mailto:` `href`s which do not contain an email address',
         false).
     option(
-        '--ignore-missing-alt',
+        '--ignore-missing-alt [bool]',
         'If `true`, ignores images with missing alt tags',
         false).
     option(
@@ -84,7 +84,7 @@ program.
         'Sets the logging level. One of `debug`, `info`, `warn`, or `error`',
         'info').
     option(
-        '--only-4xx',
+        '--only-4xx [bool]',
         'Only reports errors for links that fall within the 4xx status code range',
         false).
     option(
@@ -167,7 +167,7 @@ program.
         options['directory_index_file'] = opts.directoryIndexFile
       }
 
-      if (opts.disableExternal) {
+      if (opts.disableExternal != null ) {
         options['disable_external'] = opts.disableExternal
       }
 
@@ -184,7 +184,7 @@ program.
         options['ignore_status_codes'] = opts.ignoreStatusCodes.split(',')
       }
 
-      if (opts.only4xx) {
+      if (opts.only4xx != null ) {
         options['only_4xx'] = opts.only4xx
       }
 
@@ -210,7 +210,7 @@ program.
         options['root_dir'] = opts.rootDir
       }
 
-      if (opts.enforceHttps) {
+      if (opts.enforceHttps != null) {
         options['enforce_https'] = opts.enforceHttps
       }
 

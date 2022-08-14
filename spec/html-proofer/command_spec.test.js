@@ -18,7 +18,7 @@ describe('Command test', () => {
 
   it('works with check-external-hash', async () => {
     const broken_hash_on_the_web = path.join(FIXTURES_DIR, 'links', 'broken_hash_on_the_web.html')
-    const output = await make_bin(`--check-external-hash ${broken_hash_on_the_web}`)
+    const output = await make_bin(`${broken_hash_on_the_web} --check-external-hash`)
     expect(output).toMatch('1 failure')
   })
 
@@ -67,7 +67,7 @@ describe('Command test', () => {
 
   it('works with only-4xx', async () => {
     const broken_hash_on_the_web = path.join(FIXTURES_DIR, 'links', 'broken_hash_on_the_web.html')
-    const output = await make_bin(`--only-4xx ${broken_hash_on_the_web}`)
+    const output = await make_bin(`${broken_hash_on_the_web} --only-4xx`)
     expect(output).toMatch('successfully')
   })
 
@@ -79,13 +79,13 @@ describe('Command test', () => {
 
   it('works with empty-alt-ignore', async () => {
     const broken = path.join(FIXTURES_DIR, 'images', 'empty_image_alt_text.html')
-    const output = await make_bin(`--ignore-empty-alt ${broken}`)
+    const output = await make_bin(`${broken} --ignore-empty-alt`)
     expect(output).toMatch('successfully')
   })
 
   it('works with allow-hash-href', async () => {
     const broken = path.join(FIXTURES_DIR, 'links', 'hash_href.html')
-    const output = await make_bin(`--allow-hash-href ${broken}`)
+    const output = await make_bin(`${broken} --allow-hash-href`)
     expect(output).toMatch('successfully')
   })
 
