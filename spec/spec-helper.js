@@ -2,10 +2,29 @@ import {HTMLProofer} from '../lib/html-proofer'
 import {exec} from 'node:child_process'
 import * as VCR from 'axios-vcr'
 import * as path from 'path'
-import * as util from 'util'
 import axios from 'axios'
 
 export let FIXTURES_DIR = 'spec/html-proofer/fixtures'
+
+class Executor {
+  static exec(command) {
+    return new Promise((resolve, reject) => {
+      let out = []
+      let err = []
+      const childProcess = exec(command, {
+        maxBuffer: 1 * 1024 * 1024, // 1 Mb
+      })
+      childProcess.stdout.on('data', (data) => out.push(data))
+      childProcess.stderr.on('data', (data) => err.push(data))
+      // it is always resolve capturing exitCode
+      childProcess.on('exit', code => resolve({
+        stdout: out.join('\n'),
+        stderr: err.join('\n'),
+        exitCode: code,
+      }))
+    })
+  }
+}
 
 export const capture_stderr = async (block) => {
   // todo: this does not work with current logger configuration
@@ -51,14 +70,14 @@ export async function run_proofer(item, type, opts) {
 export const capture_proofer_output = async (file, type, opts = {}) => {
   const proofer = make_proofer(file, type, opts)
   const cassette_name = make_cassette_name(file, opts)
-  if (opts['use_vcr']){
+  if (opts['use_vcr']) {
     VCR.mountCassette(cassette_name/*, record: :new_episodes*/)
   }
 
   const output = await capture_stderr(async () => {
     await proofer.run()
   })
-  if (opts['use_vcr']){
+  if (opts['use_vcr']) {
     VCR.ejectCassette(cassette_name)
   }
   return output
@@ -89,10 +108,9 @@ export const capture_proofer_http = async (item, type, opts = {}) => {
   return captured
 }
 
-export const make_bin = async (args) => {
-  const pexec = util.promisify(exec)
-  const {stdout, stderr} = await pexec(`node bin/htmlproofer.js ${args}`)
-  return `${stdout}\n${stderr}`
+export const exec_cli = async (args) => {
+  const {stdout, stderr, exitCode} = await Executor.exec(`node bin/htmlproofer.js ${args}`)
+  return {output: `${stdout}\n${stderr}`, exitCode: exitCode}
 }
 
 export const make_cassette_name = (file, opts) => {
@@ -111,10 +129,7 @@ export const make_cassette_name = (file, opts) => {
 }
 
 const sanitize_path = (path) => {
-  return path.replaceAll('"', '')
-             .replaceAll(':', '=')
-             .replaceAll('/', '_')
-             .replaceAll(' ', '_')
+  return path.replaceAll('"', '').replaceAll(':', '=').replaceAll('/', '_').replaceAll(' ', '_')
 }
 
 
