@@ -252,6 +252,12 @@ describe('Links test', () => {
     expect(proofer.failed_checks).toEqual([])
   })
 
+  it('accepts complex mailto link', async () => {
+    const ignorable_links = path.join(FIXTURES_DIR, 'links', 'mailto_all_properties.html')
+    const proofer = await run_proofer(ignorable_links, 'file')
+    expect(proofer.failed_checks).toEqual([])
+  })
+
   it('ignores blank mailto links when configured to allow them', async () => {
     const blank_mail_to_link = path.join(FIXTURES_DIR, 'links', 'blank_mailto_link.html')
     const proofer = await run_proofer(blank_mail_to_link, 'file', {ignore_empty_mailto: true})
