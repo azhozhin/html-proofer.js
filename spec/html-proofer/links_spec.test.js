@@ -577,7 +577,7 @@ describe('Links test', () => {
     const hash_href = path.join(FIXTURES_DIR, 'links', 'ip_href.html')
     const proofer = await run_proofer(hash_href, 'file')
     expect(proofer.failed_checks.first.description).toMatch(/failed/)
-  }, 30000) // todo: can we make this test faster?
+  }, 60000) // todo: can we make this test faster?
 
   it('works for internal links to weird encoding IDs', async () => {
     const hash_href = path.join(FIXTURES_DIR, 'links', 'encodingLink.html')
