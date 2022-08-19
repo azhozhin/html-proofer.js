@@ -5,6 +5,7 @@ JavaScript port of [gjtorikian/html-proofer](https://github.com/gjtorikian/html-
 Snapshot state: `93ba616eb45b7ba844197fc29824995e8fcd2279`
 Version: `4.0.1` 
 
+![](https://img.shields.io/github/checks-status/azhozhin/html-proofer.js/main)
 
 ## Configuration
 
