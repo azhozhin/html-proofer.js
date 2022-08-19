@@ -465,15 +465,15 @@ describe('Links test', () => {
 
   it('allows unicode domains', async () => {
     const fixture = path.join(FIXTURES_DIR, 'links', 'unicode_domain.html')
-    const proofer = await run_proofer(fixture, 'file')
+    const proofer = await run_proofer(fixture, 'file', {enforce_https:false})
     expect(proofer.failed_checks).toEqual([])
-  }, 30000) // todo: can we make this test faster?
+  })
 
   it('allows punnycode domains', async () => {
     const fixture = path.join(FIXTURES_DIR, 'links', 'punnycode.html')
-    const proofer = await run_proofer(fixture, 'file')
+    const proofer = await run_proofer(fixture, 'file', {enforce_https:false})
     expect(proofer.failed_checks).toEqual([])
-  }, 30000) // todo: can we make this test faster?
+  })
 
   it('passes for broken *nix links', async () => {
     const fixture = path.join(FIXTURES_DIR, 'links', 'broken_unix_links.html')
