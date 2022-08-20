@@ -1,7 +1,7 @@
 import * as path from 'path'
 import {FIXTURES_DIR, run_proofer} from '../spec-helper'
 import {CheckType} from '../../src/html-proofer/CheckType'
-import {IOptions} from '../../src/interfaces/IOptions'
+import {IOptions} from '../../src/interfaces/'
 
 describe('Images test', () => {
   it('passes for existing external images', async () => {

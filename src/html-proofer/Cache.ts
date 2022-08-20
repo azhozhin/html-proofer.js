@@ -1,6 +1,4 @@
-import {EmptyOptions, IOptions} from "../interfaces/IOptions";
-import {IRunner} from "../interfaces/IRunner";
-import {ILogger} from "../interfaces/ILogger";
+import {EmptyOptions, IOptions, IRunner, ILogger, ICache} from '../interfaces';
 
 
 export class Cache implements ICache {

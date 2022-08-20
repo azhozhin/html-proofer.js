@@ -1,7 +1,7 @@
 import {FIXTURES_DIR, run_proofer} from '../spec-helper'
 import * as path from 'path'
 import {CheckType} from "../../src/html-proofer/CheckType"
-import {IOptions} from "../../src/interfaces/IOptions"
+import {IOptions} from "../../src/interfaces/"
 
 describe('Scripts test', () => {
   it('fails for broken external src', async () => {

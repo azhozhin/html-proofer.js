@@ -1,12 +1,9 @@
 import {Failure} from './Failure'
 import {Element} from './Element'
 import {adapt_nokogiri_node} from './Utils'
-import {IRunner} from "../interfaces/IRunner";
-import {IMetadata} from "../interfaces/IMetadata";
-import {IHtml} from "../interfaces/IHtml";
+
 import {Url} from "./attribute/Url";
-import {ICheck, ICheckConstructor} from "../interfaces/ICheck";
-import {IExtMetadata} from "../interfaces/IExtMetadata";
+import {ICheck, IExtMetadata, IHtml, IMetadata, IRunner} from "../interfaces";
 
 
 export class Check implements ICheck {

@@ -4,9 +4,7 @@ import {Hydra} from '../Hydra'
 import {create_nokogiri} from '../Utils'
 import {Failure} from '../Failure'
 import {outdent} from 'outdent'
-import {IExternalRequest} from "../../interfaces/IExternalRequest";
-import {IRunner} from "../../interfaces/IRunner";
-import {IExtMetadata} from "../../interfaces/IExtMetadata";
+import {IRunner, IExternalRequest, IExtMetadata} from '../../interfaces/'
 
 export class External extends UrlValidator {
 

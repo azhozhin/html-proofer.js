@@ -1,7 +1,7 @@
 import {Reporter} from '../Reporter'
 import {groupBy} from '../Utils'
-import {ILogger} from "../../interfaces/ILogger";
-import {Failure} from "../Failure";
+import {ILogger} from '../../interfaces'
+import {Failure} from '../Failure'
 
 export class Cli extends Reporter {
   constructor(logger: ILogger) {

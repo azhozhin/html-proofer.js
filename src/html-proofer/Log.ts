@@ -1,7 +1,7 @@
 // import winston from 'winston'
 // import {format} from 'logform'
 import log4js from 'log4js'
-import {ILogger} from "../interfaces/ILogger";
+import {ILogger} from "../interfaces";
 
 export class Log implements ILogger {
   logger: log4js.Logger

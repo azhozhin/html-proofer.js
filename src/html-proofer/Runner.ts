@@ -12,17 +12,20 @@ import glob from 'glob'
 import fs from 'fs'
 import {Log} from './Log'
 import {CheckType} from "./CheckType"
-import {ILogger} from "../interfaces/ILogger"
-import {IRunner} from "../interfaces/IRunner"
-import {IOptions} from "../interfaces/IOptions"
-import {ISource} from "../interfaces/ISource"
-import {IReporter} from "../interfaces/IReporter"
-import {IHtml} from "../interfaces/IHtml"
 import {Links} from "./check/Links"
-import {IChecksResult} from "../interfaces/IChecksResult"
-import {createCheck, ICheck} from "../interfaces/ICheck"
-import {IMetadata} from "../interfaces/IMetadata"
-import {IExtMetadata} from "../interfaces/IExtMetadata"
+import {
+  createCheck,
+  ICache,
+  ICheck,
+  IChecksResult,
+  IExtMetadata,
+  IHtml,
+  ILogger,
+  IMetadata,
+  IOptions,
+  IReporter,
+  IRunner, ISource
+} from "../interfaces";
 
 function normalize_path(source: string | Array<string>) {
   if (source.constructor.name === 'String') {

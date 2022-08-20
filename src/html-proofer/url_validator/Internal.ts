@@ -3,8 +3,7 @@ import {Failure} from '../Failure'
 import * as fs from 'fs'
 import {create_nokogiri, unique} from '../Utils'
 import {Url} from '../attribute/Url'
-import {IRunner} from "../../interfaces/IRunner";
-import {IMetadata} from "../../interfaces/IMetadata";
+import {IRunner, IMetadata} from "../../interfaces/"
 
 export class Internal extends UrlValidator {
   private readonly internal_urls: Map<string, Array<IMetadata>>;

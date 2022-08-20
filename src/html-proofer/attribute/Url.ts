@@ -3,7 +3,7 @@ import * as fs from 'fs'
 import * as path from 'path'
 import URI from 'urijs'
 import {isDirectory, isFile, isNullOrEmpty, joinUrl} from '../Utils'
-import {IRunner} from "../../interfaces/IRunner";
+import {IRunner} from "../../interfaces";
 
 export class Url extends Attribute {
   REMOTE_SCHEMES = Array.from(['http', 'https'])

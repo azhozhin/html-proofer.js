@@ -1,8 +1,6 @@
 import {Url} from './attribute/Url'
 import {adapt_nokogiri_node} from './Utils'
-import {IElement} from "../interfaces/IElement"
-import {IRunner} from "../interfaces/IRunner"
-import {IHtml} from "../interfaces/IHtml"
+import {IElement, IHtml, IRunner} from "../interfaces";
 
 export class Element implements IElement {
   private runner: IRunner

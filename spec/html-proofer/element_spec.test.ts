@@ -3,7 +3,7 @@ import {Runner} from '../../src/html-proofer/Runner'
 import * as path from 'path'
 import {FIXTURES_DIR, run_proofer} from '../spec-helper'
 import {Element} from '../../src/html-proofer/Element'
-import {IRunner} from '../../src/interfaces/IRunner'
+import {IRunner} from '../../src/interfaces/'
 import {CheckType} from '../../src/html-proofer/CheckType'
 import {create_nokogiri} from '../../src/html-proofer/Utils'
 

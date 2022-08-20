@@ -6,8 +6,8 @@ import {isDirectory} from '../src/html-proofer/Utils'
 import {HTMLProofer} from '../src/html-proofer'
 import {AllChecks} from '../src/html-proofer/Checks'
 import {Configuration} from '../src/html-proofer/Configuration'
-import {EmptyOptions, IOptions} from '../src/interfaces/IOptions'
-import {Check} from "../src/html-proofer/Check";
+import {EmptyOptions, IOptions} from '../src/interfaces/'
+import {Check} from '../src/html-proofer/Check'
 
 program.
     version(VERSION).

@@ -1,8 +1,7 @@
 import axios, {AxiosResponse} from 'axios'
 import * as http from 'node:http';
 import * as https from 'node:https'
-import {ILogger} from "../interfaces/ILogger";
-import {IExternalRequest} from "../interfaces/IExternalRequest";
+import {ILogger, IExternalRequest} from "../interfaces";
 
 export class Hydra {
   private logger: ILogger;

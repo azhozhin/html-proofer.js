@@ -1,5 +1,5 @@
 import {Check} from '../Check'
-import {ICheck} from "../../interfaces/ICheck";
+import {ICheck} from "../../interfaces";
 import {Element} from "../Element";
 
 export class Links extends Check implements ICheck {

@@ -2,7 +2,7 @@ import * as path from 'path'
 import {last} from '../../src/html-proofer/Utils'
 import {FIXTURES_DIR, run_proofer} from '../spec-helper'
 import {CheckType} from "../../src/html-proofer/CheckType"
-import {IOptions} from "../../src/interfaces/IOptions"
+import {IOptions} from "../../src/interfaces"
 
 describe('Links test', () => {
   it('fails for broken internal hash (even if the file exists)', async () => {

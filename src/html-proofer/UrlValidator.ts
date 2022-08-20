@@ -1,5 +1,4 @@
-import {IRunner} from "../interfaces/IRunner";
-import {ILogger} from "../interfaces/ILogger";
+import {IRunner, ILogger, ICache} from "../interfaces";
 
 export class UrlValidator {
   protected runner: IRunner

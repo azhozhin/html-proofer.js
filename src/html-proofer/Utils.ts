@@ -1,9 +1,7 @@
 import fs from 'fs'
 import * as cheerio from 'cheerio'
 import URI from 'urijs'
-import {IHtml} from "../interfaces/IHtml";
-import {INode} from "../interfaces/INode";
-import {IDoc} from "../interfaces/IDoc";
+import {IHtml} from "../interfaces";
 
 export function isFile(filepath: string): boolean {
   try {

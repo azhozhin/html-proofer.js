@@ -2,7 +2,7 @@ import * as path from 'path'
 import {capture_proofer_http, capture_proofer_output, FIXTURES_DIR, run_proofer} from '../spec-helper'
 import {HTMLProofer} from '../../src/html-proofer'
 import {CheckType} from "../../src/html-proofer/CheckType"
-import {IOptions} from "../../src/interfaces/IOptions"
+import {IOptions} from "../../src/interfaces/"
 
 describe('HTMLProofer', () => {
   describe('#failed_checks', () => {

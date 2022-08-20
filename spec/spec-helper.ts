@@ -5,8 +5,7 @@ import * as VCR from 'axios-vcr'
 import * as path from 'path'
 import axios from 'axios'
 import {CheckType} from "../src/html-proofer/CheckType"
-import {IRunner} from "../src/interfaces/IRunner"
-import {IOptions} from "../src/interfaces/IOptions"
+import {IRunner, IOptions} from "../src/interfaces/"
 
 export let FIXTURES_DIR = 'spec/html-proofer/fixtures'
 

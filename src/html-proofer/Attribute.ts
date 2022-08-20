@@ -1,4 +1,4 @@
-import {IRunner} from "../interfaces/IRunner";
+import {IRunner} from '../interfaces/'
 
 export class Attribute {
   protected runner: IRunner

@@ -2,7 +2,7 @@ import {OpenGraph} from '../../src/html-proofer/check/OpenGraph'
 import {FIXTURES_DIR, run_proofer} from '../spec-helper'
 import * as path from 'path'
 import {CheckType} from "../../src/html-proofer/CheckType"
-import {IOptions} from "../../src/interfaces/IOptions"
+import {IOptions} from "../../src/interfaces/"
 
 describe('Open Graph test', () => {
   it('passes for existing external url', async () => {

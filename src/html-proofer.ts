@@ -1,7 +1,7 @@
 import fs from 'fs'
 import {Runner} from './html-proofer/Runner'
 import {CheckType} from "./html-proofer/CheckType";
-import {EmptyOptions, IOptions} from "./interfaces/IOptions";
+import {EmptyOptions, IOptions} from "./interfaces/";
 
 export class HTMLProofer {
   static check_file(file: string, opts?: IOptions) {

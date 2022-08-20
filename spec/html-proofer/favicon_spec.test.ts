@@ -2,7 +2,7 @@ import * as path from 'path'
 import {FIXTURES_DIR, run_proofer} from '../spec-helper'
 import {Favicon} from '../../src/html-proofer/check/Favicon'
 import {CheckType} from "../../src/html-proofer/CheckType"
-import {IOptions} from "../../src/interfaces/IOptions"
+import {IOptions} from "../../src/interfaces/"
 
 describe('Favicons test', () => {
   it('ignores for absent favicon by default', async () => {

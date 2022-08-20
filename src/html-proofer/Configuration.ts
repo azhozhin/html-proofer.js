@@ -3,7 +3,7 @@ import {Scripts} from './check/Scripts'
 import {Images} from './check/Images'
 import {VERSION} from './Version'
 import {isNullOrEmpty} from './Utils'
-import {IOptions} from "../interfaces/IOptions";
+import {IOptions} from "../interfaces";
 import {CheckType} from "./CheckType";
 
 export class Configuration {
