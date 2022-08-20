@@ -1,0 +1,32 @@
+import { Url } from './attribute/Url';
+import { IElement } from "../interfaces/IElement";
+import { IRunner } from "../interfaces/IRunner";
+import { IHtml } from "../interfaces/IHtml";
+export declare class Element implements IElement {
+    private runner;
+    private html;
+    node: any;
+    url: Url;
+    line: number | null;
+    content: string;
+    base_url: string | null;
+    constructor(runner: IRunner, html: IHtml, node: any, base_url?: string | null);
+    get link_attribute(): any;
+    get meta_content(): any;
+    meta_tag(): boolean;
+    get src(): any;
+    img_tag(): boolean;
+    script_tag(): boolean;
+    get srcset(): any;
+    source_tag(): boolean;
+    get href(): any;
+    a_tag(): boolean;
+    link_tag(): boolean;
+    aria_hidden(): boolean;
+    multiple_srcsets(): any;
+    ignore(): boolean;
+    attribute_swapped(): boolean;
+    swap_attributes(old_attr: string): any;
+    node_ancestors(node: any): any[];
+    ancestors_ignorable(): boolean;
+}
