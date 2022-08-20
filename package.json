@@ -60,6 +60,6 @@
     "webpack-cli": "^4.8.0"
   },
   "bin": {
-    "htmlproofer": "dist/cjs/bin/htmlproofer.ts"
+    "htmlproofer": "dist/cjs/bin/htmlproofer.js"
   }
 }
