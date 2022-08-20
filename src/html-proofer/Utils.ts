@@ -42,7 +42,26 @@ export function create_nokogiri(src: string): IHtml {
   }
 }
 
+function getContent(html: IHtml, node: any): string | null {
+  // we need to decide if it is empty or null, cheerio does not distinguish them
+  if (node.children.length === 0) {
+    if (node.name === 'script') { // for self-closed script endIndex == startIndex <-- looks like a bug
+      return node.endIndex - node.startIndex === 0 ? null : ''
+    } else if (node.name === 'meta') { // for meta 'content is null always if 'content' is not attribute
+      return null
+    }
+    return '' // for everything else we return empty string
+  }
+  return html.css(node).html()
+}
+
 export function adapt_nokogiri_node(html: IHtml, node: any) {
+
+  // return {
+  //   attributes: node.attribs,
+  //   text: html.css(node).text(),
+  //   content: getContent(html, node),
+  //  }
   const handler = {
     get: function (target: any, name: string) {
       if (target.hasOwnProperty(name)) {
@@ -71,7 +90,8 @@ export function adapt_nokogiri_node(html: IHtml, node: any) {
         }
         return html.css(node).html()
       }
-      return target.attribs[name]
+      throw new Error('Should not reach here')
+      //return target.attribs[name]
     },
   }
   return new Proxy(node, handler)
@@ -79,7 +99,6 @@ export function adapt_nokogiri_node(html: IHtml, node: any) {
 
 export function isNullOrEmpty(str: string | null): boolean {
   return str == null || str === ''
-
 }
 
 export function mergeConcat(a: Map<string, Array<any>>, b: Map<string, Array<any>>) {

@@ -19,7 +19,7 @@ export class Element implements IElement {
     this.base_url = base_url
     this.url = new Url(runner, this.link_attribute, base_url)
 
-    this.line = this.node.sourceCodeLocation.startLine
+    this.line = node.sourceCodeLocation.startLine
     this.content = this.node.content
   }
 
@@ -142,7 +142,7 @@ export class Element implements IElement {
       return null
     }
 
-    return this.node[new_attr]
+    return this.node.attributes[new_attr]
   }
 
   node_ancestors(node:any) {
