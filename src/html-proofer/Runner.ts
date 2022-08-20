@@ -43,7 +43,7 @@ export class Runner implements IRunner {
   checked_hashes: Map<string, Map<string, boolean>>
 
   private readonly type: CheckType
-  private readonly source: ISource
+  private readonly sources: ISource
   private failures: Array<Failure>
   reporter: IReporter
   private internal_urls: Map<string, Array<IMetadata>> = new Map()
@@ -52,11 +52,11 @@ export class Runner implements IRunner {
   private before_request: any[]
   private _checks: any[] | null = null
 
-  constructor(src: ISource, opts: IOptions | null = null) {
+  constructor(sources: ISource, opts: IOptions | null = null) {
     this.options = Configuration.generate_defaults(opts)
 
     this.type = this.options.type!
-    this.source = src
+    this.sources = sources
 
     this.cache = new Cache(this, this.options)
     this.logger = new Log(/*this.options['log_level']*/)
@@ -80,13 +80,13 @@ export class Runner implements IRunner {
 
     if (this.type === CheckType.LINKS) {
       this.logger.log('info',
-        `Running ${checkText} (${this.format_checks_list(this.checks)}) on ${this.source} ... \n\n`)
+        `Running ${checkText} (${this.format_checks_list(this.checks)}) on ${this.sources} ... \n\n`)
       if (!this.options['disable_external']) {
         await this.check_list_of_links()
       }
     } else {
       const checkNames = this.format_checks_list(this.checks)
-      const localPath = normalize_path(this.source)
+      const localPath = normalize_path(this.sources)
       const extensions = this.options['extensions']!.join(', ')
       this.logger.log('info', `Running ${checkText} (${checkNames}) in ${localPath} on *${extensions} files...\n\n`)
       await this.check_files()
@@ -107,7 +107,7 @@ export class Runner implements IRunner {
   }
 
   async check_list_of_links() {
-    for (const src of this.source) {
+    for (const src of this.sources) {
       const url = new Url(this, src, null).toString()
       this.external_urls.set(url, [])
     }
@@ -133,7 +133,8 @@ export class Runner implements IRunner {
 
   get process_files() {
     // todo: this is partial implementation
-    const result = this.files.map(file => this.load_file(file.path, file.source))
+    const files = this.files
+    const result = files.map(file => this.load_file(file.path, file.source))
     return result
   }
 
@@ -163,8 +164,6 @@ export class Runner implements IRunner {
       // todo: it is better to return all stuff as result rather than properties
       check.run()
 
-      //result['external_urls'].merge(check.external_urls) { |_key, old, current| old.concat(current) }
-      //result['internal_urls'].merge(check.internal_urls) { |_key, old, current| old.concat(current) }
       mergeConcat(result.external_urls, check.external_urls)
       mergeConcat(result.internal_urls, check.internal_urls)
       result.failures = result.failures.concat(check.failures)
@@ -185,10 +184,11 @@ export class Runner implements IRunner {
     this.failures = this.failures.concat(validated)
   }
 
+  // todo: this should not be property
   get files(): { source: string, path: string }[] {
     if (this.type === CheckType.DIRECTORY) {
       // todo: this is too complicated
-      let files = (this.source as Array<string>).map((src) => {
+      let files = (this.sources as Array<string>).map((src) => {
         // glob accepts only forward slashes, on Windows path separator is backslash, thus should be converted
         const pattern = path.join(src, '**', `*${this.options['extensions']!.join(',')}`).replace(/\\/g, '/')
         return glob.sync(pattern)
@@ -200,10 +200,10 @@ export class Runner implements IRunner {
       }).flat()
       return files
     }
-    if (this.type === CheckType.FILE && this.options['extensions']!.includes(path.extname((this.source as string)))) {
-      let files = [this.source].filter(f => !this.ignore_file((f as string))).map(f => ({
-        source: (f as string),
-        path: (f as string)
+    if (this.type === CheckType.FILE && this.options['extensions']!.includes(path.extname((this.sources as string)))) {
+      let files = [(this.sources as string)].filter(f => !this.ignore_file(f)).map(f => ({
+        source: f,
+        path: f
       }))
       return files
     }
