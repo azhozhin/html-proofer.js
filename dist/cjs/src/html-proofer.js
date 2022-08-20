@@ -7,7 +7,7 @@ exports.HTMLProofer = void 0;
 const fs_1 = __importDefault(require("fs"));
 const Runner_1 = require("./html-proofer/Runner");
 const CheckType_1 = require("./html-proofer/CheckType");
-const IOptions_1 = require("./interfaces/IOptions");
+const interfaces_1 = require("./interfaces/");
 class HTMLProofer {
     static check_file(file, opts) {
         if (file.constructor.name !== 'String') {
@@ -16,7 +16,7 @@ class HTMLProofer {
         if (!fs_1.default.existsSync(file)) {
             throw new Error(`ArgumentError: ${file} does not exist`);
         }
-        let options = (opts || IOptions_1.EmptyOptions);
+        let options = (opts || interfaces_1.EmptyOptions);
         options.type = CheckType_1.CheckType.FILE;
         return new Runner_1.Runner(file, options);
     }
@@ -24,7 +24,7 @@ class HTMLProofer {
         if (!fs_1.default.existsSync(directory)) {
             throw new Error(`ArgumentError: ${directory} does not exist`);
         }
-        let options = (opts || IOptions_1.EmptyOptions);
+        let options = (opts || interfaces_1.EmptyOptions);
         options.type = CheckType_1.CheckType.DIRECTORY;
         return new Runner_1.Runner([directory], options);
     }
@@ -32,7 +32,7 @@ class HTMLProofer {
         if (!Array.isArray(directories)) {
             throw new Error('ArgumentError');
         }
-        let options = (opts || IOptions_1.EmptyOptions);
+        let options = (opts || interfaces_1.EmptyOptions);
         options.type = CheckType_1.CheckType.DIRECTORIES;
         for (const directory of directories) {
             if (!fs_1.default.existsSync(directory)) {
@@ -45,7 +45,7 @@ class HTMLProofer {
         if (!Array.isArray(links)) {
             throw new Error('ArgumentError');
         }
-        let options = (opts || IOptions_1.EmptyOptions);
+        let options = (opts || interfaces_1.EmptyOptions);
         options.type = CheckType_1.CheckType.LINKS;
         return new Runner_1.Runner(links, options);
     }

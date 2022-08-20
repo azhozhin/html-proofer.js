@@ -12,32 +12,32 @@ class Links extends Check_1.Check {
     }
     run() {
         const nodes = [];
-        this.html.css('a, link, source').each((i, node) => {
+        for (const node of this.html.css('a, link, source')) {
             const link = this.create_element(node);
             if (link.ignore()) {
-                return;
+                continue;
             }
-            if (!this.allow_hash_href() && link.node['href'] === '#') {
+            if (!this.allow_hash_href() && link.node.attributes['href'] === '#') {
                 this.add_failure('linking to internal hash #, which points to nowhere', link.line, null, link.content);
-                return;
+                continue;
             }
             // is there even a href?
             if (!link.url.raw_attribute) {
                 if (this.allow_missing_href()) {
-                    return;
+                    continue;
                 }
                 this.add_failure(`'${link.node.name}' tag is missing a reference`, link.line, null, link.content);
-                return;
+                continue;
             }
             // is it even a valid URL?
             if (!link.url.valid()) {
                 this.add_failure(`${link.href} is an invalid URL`, link.line, null, link.content);
-                return;
+                continue;
             }
             this.check_schemes(link);
             // intentionally down here because we still want valid? & missing_href? to execute
             if (link.url.non_http_remote()) {
-                return;
+                continue;
             }
             if (!link.url.internal && link.url.remote()) {
                 if (this.runner.check_sri() && link.link_tag()) {
@@ -45,12 +45,12 @@ class Links extends Check_1.Check {
                 }
                 // we need to skip these for now; although the domain main be valid,
                 // curl/Typheous inaccurately return 404s for some links. cc https://git.io/vyCFx
-                if (link.node['rel'] == 'dns-prefetch') {
-                    return;
+                if (link.node.attributes['rel'] == 'dns-prefetch') {
+                    continue;
                 }
                 if (!link.url.is_path()) {
                     this.add_failure(`${link.url.raw_attribute} is an invalid URL`, link.line, null, link.content);
-                    return;
+                    continue;
                 }
                 this.add_to_external_urls(link.url, link.line);
             }
@@ -58,11 +58,16 @@ class Links extends Check_1.Check {
                 // does the local directory have a trailing slash?
                 if (link.url.unslashed_directory(link.url.absolute_path)) {
                     this.add_failure(`internally linking to a directory ${link.url.raw_attribute} without trailing slash`, link.line, null, link.content);
-                    return;
+                    continue;
                 }
                 this.add_to_internal_urls(link.url, link.line);
             }
-        });
+        }
+        return {
+            external_urls: this.external_urls,
+            internal_urls: this.internal_urls,
+            failures: this.failures
+        };
     }
     allow_missing_href() {
         return this.runner.options['allow_missing_href'];
@@ -111,16 +116,16 @@ class Links extends Check_1.Check {
         return this.runner.options['ignore_empty_mailto'];
     }
     check_sri(link) {
-        if (!this.SRI_REL_TYPES.includes(link.node['rel'])) {
+        if (!this.SRI_REL_TYPES.includes(link.node.attributes['rel'])) {
             return;
         }
-        if ((!link.node['integrity']) && (!link.node['crossorigin'])) {
+        if ((!link.node.attributes['integrity']) && (!link.node.attributes['crossorigin'])) {
             this.add_failure(`SRI and CORS not provided in: ${link.url.raw_attribute}`, link.line, null, link.content);
         }
-        else if (!link.node['integrity']) {
+        else if (!link.node.attributes['integrity']) {
             this.add_failure(`Integrity is missing in: ${link.url.raw_attribute}`, link.line, null, link.content);
         }
-        else if (!link.node['crossorigin']) {
+        else if (!link.node.attributes['crossorigin']) {
             this.add_failure(`CORS not provided for external resource in: ${link.url.raw_attribute}`, link.line, null, link.content);
         }
     }

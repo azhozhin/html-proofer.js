@@ -1,13 +1,5 @@
 import { Failure } from './Failure.js';
-import { ILogger } from "../interfaces/ILogger";
-import { IRunner } from "../interfaces/IRunner";
-import { IOptions } from "../interfaces/IOptions";
-import { ISource } from "../interfaces/ISource";
-import { IReporter } from "../interfaces/IReporter";
-import { IHtml } from "../interfaces/IHtml";
-import { IChecksResult } from "../interfaces/IChecksResult";
-import { ICheck } from "../interfaces/ICheck";
-import { IExtMetadata } from "../interfaces/IExtMetadata";
+import { ICache, ICheck, ICheckResult, IExtMetadata, IHtml, ILogger, IOptions, IReporter, IRunner, ISource } from "../interfaces";
 export declare class Runner implements IRunner {
     current_source: string | null;
     current_filename: string | null;
@@ -17,21 +9,20 @@ export declare class Runner implements IRunner {
     checked_paths: Map<string, boolean>;
     checked_hashes: Map<string, Map<string, boolean>>;
     private readonly type;
-    private readonly source;
+    private readonly sources;
     private failures;
     reporter: IReporter;
     private internal_urls;
     external_urls: Map<string, Array<IExtMetadata>>;
-    private current_check;
     private before_request;
     private _checks;
-    constructor(src: ISource, opts?: IOptions | null);
+    constructor(sources: ISource, opts?: IOptions | null);
     run(): Promise<void>;
     check_list_of_links(): Promise<void>;
     check_files(): Promise<void>;
-    get process_files(): IChecksResult[];
-    load_file(path: string, source: string): IChecksResult;
-    check_parsed(html: IHtml, p: string, source: string): IChecksResult;
+    get process_files(): ICheckResult[];
+    load_file(path: string, source: string): ICheckResult;
+    check_parsed(html: IHtml, p: string, source: string): ICheckResult;
     private validate_external_urls;
     private validate_internal_urls;
     get files(): {

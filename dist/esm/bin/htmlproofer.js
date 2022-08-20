@@ -14,7 +14,7 @@ import { isDirectory } from '../src/html-proofer/Utils';
 import { HTMLProofer } from '../src/html-proofer';
 import { AllChecks } from '../src/html-proofer/Checks';
 import { Configuration } from '../src/html-proofer/Configuration';
-import { EmptyOptions } from '../src/interfaces/IOptions';
+import { EmptyOptions } from '../src/interfaces/';
 program.
     version(VERSION).
     description(`Test your rendered HTML files to make sure they're accurate.\n` +

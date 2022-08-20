@@ -2,13 +2,13 @@ import { Check } from '../Check';
 import { isNullOrEmpty } from '../Utils';
 export class Scripts extends Check {
     run() {
-        this.html.css('script').each((i, node) => {
+        for (const node of this.html.css('script')) {
             const script = this.create_element(node);
             if (script.ignore()) {
-                return;
+                continue;
             }
-            if (!isNullOrEmpty(script.content.trim())) {
-                return;
+            if (!isNullOrEmpty(script.content)) {
+                continue;
             }
             //# does the script exist?
             if (this.missing_src(script)) {
@@ -23,20 +23,24 @@ export class Scripts extends Check {
             else if (!script.url.exists()) {
                 this.add_failure(`internal script reference ${script.src} does not exist`, script.line, null, script.content);
             }
-        });
-        return this.external_urls;
+        }
+        return {
+            external_urls: this.external_urls,
+            internal_urls: this.internal_urls,
+            failures: this.failures
+        };
     }
     missing_src(script) {
-        return script.node['src'] == undefined;
+        return script.node.attributes['src'] == undefined;
     }
     check_sri(script) {
-        if (isNullOrEmpty(script.node['integrity']) && isNullOrEmpty(script.node['crossorigin'])) {
+        if (isNullOrEmpty(script.node.attributes['integrity']) && isNullOrEmpty(script.node.attributes['crossorigin'])) {
             this.add_failure(`SRI and CORS not provided in: #{@script.url.raw_attribute}`, script.line, null, script.content);
         }
-        else if (isNullOrEmpty(script.node['integrity'])) {
+        else if (isNullOrEmpty(script.node.attributes['integrity'])) {
             this.add_failure(`Integrity is missing in: #{@script.url.raw_attribute}`, script.line, null, script.content);
         }
-        else if (isNullOrEmpty(script.node['crossorigin'])) {
+        else if (isNullOrEmpty(script.node.attributes['crossorigin'])) {
             this.add_failure(`CORS not provided for external resource in: #{@script.url.raw_attribute}`, script.line, null, script.content);
         }
     }

@@ -4,7 +4,6 @@ import { Scripts } from './check/Scripts';
 import { Images } from './check/Images';
 import { VERSION } from './Version';
 import { isNullOrEmpty } from './Utils';
-import { CheckType } from "./CheckType";
 export class Configuration {
     static generate_defaults(opts) {
         const options = Object.assign({}, this.PROOFER_DEFAULTS, opts);
@@ -38,7 +37,6 @@ export class Configuration {
 _a = Configuration;
 Configuration.DEFAULT_TESTS = [Links, Images, Scripts];
 Configuration.PROOFER_DEFAULTS = {
-    type: CheckType.LINKS,
     allow_hash_href: true,
     allow_missing_href: false,
     assume_extension: '.html',

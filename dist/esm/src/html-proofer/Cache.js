@@ -1,4 +1,4 @@
-import { EmptyOptions } from "../interfaces/IOptions";
+import { EmptyOptions } from '../interfaces';
 export class Cache {
     constructor(runner, opts) {
         this.runner = runner;

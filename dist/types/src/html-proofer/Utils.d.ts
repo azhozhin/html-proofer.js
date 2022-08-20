@@ -1,9 +1,8 @@
-import { IHtml } from "../interfaces/IHtml";
+import { IHtml } from "../interfaces";
 export declare function isFile(filepath: string): boolean;
 export declare function isDirectory(filepath: string): boolean;
 export declare function pluralize(count: number, single: string, plural: string): string;
-export declare function create_nokogiri(src: string): IHtml;
-export declare function adapt_nokogiri_node(doc: IHtml, node: any): any;
+export declare function createDocument(src: string): IHtml;
 export declare function isNullOrEmpty(str: string | null): boolean;
 export declare function mergeConcat(a: Map<string, Array<any>>, b: Map<string, Array<any>>): void;
 export declare function joinUrl(baseUrl: string, url: string): string;

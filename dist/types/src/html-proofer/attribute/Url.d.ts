@@ -1,5 +1,5 @@
 import { Attribute } from '../Attribute';
-import { IRunner } from "../../interfaces/IRunner";
+import { IRunner } from "../../interfaces";
 export declare class Url extends Attribute {
     REMOTE_SCHEMES: string[];
     url: string | null;

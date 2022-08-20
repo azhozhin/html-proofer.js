@@ -1,5 +1,4 @@
-import { ILogger } from "../interfaces/ILogger";
-import { IExternalRequest } from "../interfaces/IExternalRequest";
+import { ILogger, IExternalRequest } from "../interfaces";
 export declare class Hydra {
     private logger;
     private requests;

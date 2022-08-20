@@ -1,5 +1,5 @@
 import { Runner } from './html-proofer/Runner';
-import { IOptions } from "./interfaces/IOptions";
+import { IOptions } from "./interfaces/";
 export declare class HTMLProofer {
     static check_file(file: string, opts?: IOptions): Runner;
     static check_directory(directory: string, opts?: IOptions): Runner;

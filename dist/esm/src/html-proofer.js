@@ -1,7 +1,7 @@
 import fs from 'fs';
 import { Runner } from './html-proofer/Runner';
 import { CheckType } from "./html-proofer/CheckType";
-import { EmptyOptions } from "./interfaces/IOptions";
+import { EmptyOptions } from "./interfaces/";
 export class HTMLProofer {
     static check_file(file, opts) {
         if (file.constructor.name !== 'String') {

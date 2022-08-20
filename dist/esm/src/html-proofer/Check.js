@@ -1,6 +1,5 @@
 import { Failure } from './Failure';
 import { Element } from './Element';
-import { adapt_nokogiri_node } from './Utils';
 export class Check {
     constructor(runner, html) {
         this.internal_urls = new Map();
@@ -13,26 +12,16 @@ export class Check {
     create_element(node) {
         return new Element(this.runner, this.html, node, this.base_url());
     }
-    run() {
-        throw new Error('NotImplementedError');
-    }
     add_failure(description, line = null, status = null, content = null) {
-        this.failures.push(new Failure(this.runner.current_filename, this.short_name, description, line, status, content));
+        this.failures.push(new Failure(this.runner.current_filename, this.name, description, line, status, content));
     }
     removeIgnoredTags(html) {
         for (const node of html.css("code, pre, tt")) {
-            html.css(node).remove();
+            html.remove(node);
         }
         return html;
     }
-    get short_name() {
-        // self.class.name.split("::").last
-        return this.constructor.name;
-    }
     get name() {
-        return this.constructor.name;
-    }
-    static getClassName() {
         return this.constructor.name;
     }
     add_to_internal_urls(url, line) {
@@ -68,8 +57,8 @@ export class Check {
             this._base_url = null;
             return null;
         }
-        const node = adapt_nokogiri_node(this.html, base[0]);
-        this._base_url = node['href'];
+        const node = base[0];
+        this._base_url = node.attributes['href'];
         return this._base_url;
     }
 }

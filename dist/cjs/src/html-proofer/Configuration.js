@@ -7,7 +7,6 @@ const Scripts_1 = require("./check/Scripts");
 const Images_1 = require("./check/Images");
 const Version_1 = require("./Version");
 const Utils_1 = require("./Utils");
-const CheckType_1 = require("./CheckType");
 class Configuration {
     static generate_defaults(opts) {
         const options = Object.assign({}, this.PROOFER_DEFAULTS, opts);
@@ -42,7 +41,6 @@ exports.Configuration = Configuration;
 _a = Configuration;
 Configuration.DEFAULT_TESTS = [Links_1.Links, Images_1.Images, Scripts_1.Scripts];
 Configuration.PROOFER_DEFAULTS = {
-    type: CheckType_1.CheckType.LINKS,
     allow_hash_href: true,
     allow_missing_href: false,
     assume_extension: '.html',

@@ -16,7 +16,7 @@ const Utils_1 = require("../src/html-proofer/Utils");
 const html_proofer_1 = require("../src/html-proofer");
 const Checks_1 = require("../src/html-proofer/Checks");
 const Configuration_1 = require("../src/html-proofer/Configuration");
-const IOptions_1 = require("../src/interfaces/IOptions");
+const interfaces_1 = require("../src/interfaces/");
 commander_1.program.
     version(Version_1.VERSION).
     description(`Test your rendered HTML files to make sure they're accurate.\n` +
@@ -52,7 +52,7 @@ commander_1.program.
     const opts = commander_1.program.opts();
     const path = commander_1.program.args.length === 0 ? '.' : commander_1.program.args[0];
     //console.debug(opts)
-    const options = IOptions_1.EmptyOptions;
+    const options = interfaces_1.EmptyOptions;
     const checks = [];
     if (opts.checks) {
         let checks_str = opts.checks;

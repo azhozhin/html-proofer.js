@@ -60,10 +60,10 @@ export class Url extends Attribute {
         return url;
     }
     swap_urls(url) {
-        if (!this.runner.options['swap_urls']) {
+        if (!this.runner.options.swap_urls) {
             return url;
         }
-        const replacements = this.runner.options['swap_urls'];
+        const replacements = this.runner.options.swap_urls;
         for (const [link, replacement] of replacements) {
             // this is workaround for javascript as it is not possible to use RegExp as key for dictionary
             if (link.startsWith('/') && link.endsWith('/')) {

@@ -125,8 +125,8 @@ class Internal extends UrlValidator_1.UrlValidator {
                 `[name = "${escaped_frag_id}"]`
             ];
         });
-        const html = (0, Utils_1.create_nokogiri)(url.absolute_path);
-        return html.css(csss.join(','));
+        const doc = (0, Utils_1.createDocument)(url.absolute_path);
+        return doc.css(csss.join(','));
     }
 }
 exports.Internal = Internal;

@@ -49,7 +49,7 @@ const fs_1 = __importDefault(require("fs"));
 const Log_1 = require("./Log");
 const CheckType_1 = require("./CheckType");
 const Links_1 = require("./check/Links");
-const ICheck_1 = require("../interfaces/ICheck");
+const interfaces_1 = require("../interfaces");
 function normalize_path(source) {
     if (source.constructor.name === 'String') {
         return source.replaceAll('\\', '/');
@@ -59,20 +59,19 @@ function normalize_path(source) {
     }
 }
 class Runner {
-    constructor(src, opts = null) {
+    constructor(sources, opts = null) {
         this.internal_urls = new Map();
         this.external_urls = new Map();
         this._checks = null;
         this.options = Configuration_1.Configuration.generate_defaults(opts);
         this.type = this.options.type;
-        this.source = src;
+        this.sources = sources;
         this.cache = new Cache_1.Cache(this, this.options);
         this.logger = new Log_1.Log( /*this.options['log_level']*/);
         this.failures = [];
         this.before_request = [];
         this.checked_paths = new Map();
         this.checked_hashes = new Map();
-        this.current_check = null;
         this.current_source = null;
         this.current_filename = null;
         this.reporter = new Cli_1.Cli(this.logger);
@@ -81,14 +80,14 @@ class Runner {
         return __awaiter(this, void 0, void 0, function* () {
             const checkText = (0, Utils_1.pluralize)(this.checks.length, 'check', 'checks');
             if (this.type === CheckType_1.CheckType.LINKS) {
-                this.logger.log('info', `Running ${checkText} (${this.format_checks_list(this.checks)}) on ${this.source} ... \n\n`);
+                this.logger.log('info', `Running ${checkText} (${this.format_checks_list(this.checks)}) on ${this.sources} ... \n\n`);
                 if (!this.options['disable_external']) {
                     yield this.check_list_of_links();
                 }
             }
             else {
                 const checkNames = this.format_checks_list(this.checks);
-                const localPath = normalize_path(this.source);
+                const localPath = normalize_path(this.sources);
                 const extensions = this.options['extensions'].join(', ');
                 this.logger.log('info', `Running ${checkText} (${checkNames}) in ${localPath} on *${extensions} files...\n\n`);
                 yield this.check_files();
@@ -108,7 +107,7 @@ class Runner {
     }
     check_list_of_links() {
         return __awaiter(this, void 0, void 0, function* () {
-            for (const src of this.source) {
+            for (const src of this.sources) {
                 const url = new Url_1.Url(this, src, null).toString();
                 this.external_urls.set(url, []);
             }
@@ -132,12 +131,14 @@ class Runner {
     }
     get process_files() {
         // todo: this is partial implementation
-        const result = this.files.map(file => this.load_file(file.path, file.source));
+        const files = this.files;
+        const result = files
+            .map(file => this.load_file(file.path, file.source));
         return result;
     }
     load_file(path, source) {
-        const html = (0, Utils_1.create_nokogiri)(path);
-        return this.check_parsed(html, path, source);
+        const doc = (0, Utils_1.createDocument)(path);
+        return this.check_parsed(doc, path, source);
     }
     // Collects any external URLs found in a directory of files. Also collectes
     // every failed test from process_files.
@@ -150,16 +151,12 @@ class Runner {
         for (const ch of this.checks) {
             this.current_source = source;
             this.current_filename = p;
-            const check = (0, ICheck_1.createCheck)(ch, this, html);
+            const check = (0, interfaces_1.createCheck)(ch, this, html);
             this.logger.log('debug', `Running ${check.name} in ${p}`);
-            this.current_check = check;
-            // todo: it is better to return all stuff as result rather than properties
-            check.run();
-            //result['external_urls'].merge(check.external_urls) { |_key, old, current| old.concat(current) }
-            //result['internal_urls'].merge(check.internal_urls) { |_key, old, current| old.concat(current) }
-            (0, Utils_1.mergeConcat)(result.external_urls, check.external_urls);
-            (0, Utils_1.mergeConcat)(result.internal_urls, check.internal_urls);
-            result.failures = result.failures.concat(check.failures);
+            const checkResult = check.run();
+            (0, Utils_1.mergeConcat)(result.external_urls, checkResult.external_urls);
+            (0, Utils_1.mergeConcat)(result.internal_urls, checkResult.internal_urls);
+            result.failures = result.failures.concat(checkResult.failures);
         }
         return result;
     }
@@ -178,10 +175,11 @@ class Runner {
             this.failures = this.failures.concat(validated);
         });
     }
+    // todo: this should not be property
     get files() {
         if (this.type === CheckType_1.CheckType.DIRECTORY) {
             // todo: this is too complicated
-            let files = this.source.map((src) => {
+            let files = this.sources.map((src) => {
                 // glob accepts only forward slashes, on Windows path separator is backslash, thus should be converted
                 const pattern = path.join(src, '**', `*${this.options['extensions'].join(',')}`).replace(/\\/g, '/');
                 return glob_1.default.sync(pattern)
@@ -193,8 +191,8 @@ class Runner {
             }).flat();
             return files;
         }
-        if (this.type === CheckType_1.CheckType.FILE && this.options['extensions'].includes(path.extname(this.source))) {
-            let files = [this.source].filter(f => !this.ignore_file(f)).map(f => ({
+        if (this.type === CheckType_1.CheckType.FILE && this.options['extensions'].includes(path.extname(this.sources))) {
+            let files = [this.sources].filter(f => !this.ignore_file(f)).map(f => ({
                 source: f,
                 path: f
             }));

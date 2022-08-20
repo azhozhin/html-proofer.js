@@ -1,7 +1,7 @@
 import { Links } from './check/Links';
 import { Scripts } from './check/Scripts';
 import { Images } from './check/Images';
-import { IOptions } from "../interfaces/IOptions";
+import { IOptions } from "../interfaces";
 export declare class Configuration {
     static DEFAULT_TESTS: (typeof Links | typeof Scripts | typeof Images)[];
     static PROOFER_DEFAULTS: IOptions;

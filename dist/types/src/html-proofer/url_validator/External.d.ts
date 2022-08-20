@@ -1,7 +1,6 @@
 import { UrlValidator } from '../UrlValidator';
 import { Url } from '../attribute/Url';
-import { IRunner } from "../../interfaces/IRunner";
-import { IExtMetadata } from "../../interfaces/IExtMetadata";
+import { IRunner, IExtMetadata } from '../../interfaces/';
 export declare class External extends UrlValidator {
     before_request: any[];
     private readonly external_urls;

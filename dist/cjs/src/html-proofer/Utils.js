@@ -26,7 +26,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.unique = exports.first = exports.last = exports.groupBy = exports.hasUnicode = exports.joinUrl = exports.mergeConcat = exports.isNullOrEmpty = exports.adapt_nokogiri_node = exports.create_nokogiri = exports.pluralize = exports.isDirectory = exports.isFile = void 0;
+exports.unique = exports.first = exports.last = exports.groupBy = exports.hasUnicode = exports.joinUrl = exports.mergeConcat = exports.isNullOrEmpty = exports.createDocument = exports.pluralize = exports.isDirectory = exports.isFile = void 0;
 const fs_1 = __importDefault(require("fs"));
 const cheerio = __importStar(require("cheerio"));
 const urijs_1 = __importDefault(require("urijs"));
@@ -52,7 +52,7 @@ function pluralize(count, single, plural) {
     return `${count} ${count === 1 ? single : plural}`;
 }
 exports.pluralize = pluralize;
-function create_nokogiri(src) {
+function createDocument(src) {
     let content;
     if (fs_1.default.existsSync(src) && !isDirectory(src)) {
         content = fs_1.default.readFileSync(src);
@@ -64,47 +64,48 @@ function create_nokogiri(src) {
     const $ = cheerio.load(content, { sourceCodeLocationInfo: true } /*, false*/);
     // simulation of nokogiri API
     return {
-        css: $,
+        css: (selector) => {
+            const result = [];
+            $(selector).each((i, node) => {
+                result.push(adapt_nokogiri_node($, node));
+            });
+            return result;
+        },
         content: $.html(),
         text: $.text(),
-    };
-}
-exports.create_nokogiri = create_nokogiri;
-function adapt_nokogiri_node(doc, node) {
-    const handler = {
-        get: function (target, name) {
-            if (target.hasOwnProperty(name)) {
-                return target[name];
-            }
-            // simulate nokogiri api to attributes
-            if (name === 'attributes') {
-                return target.attribs;
-            }
-            if (name === 'text') {
-                return doc.css(node).text();
-            }
-            if (name === 'content') {
-                if (target.attribs && target.attribs['content'] != null) {
-                    return target.attribs['content'];
-                }
-                // we need to decide if it is empty or null, cheerio does not distinguish them
-                if (node.children.length === 0) {
-                    if (node.name === 'script') { // for self-closed script endIndex == startIndex <-- looks like a bug
-                        return node.endIndex - node.startIndex === 0 ? null : '';
-                    }
-                    else if (node.name === 'meta') { // for meta 'content is null always if 'content' is not attribute
-                        return null;
-                    }
-                    return ''; // for everything else we return empty string
-                }
-                return doc.css(node).html();
-            }
-            return target.attribs[name];
+        // API to remove nodes from DOM
+        remove: (node) => {
+            $(node.nativeNode).remove();
         },
     };
-    return new Proxy(node, handler);
 }
-exports.adapt_nokogiri_node = adapt_nokogiri_node;
+exports.createDocument = createDocument;
+function getContent($, node) {
+    // we need to decide if it is empty or null, cheerio does not distinguish them
+    if (node.children.length === 0) {
+        if (node.name === 'script') { // for self-closed script endIndex == startIndex <-- looks like a bug
+            return node.endIndex - node.startIndex === 0 ? null : '';
+        }
+        else if (node.name === 'meta') { // for meta 'content is null always if 'content' is not attribute
+            return null;
+        }
+        return ''; // for everything else we return empty string
+    }
+    return $(node).html();
+}
+function adapt_nokogiri_node($, node) {
+    return {
+        name: node.name,
+        // todo: this could be performance issue
+        parent: (node.parent != null) ? adapt_nokogiri_node($, node.parent) : null,
+        attributes: node.attribs,
+        text: $(node).text(),
+        content: getContent($, node),
+        // technical details from parser
+        sourceCodeLocation: node.sourceCodeLocation,
+        nativeNode: node,
+    };
+}
 function isNullOrEmpty(str) {
     return str == null || str === '';
 }

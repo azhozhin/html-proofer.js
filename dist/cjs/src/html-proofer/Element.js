@@ -2,15 +2,14 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Element = void 0;
 const Url_1 = require("./attribute/Url");
-const Utils_1 = require("./Utils");
 class Element {
     constructor(runner, html, node, base_url = null) {
         this.runner = runner;
         this.html = html;
-        this.node = (0, Utils_1.adapt_nokogiri_node)(html, node);
+        this.node = node;
         this.base_url = base_url;
         this.url = new Url_1.Url(runner, this.link_attribute, base_url);
-        this.line = this.node.sourceCodeLocation.startLine;
+        this.line = node.sourceCodeLocation.startLine;
         this.content = this.node.content;
     }
     get link_attribute() {
@@ -23,7 +22,7 @@ class Element {
         if (this.attribute_swapped()) {
             return this.swap_attributes('content');
         }
-        return this.node['content'];
+        return this.node.attributes['content'];
     }
     meta_tag() {
         return this.node.name === 'meta';
@@ -35,7 +34,7 @@ class Element {
         if (this.attribute_swapped()) {
             return this.swap_attributes('src');
         }
-        return this.node['src'];
+        return this.node.attributes['src'];
     }
     img_tag() {
         return this.node.name === 'img';
@@ -50,7 +49,7 @@ class Element {
         if (this.attribute_swapped()) {
             this.swap_attributes('srcset');
         }
-        return this.node['srcset'];
+        return this.node.attributes['srcset'];
     }
     source_tag() {
         return this.node.name === 'source';
@@ -62,7 +61,7 @@ class Element {
         if (this.attribute_swapped()) {
             this.swap_attributes('href');
         }
-        return this.node['href'];
+        return this.node.attributes['href'];
     }
     a_tag() {
         return this.node.name === 'a';
@@ -112,7 +111,7 @@ class Element {
         if (!new_attr) {
             return null;
         }
-        return this.node[new_attr];
+        return this.node.attributes[new_attr];
     }
     node_ancestors(node) {
         if (!node) {
@@ -125,7 +124,7 @@ class Element {
                 break;
             }
             ancestors.push(current_node);
-            current_node = (0, Utils_1.adapt_nokogiri_node)(this.html, current_node.parent);
+            current_node = current_node.parent;
         }
         return ancestors.reverse();
     }

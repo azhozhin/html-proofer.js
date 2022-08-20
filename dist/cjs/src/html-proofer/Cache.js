@@ -1,12 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Cache = void 0;
-const IOptions_1 = require("../interfaces/IOptions");
+const interfaces_1 = require("../interfaces");
 class Cache {
     constructor(runner, opts) {
         this.runner = runner;
         this.logger = runner.logger;
-        this.options = opts || IOptions_1.EmptyOptions;
+        this.options = opts || interfaces_1.EmptyOptions;
     }
     add_internal(url, metadata, found) {
         if (!this.enabled()) {

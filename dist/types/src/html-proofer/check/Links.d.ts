@@ -1,9 +1,9 @@
 import { Check } from '../Check';
-import { ICheck } from "../../interfaces/ICheck";
+import { ICheck, ICheckResult } from "../../interfaces";
 import { Element } from "../Element";
 export declare class Links extends Check implements ICheck {
     EMAIL_REGEXP: RegExp;
-    run(): void;
+    run(): ICheckResult;
     allow_missing_href(): boolean | undefined;
     allow_hash_href(): boolean | undefined;
     check_schemes(link: Element): void;

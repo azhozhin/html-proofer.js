@@ -142,10 +142,9 @@ class External extends UrlValidator_1.UrlValidator {
             return false;
         }
         const hash = url.hash;
-        const body_doc = (0, Utils_1.create_nokogiri)(response.data);
+        const doc = (0, Utils_1.createDocument)(response.data);
         const unencoded_hash = decodeURI(hash);
-        // todo: hash and unencoded hash might match, so there is no need to query the same thing
-        const csss = [
+        const cssSelectors = [
             `[name="${hash}"]`,
             `[name="${unencoded_hash}"]`,
             `[id="${hash}"]`,
@@ -153,17 +152,18 @@ class External extends UrlValidator_1.UrlValidator {
         ];
         //# user-content is a special addition by GitHub.
         if (url.host.match(/github\.com/i)) {
-            csss.push(`[name="user-content-${hash}"]`);
-            csss.push(`[id="user-content-${hash}"]`);
+            cssSelectors.push(`[name="user-content-${hash}"]`);
+            cssSelectors.push(`[id="user-content-${hash}"]`);
             // when linking to a file on GitHub, like #L12-L34, only the first "L" portion
             // will be identified as a linkable portion
             const match = hash.match(/^(L\d)+/);
             if (match) {
-                csss.push(`[id="${match[0]}"]`);
+                cssSelectors.push(`[id="${match[0]}"]`);
             }
         }
-        const full_selector = csss.join(',');
-        if (body_doc.css(full_selector).length > 0) {
+        // some (encoded and decoded) selectors could match thus do need to query twice
+        const full_selector = (0, Utils_1.unique)(cssSelectors).join(',');
+        if (doc.css(full_selector).length > 0) {
             return;
         }
         const msg = `External link ${href} failed: ${url.sans_hash()} exists, but the hash '${hash}' does not`;

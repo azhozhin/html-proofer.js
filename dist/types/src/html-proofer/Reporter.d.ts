@@ -1,5 +1,5 @@
-import { IReporter } from "../interfaces/IReporter";
-import { ILogger } from "../interfaces/ILogger";
+import { IReporter } from "../interfaces";
+import { ILogger } from "../interfaces";
 import { Failure } from "./Failure";
 export declare class Reporter implements IReporter {
     failures: Array<Failure>;

@@ -1,5 +1,4 @@
-import { IOptions } from "../interfaces/IOptions";
-import { IRunner } from "../interfaces/IRunner";
+import { IOptions, IRunner, ICache } from '../interfaces';
 export declare class Cache implements ICache {
     private readonly runner;
     private readonly logger;

@@ -7,10 +7,10 @@ export class Images extends Check {
         this.SCREEN_SHOT_REGEX = /Screen(?: |%20)Shot(?: |%20)\d+-\d+-\d+(?: |%20)at(?: |%20)\d+.\d+.\d+/;
     }
     run() {
-        this.html.css('img').each((i, node) => {
+        for (const node of this.html.css('img')) {
             let img = this.create_element(node);
             if (img.ignore()) {
-                return;
+                continue;
             }
             // screenshot filenames should return because of terrible names
             if (this.terrible_filename(img)) {
@@ -49,8 +49,12 @@ export class Images extends Check {
             if (this.runner.enforce_https() && img.url.http()) {
                 this.add_failure(`image ${img.url.raw_attribute} uses the http scheme`, img.line, null, img.content);
             }
-            return this.external_urls;
-        });
+        }
+        return {
+            external_urls: this.external_urls,
+            internal_urls: this.internal_urls,
+            failures: this.failures
+        };
     }
     ignore_missing_alt() {
         return this.runner.options['ignore_missing_alt'] || false;
@@ -62,13 +66,13 @@ export class Images extends Check {
         return img.url.ignore() || img.aria_hidden();
     }
     missing_alt_tag(img) {
-        return img.node['alt'] == null;
+        return img.node.attributes['alt'] == null;
     }
     empty_alt_tag(img) {
-        return !this.missing_alt_tag(img) && img.node['alt'] === '';
+        return !this.missing_alt_tag(img) && img.node.attributes['alt'] === '';
     }
     alt_all_spaces(img) {
-        return !this.missing_alt_tag(img) && img.node['alt'].trim() === '';
+        return !this.missing_alt_tag(img) && img.node.attributes['alt'].trim() === '';
     }
     terrible_filename(img) {
         const u = img.url.toString();

@@ -1,16 +1,14 @@
 import { Url } from './attribute/Url';
-import { IElement } from "../interfaces/IElement";
-import { IRunner } from "../interfaces/IRunner";
-import { IHtml } from "../interfaces/IHtml";
+import { IElement, IHtml, INode, IRunner } from "../interfaces";
 export declare class Element implements IElement {
     private runner;
     private html;
-    node: any;
+    node: INode;
     url: Url;
     line: number | null;
-    content: string;
+    content: string | null;
     base_url: string | null;
-    constructor(runner: IRunner, html: IHtml, node: any, base_url?: string | null);
+    constructor(runner: IRunner, html: IHtml, node: INode, base_url?: string | null);
     get link_attribute(): any;
     get meta_content(): any;
     meta_tag(): boolean;
