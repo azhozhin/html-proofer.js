@@ -1,5 +1,6 @@
 import {Failure} from "../html-proofer/Failure"
 import {CheckType} from "../html-proofer/CheckType"
+import * as cheerio from "cheerio";
 
 export interface ICache {
   add_internal(url: any, metadata: any, found: any): void
@@ -50,7 +51,9 @@ export interface IExternalRequest {
 
 
 export interface IHtml {
-  css(selector:string): any
+  css(selector: string | any): any
+
+  remove(node: any): void
 
   content: string
   text: string
@@ -121,7 +124,6 @@ export interface IOptions {
 export const EmptyOptions: IOptions = {}
 
 
-
 export interface IReporter {
   report(): void
 
@@ -160,8 +162,15 @@ export interface IRunner {
 }
 
 export interface INode {
-  content: string
-  text: string
+  name: string,
+  content: string | null,
+  text: string | null,
+  attributes: any
+  parent: INode | null,
+  // technical details from parser
+  sourceCodeLocation: any,
+  nativeNode: any,
 }
 
 export type ISource = string | Array<string>
+

@@ -5,11 +5,11 @@ import {ICheckResult} from "../../interfaces";
 export class OpenGraph extends Check {
 
   public run():ICheckResult {
-    this.html.css('meta[property="og:url"], meta[property="og:image"]').each((i:number, node:any) => {
+    for (const node of this.html.css('meta[property="og:url"], meta[property="og:image"]')) {
       const openGraph = this.create_element(node)
 
       if (openGraph.ignore()) {
-        return
+        continue
       }
 
       //does the openGraph exist?
@@ -27,7 +27,7 @@ export class OpenGraph extends Check {
               openGraph.line, null, openGraph.content)
         }
       }
-    })
+    }
 
     return {
       external_urls: this.external_urls,

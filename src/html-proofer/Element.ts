@@ -1,20 +1,19 @@
 import {Url} from './attribute/Url'
-import {adapt_nokogiri_node} from './Utils'
-import {IElement, IHtml, IRunner} from "../interfaces";
+import {IElement, IHtml, INode, IRunner} from "../interfaces";
 
 export class Element implements IElement {
   private runner: IRunner
   private html: IHtml
-  public node: any
+  public node: INode
   public url: Url
-  public line: number | null;
-  public content: string;
-  public base_url: string | null;
+  public line: number | null
+  public content: string | null
+  public base_url: string | null
 
-  constructor(runner: IRunner, html: IHtml, node: any, base_url: string | null = null) {
+  constructor(runner: IRunner, html: IHtml, node: INode, base_url: string | null = null) {
     this.runner = runner
     this.html = html
-    this.node = adapt_nokogiri_node(html, node)
+    this.node = node
 
     this.base_url = base_url
     this.url = new Url(runner, this.link_attribute, base_url)
@@ -157,7 +156,7 @@ export class Element implements IElement {
         break
       }
       ancestors.push(current_node)
-      current_node = adapt_nokogiri_node(this.html, current_node.parent)
+      current_node = current_node.parent
     }
     return ancestors.reverse()
   }

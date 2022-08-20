@@ -1,7 +1,7 @@
 import {UrlValidator} from '../UrlValidator'
 import {Url} from '../attribute/Url'
 import {Hydra} from '../Hydra'
-import {create_nokogiri, unique} from '../Utils'
+import {createDocument, unique} from '../Utils'
 import {Failure} from '../Failure'
 import {outdent} from 'outdent'
 import {IRunner, IExternalRequest, IExtMetadata} from '../../interfaces/'
@@ -150,7 +150,7 @@ export class External extends UrlValidator {
 
     const hash = url.hash
 
-    const body_doc = create_nokogiri(response.data)
+    const doc = createDocument(response.data)
 
     const unencoded_hash = decodeURI(hash)
     const cssSelectors = [
@@ -175,7 +175,7 @@ export class External extends UrlValidator {
 
     // some (encoded and decoded) selectors could match thus do need to query twice
     const full_selector = unique(cssSelectors).join(',')
-    if (body_doc.css(full_selector).length > 0) {
+    if (doc.css(full_selector).length > 0) {
       return
     }
 

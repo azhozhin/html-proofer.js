@@ -1,7 +1,7 @@
 import fs from 'fs'
 import * as cheerio from 'cheerio'
 import URI from 'urijs'
-import {IHtml} from "../interfaces";
+import {IHtml, INode} from "../interfaces";
 
 export function isFile(filepath: string): boolean {
   try {
@@ -24,7 +24,7 @@ export function pluralize(count: number, single: string, plural: string): string
 }
 
 
-export function create_nokogiri(src: string): IHtml {
+export function createDocument(src: string): IHtml {
   let content
   if (fs.existsSync(src) && !isDirectory(src)) {
     content = fs.readFileSync(src)
@@ -36,13 +36,23 @@ export function create_nokogiri(src: string): IHtml {
 
   // simulation of nokogiri API
   return {
-    css: $,
+    css: (selector): Array<INode> => {
+      const result: Array<INode> = []
+      $(selector).each((i, node) => {
+        result.push(adapt_nokogiri_node($, node))
+      })
+      return result
+    },
     content: $.html(),
     text: $.text(),
+    // API to remove nodes from DOM
+    remove: (node: INode): void => {
+      $(node.nativeNode).remove()
+    },
   }
 }
 
-function getContent(html: IHtml, node: any): string | null {
+function getContent($: any, node: any): string | null {
   // we need to decide if it is empty or null, cheerio does not distinguish them
   if (node.children.length === 0) {
     if (node.name === 'script') { // for self-closed script endIndex == startIndex <-- looks like a bug
@@ -52,49 +62,21 @@ function getContent(html: IHtml, node: any): string | null {
     }
     return '' // for everything else we return empty string
   }
-  return html.css(node).html()
+  return $(node).html()
 }
 
-export function adapt_nokogiri_node(html: IHtml, node: any) {
-
-  // return {
-  //   attributes: node.attribs,
-  //   text: html.css(node).text(),
-  //   content: getContent(html, node),
-  //  }
-  const handler = {
-    get: function (target: any, name: string) {
-      if (target.hasOwnProperty(name)) {
-        return target[name]
-      }
-      // simulate nokogiri api to attributes
-      if (name === 'attributes') {
-        return target.attribs
-      }
-      if (name === 'text') {
-        return html.css(node).text()
-      }
-      if (name === 'content') {
-        if (target.attribs && target.attribs['content'] != null) {
-          return target.attribs['content']
-        }
-
-        // we need to decide if it is empty or null, cheerio does not distinguish them
-        if (node.children.length === 0) {
-          if (node.name === 'script') { // for self-closed script endIndex == startIndex <-- looks like a bug
-            return node.endIndex - node.startIndex === 0 ? null : ''
-          } else if (node.name === 'meta') { // for meta 'content is null always if 'content' is not attribute
-            return null
-          }
-          return '' // for everything else we return empty string
-        }
-        return html.css(node).html()
-      }
-      throw new Error('Should not reach here')
-      //return target.attribs[name]
-    },
+function adapt_nokogiri_node($: cheerio.CheerioAPI, node: cheerio.Element): INode {
+  return {
+    name: node.name,
+    // todo: this could be performance issue
+    parent: (node.parent != null) ? adapt_nokogiri_node($, node.parent as cheerio.Element) : null,
+    attributes: node.attribs,
+    text: $(node).text(),
+    content: getContent($, node),
+    // technical details from parser
+    sourceCodeLocation: node.sourceCodeLocation,
+    nativeNode: node,
   }
-  return new Proxy(node, handler)
 }
 
 export function isNullOrEmpty(str: string | null): boolean {
@@ -169,6 +151,6 @@ export function first(arr: Array<any>): any {
   return arr[0]
 }
 
-export function unique(arr:Array<string>): Array<string> {
+export function unique(arr: Array<string>): Array<string> {
   return [...new Set(arr)]
 }

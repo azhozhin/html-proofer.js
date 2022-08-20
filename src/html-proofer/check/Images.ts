@@ -8,11 +8,11 @@ export class Images extends Check {
   SCREEN_SHOT_REGEX = /Screen(?: |%20)Shot(?: |%20)\d+-\d+-\d+(?: |%20)at(?: |%20)\d+.\d+.\d+/
 
   public run(): ICheckResult {
-    this.html.css('img').each((i: number, node: any) => {
+    for (const node of this.html.css('img')){
       let img = this.create_element(node)
 
       if (img.ignore()) {
-        return
+        continue
       }
 
       // screenshot filenames should return because of terrible names
@@ -50,9 +50,7 @@ export class Images extends Check {
       if (this.runner.enforce_https() && img.url.http()) {
         this.add_failure(`image ${img.url.raw_attribute} uses the http scheme`, img.line, null, img.content)
       }
-
-      return this.external_urls
-    })
+    }
 
     return {
       external_urls: this.external_urls,

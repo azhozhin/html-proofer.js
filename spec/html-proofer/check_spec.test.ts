@@ -7,18 +7,18 @@ import {ICheckResult} from "../../src/interfaces";
 
 class MailToOctocat extends Check {
   public run(): ICheckResult {
-    this.html.css('a').each((i: number, node: any) => {
+    for (const node of this.html.css('a')) {
       const link = this.create_element(node)
 
       if (link.ignore()) {
-        return
+        continue
       }
 
       if (this.mailto_octocat(link)) {
         this.add_failure(`Don't email the Octocat directly!`, link.line)
-        return
+        continue
       }
-    })
+    }
 
     return {
       external_urls: this.external_urls,

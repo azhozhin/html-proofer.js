@@ -1,6 +1,5 @@
 import {Failure} from './Failure'
 import {Element} from './Element'
-import {adapt_nokogiri_node} from './Utils'
 
 import {Url} from "./attribute/Url";
 import {ICheck, ICheckResult, IExtMetadata, IHtml, IIntMetadata, IRunner} from "../interfaces";
@@ -34,7 +33,7 @@ export abstract class Check implements ICheck {
 
   private removeIgnoredTags(html: IHtml) {
     for (const node of html.css("code, pre, tt")) {
-      html.css(node).remove()
+      html.remove(node)
     }
     return html
   }
@@ -82,7 +81,7 @@ export abstract class Check implements ICheck {
       this._base_url = null
       return null
     }
-    const node = adapt_nokogiri_node(this.html, base[0])
+    const node = base[0]
     this._base_url = node.attributes['href']
     return this._base_url
   }

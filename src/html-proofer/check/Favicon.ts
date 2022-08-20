@@ -7,18 +7,18 @@ export class Favicon extends Check {
   public run(): ICheckResult {
     let found = false
     let el: Element | null = null
-    this.html.css('link').each((i: number, node: any) => {
+    for (const node of this.html.css('link')) {
       el = this.create_element(node)
 
       if (el.ignore()) {
-        return
+        continue
       }
 
       found = last(el.node.attributes['rel'].split(' ')) === 'icon'
       if (found) {
-        return false
+        break
       }
-    })
+    }
 
     if (this.immediate_redirect()) {
       // do nothing
@@ -49,6 +49,6 @@ export class Favicon extends Check {
     }
 
     // todo: inconsistent API
-    return content[0].attribs['content'].startsWith('0;')
+    return content[0].attributes['content'].startsWith('0;')
   }
 }

@@ -1,7 +1,7 @@
 import {UrlValidator} from '../UrlValidator'
 import {Failure} from '../Failure'
 import * as fs from 'fs'
-import {create_nokogiri, unique} from '../Utils'
+import {createDocument, unique} from '../Utils'
 import {Url} from '../attribute/Url'
 import {IRunner, IIntMetadata} from "../../interfaces/"
 
@@ -110,8 +110,8 @@ export class Internal extends UrlValidator {
         `[name = "${escaped_frag_id}"]`]
     })
 
-    const html = create_nokogiri(url.absolute_path)
-    return html.css(csss.join(','))
+    const doc = createDocument(url.absolute_path)
+    return doc.css(csss.join(','))
   }
 
 }

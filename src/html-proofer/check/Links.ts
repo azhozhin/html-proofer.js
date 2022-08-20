@@ -7,38 +7,38 @@ export class Links extends Check implements ICheck {
 
   public run(): ICheckResult {
     const nodes = []
-    this.html.css('a, link, source').each((i: number, node: any) => {
+    for (const node of this.html.css('a, link, source')) {
       const link = this.create_element(node)
 
       if (link.ignore()) {
-        return
+        continue
       }
 
       if (!this.allow_hash_href() && link.node.attributes['href'] === '#') {
         this.add_failure('linking to internal hash #, which points to nowhere', link.line, null, link.content)
-        return
+        continue
       }
 
       // is there even a href?
       if (!link.url.raw_attribute) {
         if (this.allow_missing_href()) {
-          return
+          continue
         }
 
         this.add_failure(`'${link.node.name}' tag is missing a reference`, link.line, null, link.content)
-        return
+        continue
       }
       // is it even a valid URL?
       if (!link.url.valid()) {
         this.add_failure(`${link.href} is an invalid URL`, link.line, null, link.content)
-        return
+        continue
       }
 
       this.check_schemes(link)
 
       // intentionally down here because we still want valid? & missing_href? to execute
       if (link.url.non_http_remote()) {
-        return
+        continue
       }
 
       if (!link.url.internal && link.url.remote()) {
@@ -49,12 +49,12 @@ export class Links extends Check implements ICheck {
         // we need to skip these for now; although the domain main be valid,
         // curl/Typheous inaccurately return 404s for some links. cc https://git.io/vyCFx
         if (link.node.attributes['rel'] == 'dns-prefetch') {
-          return
+          continue
         }
 
         if (!link.url.is_path()) {
           this.add_failure(`${link.url.raw_attribute} is an invalid URL`, link.line, null, link.content)
-          return
+          continue
         }
 
         this.add_to_external_urls(link.url, link.line)
@@ -63,11 +63,11 @@ export class Links extends Check implements ICheck {
         if (link.url.unslashed_directory(link.url.absolute_path)) {
           this.add_failure(`internally linking to a directory ${link.url.raw_attribute} without trailing slash`,
             link.line, null, link.content)
-          return
+          continue
         }
         this.add_to_internal_urls(link.url, link.line)
       }
-    })
+    }
 
     return {
       external_urls: this.external_urls,

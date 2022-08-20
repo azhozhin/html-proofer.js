@@ -5,15 +5,15 @@ import {ICheckResult} from "../../interfaces";
 
 export class Scripts extends Check {
   public run(): ICheckResult {
-    this.html.css('script').each((i: number, node: any) => {
+    for (const node of this.html.css('script')) {
       const script = this.create_element(node)
 
       if (script.ignore()) {
-        return
+        continue
       }
 
-      if (!isNullOrEmpty(script.content.trim())) {
-        return
+      if (!isNullOrEmpty((script.content || '').trim())) {
+        continue
       }
 
       //# does the script exist?
@@ -27,7 +27,7 @@ export class Scripts extends Check {
       } else if (!script.url.exists()) {
         this.add_failure(`internal script reference ${script.src} does not exist`, script.line, null, script.content)
       }
-    })
+    }
 
     return {
       external_urls: this.external_urls,

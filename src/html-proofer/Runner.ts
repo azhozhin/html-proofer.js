@@ -1,7 +1,7 @@
 import {Failure} from './Failure.js'
 import * as path from 'path'
 import {Cli} from './reporter/Cli'
-import {create_nokogiri, mergeConcat, pluralize} from './Utils'
+import {createDocument, mergeConcat, pluralize} from './Utils'
 import {Check} from './Check.js'
 import {External} from './url_validator/External'
 import {Internal} from './url_validator/Internal'
@@ -141,8 +141,8 @@ export class Runner implements IRunner {
   }
 
   load_file(path: string, source: string) {
-    const html = create_nokogiri(path)
-    return this.check_parsed(html, path, source)
+    const doc = createDocument(path)
+    return this.check_parsed(doc, path, source)
   }
 
   // Collects any external URLs found in a directory of files. Also collectes

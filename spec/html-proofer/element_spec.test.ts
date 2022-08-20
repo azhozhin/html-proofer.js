@@ -5,7 +5,7 @@ import {FIXTURES_DIR, run_proofer} from '../spec-helper'
 import {Element} from '../../src/html-proofer/Element'
 import {IRunner} from '../../src/interfaces/'
 import {CheckType} from '../../src/html-proofer/CheckType'
-import {create_nokogiri} from '../../src/html-proofer/Utils'
+import {createDocument} from '../../src/html-proofer/Utils'
 
 describe('HTMLProofer::Element', () => {
 
@@ -19,24 +19,24 @@ describe('HTMLProofer::Element', () => {
   describe('#initialize', () => {
 
     it('accepts the xmlns attribute', () => {
-      const noko = create_nokogiri('<a xmlns:cc="http://creativecommons.org/ns#">Creative Commons</a>')
-      const nokoNode = noko.css('a')[0];
-      const element = new Element(context.runner!, noko, nokoNode)
+      const doc = createDocument('<a xmlns:cc="http://creativecommons.org/ns#">Creative Commons</a>')
+      const node = doc.css('a')[0]
+      const element = new Element(context.runner!, doc, node)
       expect(element.node.attributes['xmlns:cc']).toEqual('http://creativecommons.org/ns#')
     })
 
     it('assigns the text node', () => {
-      const noko = create_nokogiri('<p>One')
-      const nokoNode = noko.css('p')[0];
-      const element = new Element(context.runner!, noko, nokoNode)
+      const doc = createDocument('<p>One')
+      const node = doc.css('p')[0];
+      const element = new Element(context.runner!, doc, node)
       expect(element.node.text).toEqual('One')
       expect(element.node.content).toEqual('One')
     })
 
     it('accepts the content attribute', () => {
-      const noko = create_nokogiri('<meta name="twitter:card" content="summary">')
-      const nokoNode = noko.css('meta')[0];
-      const element = new Element(context.runner!, noko, nokoNode)
+      const doc = createDocument('<meta name="twitter:card" content="summary">')
+      const node = doc.css('meta')[0];
+      const element = new Element(context.runner!, doc, node)
       expect(element.node.attributes['content']).toEqual('summary')
     })
 
@@ -44,9 +44,9 @@ describe('HTMLProofer::Element', () => {
 
   describe('#link_attribute', () => {
     it('works for src attributes', () => {
-      const noko = create_nokogiri('<img src=image.png />')
-      const nokoNode = noko.css('img')[0];
-      const element = new Element(context.runner!, noko, nokoNode)
+      const doc = createDocument('<img src=image.png />')
+      const node = doc.css('img')[0];
+      const element = new Element(context.runner!, doc, node)
       expect(element.url.toString()).toEqual('image.png')
 
     })
@@ -54,10 +54,9 @@ describe('HTMLProofer::Element', () => {
 
   describe('#ignore', () => {
     it('works for twitter cards', () => {
-      const noko = create_nokogiri(
-          '<meta name="twitter:url" data-proofer-ignore content="http://example.com/soon-to-be-published-url">')
-      const nokoNode = noko.css('meta')[0];
-      const element = new Element(context.runner!, noko, nokoNode)
+      const doc = createDocument('<meta name="twitter:url" data-proofer-ignore content="http://example.com/soon-to-be-published-url">')
+      const node = doc.css('meta')[0];
+      const element = new Element(context.runner!, doc, node)
       expect(element.ignore()).toEqual(true)
     })
 
@@ -74,58 +73,58 @@ describe('HTMLProofer::Element', () => {
 
   describe('return content properly', () => {
     it('0', () => {
-      const doc = create_nokogiri('<meta content="abc">')
-      const nokoNode = doc.css('meta')[0];
-      const element = new Element(context.runner!, doc, nokoNode)
-      expect(element.content).toEqual('abc')
+      const doc = createDocument('<meta content="abc">')
+      const node = doc.css('meta')[0];
+      const element = new Element(context.runner!, doc, node)
+      expect(element.node.attributes['content']).toEqual('abc')
     })
 
     it('1', () => {
-      const doc = create_nokogiri('<meta>')
-      const nokoNode = doc.css('meta')[0];
-      const element = new Element(context.runner!, doc, nokoNode)
+      const doc = createDocument('<meta>')
+      const node = doc.css('meta')[0];
+      const element = new Element(context.runner!, doc, node)
       expect(element.content).toBeNull()
     })
 
     it('1.1', () => {
-      const doc = create_nokogiri('<meta />')
-      const nokoNode = doc.css('meta')[0];
-      const element = new Element(context.runner!, doc, nokoNode)
+      const doc = createDocument('<meta />')
+      const node = doc.css('meta')[0];
+      const element = new Element(context.runner!, doc, node)
       expect(element.content).toBeNull()
     })
 
     it('1.2', () => {
-      const doc = create_nokogiri('<meta data-tag="a"/>')
-      const nokoNode = doc.css('meta')[0];
-      const element = new Element(context.runner!, doc, nokoNode)
+      const doc = createDocument('<meta data-tag="a"/>')
+      const node = doc.css('meta')[0];
+      const element = new Element(context.runner!, doc, node)
       expect(element.content).toBeNull()
     })
 
     it('2', () => {
-      const doc = create_nokogiri(' <script />')
-      const nokoNode = doc.css('script')[0];
-      const element = new Element(context.runner!, doc, nokoNode)
+      const doc = createDocument(' <script />')
+      const node = doc.css('script')[0];
+      const element = new Element(context.runner!, doc, node)
       expect(element.content).toBeNull()
     })
 
     it('2.1', () => {
-      const doc = create_nokogiri(' <script data-tag="b"/>')
-      const nokoNode = doc.css('script')[0];
-      const element = new Element(context.runner!, doc, nokoNode)
+      const doc = createDocument(' <script data-tag="b"/>')
+      const node = doc.css('script')[0];
+      const element = new Element(context.runner!, doc, node)
       expect(element.content).toBeNull()
     })
 
     it('3', () => {
-      const doc = create_nokogiri(' <script></script>')
-      const nokoNode = doc.css('script')[0];
-      const element = new Element(context.runner!, doc, nokoNode)
+      const doc = createDocument(' <script></script>')
+      const node = doc.css('script')[0];
+      const element = new Element(context.runner!, doc, node)
       expect(element.content).toEqual('')
     })
 
     it('3.1', () => {
-      const doc = create_nokogiri(' <script data-tag="b"></script>')
-      const nokoNode = doc.css('script')[0];
-      const element = new Element(context.runner!, doc, nokoNode)
+      const doc = createDocument(' <script data-tag="b"></script>')
+      const node = doc.css('script')[0];
+      const element = new Element(context.runner!, doc, node)
       expect(element.content).toEqual('')
     })
   })
