@@ -33,7 +33,7 @@ class HTMLProofer {
             throw new Error('ArgumentError');
         }
         let options = (opts || interfaces_1.EmptyOptions);
-        options.type = CheckType_1.CheckType.DIRECTORIES;
+        options.type = CheckType_1.CheckType.DIRECTORY;
         for (const directory of directories) {
             if (!fs_1.default.existsSync(directory)) {
                 throw new Error(`ArgumentError: ${directory} does not exist`);
