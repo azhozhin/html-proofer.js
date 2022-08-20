@@ -12,16 +12,14 @@ class CustomReporter extends Reporter {
 describe('HTMLProofer::Reporter', () => {
   it('supports a custom reporter', async () => {
     const file = path.join(FIXTURES_DIR, 'sorting', 'kitchen_sinkish.html')
-    //const cassette_name = make_cassette_name(file, {})
-
-    //VCR.mountCassette(cassette_name/*, record: :new_episodes*/)
+    // const cassette_name = make_cassette_name(file, {})
+    // VCR.mountCassette(cassette_name/*, record: :new_episodes*/)
     const proofer = make_proofer(file, CheckType.FILE, {})
     proofer.reporter = new CustomReporter(proofer.logger)
     const output = await capture_stderr(async () => {
       await proofer.run()
     })
-    //VCR.ejectCassette(cassette_name)
+    // VCR.ejectCassette(cassette_name)
     expect(output).toMatch('Womp womp, found')
-//end
   })
 })

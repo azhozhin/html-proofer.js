@@ -18,7 +18,7 @@ describe('HTMLProofer::Runner', () => {
         request = r
       })
 
-      //const cassette_name = make_cassette_name(path.join(FIXTURES_DIR, "links", "check_just_once.html"), opts)
+      // const cassette_name = make_cassette_name(path.join(FIXTURES_DIR, "links", "check_just_once.html"), opts)
       // VCR.mountCassette(cassette_name/*, record: :new_episodes*/)
       await capture_stderr(async () => {
         await proofer.run()

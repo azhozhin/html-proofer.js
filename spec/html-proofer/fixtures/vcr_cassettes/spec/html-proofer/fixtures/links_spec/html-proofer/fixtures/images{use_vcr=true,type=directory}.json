@@ -2244,5 +2244,42 @@
         }
       }
     }
+  },
+  "4e8e4f76f42e1edd10809bd3461322a6": {
+    "meta": {
+      "url": "https://overcast.fm/+CGRt2FEbw/1:17:15",
+      "method": "head",
+      "headers": {
+        "Accept": "application/xml,application/xhtml+xml,text/html;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5",
+        "User-Agent": "Mozilla/5.0 (compatible; HTML Proofer/4.0.1; +https://github.com/gjtorikian/html-proofer)"
+      }
+    },
+    "fixture": true,
+    "originalResponseData": {
+      "status": 200,
+      "statusText": "OK",
+      "headers": {
+        "server": "nginx",
+        "date": "Sat, 20 Aug 2022 18:44:53 GMT",
+        "content-type": "text/html; charset=utf-8",
+        "connection": "close",
+        "x-overcast-origin": "17",
+        "x-frame-options": "DENY",
+        "cross-origin-opener-policy": "same-origin",
+        "x-content-type-options": "nosniff",
+        "referrer-policy": "origin-when-cross-origin",
+        "strict-transport-security": "max-age=63072000; includeSubDomains",
+        "content-security-policy": "default-src 'self' *.overcast-cdn.com; script-src 'self' *.overcast-cdn.com 'nonce-R9lTeSayDXvdWkLsxBaTAg=='; style-src 'self' *.overcast-cdn.com 'nonce-R04Wx9ja6VtUf3pyI7BKVA=='; object-src 'none'; frame-src 'none'; media-src * http://*; connect-src * http://* *.overcast-cdn.com"
+      },
+      "data": "",
+      "config": {
+        "url": "https://overcast.fm/+CGRt2FEbw/1:17:15",
+        "method": "head",
+        "headers": {
+          "Accept": "application/xml,application/xhtml+xml,text/html;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5",
+          "User-Agent": "Mozilla/5.0 (compatible; HTML Proofer/4.0.1; +https://github.com/gjtorikian/html-proofer)"
+        }
+      }
+    }
   }
 }

@@ -31,93 +31,93 @@ describe('Links test', () => {
   })
 
   it('passes for GitHub hashes to a file on the web when asked', async () => {
-    const github_hash = path.join(FIXTURES_DIR, 'links', 'github_file_hash.html')
-    const proofer = await run_proofer(github_hash, CheckType.FILE)
+    const githubHash = path.join(FIXTURES_DIR, 'links', 'github_file_hash.html')
+    const proofer = await run_proofer(githubHash, CheckType.FILE)
     expect(proofer.failed_checks).toEqual([])
   })
 
   it('passes for broken hashes on the web (when we look only for 4xx)', async () => {
     const options = {only_4xx: true}
-    const broken_hash_on_the_web = path.join(FIXTURES_DIR, 'links', 'broken_hash_on_the_web.html')
-    const proofer = await run_proofer(broken_hash_on_the_web, CheckType.FILE, options)
+    const brokenHashOnTheWeb = path.join(FIXTURES_DIR, 'links', 'broken_hash_on_the_web.html')
+    const proofer = await run_proofer(brokenHashOnTheWeb, CheckType.FILE, options)
     expect(proofer.failed_checks).toEqual([])
   })
 
   it('fails for broken internal hash', async () => {
-    const broken_hash_internal_filepath = path.join(FIXTURES_DIR, 'links', 'broken_hash_internal.html')
-    const proofer = await run_proofer(broken_hash_internal_filepath, CheckType.FILE)
+    const brokenHashInternalFilepath = path.join(FIXTURES_DIR, 'links', 'broken_hash_internal.html')
+    const proofer = await run_proofer(brokenHashInternalFilepath, CheckType.FILE)
     expect(proofer.failed_checks[0].description).toMatch(/internally linking to #noHash; the file exists, but the hash 'noHash' does not/)
   })
 
   it('finds internal hash with implict index', async () => {
-    const broken_hash_internal_filepath = path.join(FIXTURES_DIR, 'links', 'implicit_internal')
-    const proofer = await run_proofer(broken_hash_internal_filepath, CheckType.DIRECTORY)
+    const brokenHashInternalFilepath = path.join(FIXTURES_DIR, 'links', 'implicit_internal')
+    const proofer = await run_proofer(brokenHashInternalFilepath, CheckType.DIRECTORY)
     expect(proofer.failed_checks).toEqual([])
   })
 
   it('fails to find internal hash with implict index if not asked to follow', async () => {
     const options = {typhoeus: {followlocation: false}}
-    const broken_hash_internal_filepath = path.join(FIXTURES_DIR, 'links', 'implicit_internal')
-    const proofer = await run_proofer(broken_hash_internal_filepath, CheckType.DIRECTORY, options)
+    const brokenHashInternalFilepath = path.join(FIXTURES_DIR, 'links', 'implicit_internal')
+    const proofer = await run_proofer(brokenHashInternalFilepath, CheckType.DIRECTORY, options)
     expect(proofer.failed_checks.length).toEqual(1)
     expect(proofer.failed_checks[0].description).toMatch(/without trailing slash/)
   })
 
   it('passes when linking to the top', async () => {
-    const top_hash_internal_filepath = path.join(FIXTURES_DIR, 'links', 'topHashInternal.html')
-    const proofer = await run_proofer(top_hash_internal_filepath, CheckType.FILE)
+    const topHashInternalFilepath = path.join(FIXTURES_DIR, 'links', 'topHashInternal.html')
+    const proofer = await run_proofer(topHashInternalFilepath, CheckType.FILE)
     expect(proofer.failed_checks).toEqual([])
   })
 
   it('fails for broken external links', async () => {
-    const broken_link_external_filepath = path.join(FIXTURES_DIR, 'links', 'broken_link_external.html')
-    const proofer = await run_proofer(broken_link_external_filepath, CheckType.FILE)
+    const brokenLinkExternalFilepath = path.join(FIXTURES_DIR, 'links', 'broken_link_external.html')
+    const proofer = await run_proofer(brokenLinkExternalFilepath, CheckType.FILE)
     const failure = proofer.failed_checks[0].description
     expect(failure).toMatch(new RegExp(/failed with something very wrong/))
   })
 
   it('passes for different filename without option', async () => {
-    const broken_link_external_filepath = path.join(FIXTURES_DIR, 'links', 'file.foo')
-    const proofer = await run_proofer(broken_link_external_filepath, CheckType.FILE)
+    const brokenLinkExternalFilepath = path.join(FIXTURES_DIR, 'links', 'file.foo')
+    const proofer = await run_proofer(brokenLinkExternalFilepath, CheckType.FILE)
     expect(proofer.failed_checks).toEqual([])
   })
 
   it('fails for different filenames', async () => {
     const options = {extensions: ['.foo']}
-    const broken_link_external_filepath = path.join(FIXTURES_DIR, 'links', 'file.foo')
-    const proofer = await run_proofer(broken_link_external_filepath, CheckType.FILE, options)
+    const brokenLinkExternalFilepath = path.join(FIXTURES_DIR, 'links', 'file.foo')
+    const proofer = await run_proofer(brokenLinkExternalFilepath, CheckType.FILE, options)
     expect(proofer.failed_checks[0].description).toMatch(/failed with something very wrong/)
   })
 
   it('accepts multiple filenames', async () => {
     const options = {extensions: ['.xhtml', '.foo']}
-    const broken_link_external_filepath = path.join(FIXTURES_DIR, 'links')
-    const proofer = await run_proofer(broken_link_external_filepath, CheckType.DIRECTORY, options)
+    const brokenLinkExternalFilepath = path.join(FIXTURES_DIR, 'links')
+    const proofer = await run_proofer(brokenLinkExternalFilepath, CheckType.DIRECTORY, options)
     const results = proofer.failed_checks.map(x => x.path).reduce((prev, current) => prev && (current.endsWith('.xhtml') || current.endsWith('.foo')), true)
     expect(results).toBeTruthy()
   })
 
   it('fails for broken internal links', async () => {
-    const broken_link_internal_filepath = path.join(FIXTURES_DIR, 'links', 'broken_link_internal.html')
-    const proofer = await run_proofer(broken_link_internal_filepath, CheckType.FILE)
+    const brokenLinkInternalFilepath = path.join(FIXTURES_DIR, 'links', 'broken_link_internal.html')
+    const proofer = await run_proofer(brokenLinkInternalFilepath, CheckType.FILE)
     expect(proofer.failed_checks[0].description).toMatch('internally linking to ./notreal.html, which does not exist')
   })
 
   it('fails for broken internal root links', async () => {
-    const broken_root_link_internal_filepath = path.join(FIXTURES_DIR, 'links', 'broken_root_link_internal.html')
-    const proofer = await run_proofer(broken_root_link_internal_filepath, CheckType.FILE)
+    const brokenRootLinkInternalFilepath = path.join(FIXTURES_DIR, 'links', 'broken_root_link_internal.html')
+    const proofer = await run_proofer(brokenRootLinkInternalFilepath, CheckType.FILE)
     expect(proofer.failed_checks[0].description).toMatch('internally linking to /broken_root_link_internalz.html, which does not exist')
   })
 
   it('succeeds for working internal root links', async () => {
-    const broken_root_link_internal_filepath = path.join(FIXTURES_DIR, 'links', 'working_root_link_internal.html')
-    const proofer = await run_proofer(broken_root_link_internal_filepath, CheckType.FILE)
+    const brokenRootLinkInternalFilepath = path.join(FIXTURES_DIR, 'links', 'working_root_link_internal.html')
+    const proofer = await run_proofer(brokenRootLinkInternalFilepath, CheckType.FILE)
     expect(proofer.failed_checks).toEqual([])
   })
 
   it('succeeds for working internal-root-links pointing to other folder', async () => {
-    const broken_root_link_internal_filepath = path.join(FIXTURES_DIR, 'links', 'link_to_another_folder.html')
-    const proofer = await run_proofer(broken_root_link_internal_filepath, CheckType.FILE,
+    const brokenRootLinkInternalFilepath = path.join(FIXTURES_DIR, 'links', 'link_to_another_folder.html')
+    const proofer = await run_proofer(brokenRootLinkInternalFilepath, CheckType.FILE,
       {root_dir: 'spec/html-proofer/fixtures'})
     expect(proofer.failed_checks).toEqual([])
   })
@@ -136,92 +136,92 @@ describe('Links test', () => {
 
 
   it('allows link with no href', async () => {
-    const missing_link_href_filepath = path.join(FIXTURES_DIR, 'links', 'missing_link_href.html')
-    const proofer = await run_proofer(missing_link_href_filepath, CheckType.FILE, {allow_missing_href: true})
+    const missingLinkHrefFilepath = path.join(FIXTURES_DIR, 'links', 'missing_link_href.html')
+    const proofer = await run_proofer(missingLinkHrefFilepath, CheckType.FILE, {allow_missing_href: true})
     expect(proofer.failed_checks).toEqual([])
   })
 
   it('should follow redirects', async () => {
-    const link_with_redirect_filepath = path.join(FIXTURES_DIR, 'links', 'link_with_redirect.html')
-    const proofer = await run_proofer(link_with_redirect_filepath, CheckType.FILE, {enforce_https: false})
+    const linkWithRedirectFilepath = path.join(FIXTURES_DIR, 'links', 'link_with_redirect.html')
+    const proofer = await run_proofer(linkWithRedirectFilepath, CheckType.FILE, {enforce_https: false})
     expect(proofer.failed_checks).toEqual([])
   })
 
   it('fails on redirects if not following', async () => {
-    const link_with_redirect_filepath = path.join(FIXTURES_DIR, 'links', 'link_with_redirect.html')
-    const proofer = await run_proofer(link_with_redirect_filepath, CheckType.FILE,
+    const linkWithRedirectFilepath = path.join(FIXTURES_DIR, 'links', 'link_with_redirect.html')
+    const proofer = await run_proofer(linkWithRedirectFilepath, CheckType.FILE,
       {enforce_https: false, typhoeus: {followlocation: false}})
     expect(proofer.failed_checks[0].description).toMatch(new RegExp(/failed/))
   })
 
   it('does not fail on redirects we\'re not following', async () => {
     // this test should emit a 301--see above--but we're intentionally suppressing it
-    const link_with_redirect_filepath = path.join(FIXTURES_DIR, 'links', 'link_with_redirect.html')
-    const proofer = await run_proofer(link_with_redirect_filepath, CheckType.FILE,
+    const linkWithRedirectFilepath = path.join(FIXTURES_DIR, 'links', 'link_with_redirect.html')
+    const proofer = await run_proofer(linkWithRedirectFilepath, CheckType.FILE,
       {only_4xx: true, enforce_https: false, typhoeus: {followlocation: false}})
     expect(proofer.failed_checks).toEqual([])
   })
 
   it('should understand https', async () => {
-    const link_with_https_filepath = path.join(FIXTURES_DIR, 'links', 'link_with_https.html')
-    const proofer = await run_proofer(link_with_https_filepath, CheckType.FILE)
+    const linkWithHttpsFilepath = path.join(FIXTURES_DIR, 'links', 'link_with_https.html')
+    const proofer = await run_proofer(linkWithHttpsFilepath, CheckType.FILE)
     expect(proofer.failed_checks).toEqual([])
   })
 
   it('fails for broken hash links with status code numbers', async () => {
-    const broken_link_with_number_filepath = path.join(FIXTURES_DIR, 'links', 'broken_link_with_number.html')
-    const proofer = await run_proofer(broken_link_with_number_filepath, CheckType.FILE)
+    const brokenLinkWithNumberFilepath = path.join(FIXTURES_DIR, 'links', 'broken_link_with_number.html')
+    const proofer = await run_proofer(brokenLinkWithNumberFilepath, CheckType.FILE)
     expect(proofer.failed_checks[0].description).toMatch(
       /internally linking to #25-method-not-allowed; the file exists, but the hash '25-method-not-allowed' does not/)
   })
 
   it('should understand relative hash', async () => {
-    const link_with_https_filepath = path.join(FIXTURES_DIR, 'links', 'relative_hash.html')
-    const proofer = await run_proofer(link_with_https_filepath, CheckType.FILE)
+    const linkWithHttpsFilepath = path.join(FIXTURES_DIR, 'links', 'relative_hash.html')
+    const proofer = await run_proofer(linkWithHttpsFilepath, CheckType.FILE)
     expect(proofer.failed_checks).toEqual([])
   })
 
   it('properly resolves implicit /index.html in link paths', async () => {
-    const link_to_folder = path.join(FIXTURES_DIR, 'links', 'link_to_folder.html')
-    const proofer = await run_proofer(link_to_folder, CheckType.FILE)
+    const linkToFolder = path.join(FIXTURES_DIR, 'links', 'link_to_folder.html')
+    const proofer = await run_proofer(linkToFolder, CheckType.FILE)
     expect(proofer.failed_checks).toEqual([])
   })
 
   it('properly checks links to root', async () => {
-    const root_link = path.join(FIXTURES_DIR, 'links', 'root_link/root_link.html')
-    const proofer = await run_proofer(root_link, CheckType.FILE)
+    const rootLink = path.join(FIXTURES_DIR, 'links', 'root_link/root_link.html')
+    const proofer = await run_proofer(rootLink, CheckType.FILE)
     expect(proofer.failed_checks).toEqual([])
   })
 
   it('properly checks relative links', async () => {
-    const relative_links = path.join(FIXTURES_DIR, 'links', 'relative_links.html')
-    const proofer = await run_proofer(relative_links, CheckType.FILE)
+    const relativeLinks = path.join(FIXTURES_DIR, 'links', 'relative_links.html')
+    const proofer = await run_proofer(relativeLinks, CheckType.FILE)
     expect(proofer.failed_checks).toEqual([])
   })
 
   it('properly checks ssl links', async () => {
-    const check_ssl_links = path.join(FIXTURES_DIR, 'links', 'checkSSLLinks.html')
-    const proofer = await run_proofer(check_ssl_links, CheckType.FILE)
+    const checkSslLinks = path.join(FIXTURES_DIR, 'links', 'checkSSLLinks.html')
+    const proofer = await run_proofer(checkSslLinks, CheckType.FILE)
     expect(proofer.failed_checks).toEqual([])
   })
 
   it('ignores links marked as ignore data-proofer-ignore', async () => {
-    const ignorable_links = path.join(FIXTURES_DIR, 'links', 'ignorable_links.html')
-    const proofer = await run_proofer(ignorable_links, CheckType.FILE)
+    const ignorableLinks = path.join(FIXTURES_DIR, 'links', 'ignorable_links.html')
+    const proofer = await run_proofer(ignorableLinks, CheckType.FILE)
     expect(proofer.failed_checks).toEqual([])
   })
 
   it('ignores links via ignore_urls', async () => {
     const opts = {ignore_urls: [/^http:\/\//, /sdadsad/, '../whaadadt.html']}
-    const ignorable_links = path.join(FIXTURES_DIR, 'links', 'ignorable_links_via_options.html')
-    const proofer = await run_proofer(ignorable_links, CheckType.FILE, opts)
+    const ignorableLinks = path.join(FIXTURES_DIR, 'links', 'ignorable_links_via_options.html')
+    const proofer = await run_proofer(ignorableLinks, CheckType.FILE, opts)
     expect(proofer.failed_checks).toEqual([])
   })
 
   it('translates links via swap_urls', async () => {
-    const translated_link = path.join(FIXTURES_DIR, 'links', 'link_translated_via_href_swap.html')
+    const translatedLink = path.join(FIXTURES_DIR, 'links', 'link_translated_via_href_swap.html')
     const opts: IOptions = {swap_urls: new Map<string, string>([['/^\/articles\/([\\w-]+)/', '$1.html']])}
-    const proofer = await run_proofer(translated_link, CheckType.FILE, opts)
+    const proofer = await run_proofer(translatedLink, CheckType.FILE, opts)
     expect(proofer.failed_checks).toEqual([])
   })
 
@@ -232,93 +232,93 @@ describe('Links test', () => {
   })
 
   it('finds a mix of broken and unbroken links', async () => {
-    const multiple_problems = path.join(FIXTURES_DIR, 'links', 'multiple_problems.html')
-    const proofer = await run_proofer(multiple_problems, CheckType.FILE)
+    const multipleProblems = path.join(FIXTURES_DIR, 'links', 'multiple_problems.html')
+    const proofer = await run_proofer(multipleProblems, CheckType.FILE)
     expect(proofer.failed_checks[0].description).toMatch(
       'internally linking to #anadaasdadsadschor; the file exists, but the hash \'anadaasdadsadschor\' does not')
   })
 
   it('finds the same broken link multiple times', async () => {
-    const multiple_problems = path.join(FIXTURES_DIR, 'links', 'multiple_links.html')
-    const proofer = await run_proofer(multiple_problems, CheckType.FILE)
+    const multipleProblems = path.join(FIXTURES_DIR, 'links', 'multiple_links.html')
+    const proofer = await run_proofer(multipleProblems, CheckType.FILE)
     expect(proofer.failed_checks.length).toEqual(3)
   })
 
   it('ignores valid mailto links', async () => {
-    const ignorable_links = path.join(FIXTURES_DIR, 'links', 'mailto_link.html')
-    const proofer = await run_proofer(ignorable_links, CheckType.FILE)
+    const ignorableLinks = path.join(FIXTURES_DIR, 'links', 'mailto_link.html')
+    const proofer = await run_proofer(ignorableLinks, CheckType.FILE)
     expect(proofer.failed_checks).toEqual([])
   })
 
   it('accepts complex mailto link', async () => {
-    const ignorable_links = path.join(FIXTURES_DIR, 'links', 'mailto_all_properties.html')
-    const proofer = await run_proofer(ignorable_links, CheckType.FILE)
+    const ignorableLinks = path.join(FIXTURES_DIR, 'links', 'mailto_all_properties.html')
+    const proofer = await run_proofer(ignorableLinks, CheckType.FILE)
     expect(proofer.failed_checks).toEqual([])
   })
 
   it('ignores blank mailto links when configured to allow them', async () => {
-    const blank_mail_to_link = path.join(FIXTURES_DIR, 'links', 'blank_mailto_link.html')
-    const proofer = await run_proofer(blank_mail_to_link, CheckType.FILE, {ignore_empty_mailto: true})
+    const blankMailToLink = path.join(FIXTURES_DIR, 'links', 'blank_mailto_link.html')
+    const proofer = await run_proofer(blankMailToLink, CheckType.FILE, {ignore_empty_mailto: true})
     expect(proofer.failed_checks).toEqual([])
   })
 
   it('fails for blank mailto links', async () => {
-    const blank_mail_to_link = path.join(FIXTURES_DIR, 'links', 'blank_mailto_link.html')
-    const proofer = await run_proofer(blank_mail_to_link, CheckType.FILE)
+    const blankMailToLink = path.join(FIXTURES_DIR, 'links', 'blank_mailto_link.html')
+    const proofer = await run_proofer(blankMailToLink, CheckType.FILE)
     expect(proofer.failed_checks[0].description).toMatch('mailto: contains no email address')
   })
 
   it('fails for invalid mailto links', async () => {
-    const invalid_mail_to_link = path.join(FIXTURES_DIR, 'links', 'invalid_mailto_link.html')
-    const proofer = await run_proofer(invalid_mail_to_link, CheckType.FILE)
+    const invalidMailToLink = path.join(FIXTURES_DIR, 'links', 'invalid_mailto_link.html')
+    const proofer = await run_proofer(invalidMailToLink, CheckType.FILE)
     expect(proofer.failed_checks[0].description).toMatch('mailto:octocat contains an invalid email address')
   })
 
   it('ignores valid tel links', async () => {
-    const ignorable_links = path.join(FIXTURES_DIR, 'links', 'tel_link.html')
-    const proofer = await run_proofer(ignorable_links, CheckType.FILE)
+    const ignorableLinks = path.join(FIXTURES_DIR, 'links', 'tel_link.html')
+    const proofer = await run_proofer(ignorableLinks, CheckType.FILE)
     expect(proofer.failed_checks).toEqual([])
   })
 
   it('fails for blank tel links', async () => {
-    const blank_tel_link = path.join(FIXTURES_DIR, 'links', 'blank_tel_link.html')
-    const proofer = await run_proofer(blank_tel_link, CheckType.FILE)
+    const blankTelLink = path.join(FIXTURES_DIR, 'links', 'blank_tel_link.html')
+    const proofer = await run_proofer(blankTelLink, CheckType.FILE)
     expect(proofer.failed_checks[0].description).toMatch('tel: contains no phone number')
   })
 
   it('ignores javascript links', async () => {
-    const javascript_link = path.join(FIXTURES_DIR, 'links', 'javascript_link.html')
-    const proofer = await run_proofer(javascript_link, CheckType.FILE)
+    const javascriptLink = path.join(FIXTURES_DIR, 'links', 'javascript_link.html')
+    const proofer = await run_proofer(javascriptLink, CheckType.FILE)
     expect(proofer.failed_checks).toEqual([])
   })
 
   it('works for valid links missing the protocol', async () => {
-    const missing_protocol_link = path.join(FIXTURES_DIR, 'links', 'link_missing_protocol_valid.html')
-    const proofer = await run_proofer(missing_protocol_link, CheckType.FILE)
+    const missingProtocolLink = path.join(FIXTURES_DIR, 'links', 'link_missing_protocol_valid.html')
+    const proofer = await run_proofer(missingProtocolLink, CheckType.FILE)
     expect(proofer.failed_checks).toEqual([])
   })
 
   it('fails for invalid links missing the protocol', async () => {
-    const missing_protocol_link = path.join(FIXTURES_DIR, 'links', 'link_missing_protocol_invalid.html')
-    const proofer = await run_proofer(missing_protocol_link, CheckType.FILE)
+    const missingProtocolLink = path.join(FIXTURES_DIR, 'links', 'link_missing_protocol_invalid.html')
+    const proofer = await run_proofer(missingProtocolLink, CheckType.FILE)
     expect(proofer.failed_checks[0].description).toMatch('failed with something very wrong')
   })
 
   it('works for valid href within link elements', async () => {
-    const head_link = path.join(FIXTURES_DIR, 'links', 'head_link_href.html')
-    const proofer = await run_proofer(head_link, CheckType.FILE)
+    const headLink = path.join(FIXTURES_DIR, 'links', 'head_link_href.html')
+    const proofer = await run_proofer(headLink, CheckType.FILE)
     expect(proofer.failed_checks).toEqual([])
   })
 
   it('allows empty href on link elements', async () => {
-    const head_link = path.join(FIXTURES_DIR, 'links', 'head_link_href_empty.html')
-    const proofer = await run_proofer(head_link, CheckType.FILE, {allow_missing_href: true})
+    const headLink = path.join(FIXTURES_DIR, 'links', 'head_link_href_empty.html')
+    const proofer = await run_proofer(headLink, CheckType.FILE, {allow_missing_href: true})
     expect(proofer.failed_checks).toEqual([])
   })
 
   it('allows missing href on link elements', async () => {
-    const head_link = path.join(FIXTURES_DIR, 'links', 'head_link_href_absent.html')
-    const proofer = await run_proofer(head_link, CheckType.FILE, {allow_missing_href: true})
+    const headLink = path.join(FIXTURES_DIR, 'links', 'head_link_href_absent.html')
+    const proofer = await run_proofer(headLink, CheckType.FILE, {allow_missing_href: true})
     expect(proofer.failed_checks).toEqual([])
   })
 
@@ -355,95 +355,95 @@ describe('Links test', () => {
   })
 
   it('works for broken anchors within pre', async () => {
-    const anchor_pre = path.join(FIXTURES_DIR, 'links', 'anchors_in_pre.html')
-    const proofer = await run_proofer(anchor_pre, CheckType.FILE)
+    const anchorPre = path.join(FIXTURES_DIR, 'links', 'anchors_in_pre.html')
+    const proofer = await run_proofer(anchorPre, CheckType.FILE)
     expect(proofer.failed_checks).toEqual([])
   })
 
   it('works for broken link within pre', async () => {
-    const link_pre = path.join(FIXTURES_DIR, 'links', 'links_in_pre.html')
-    const proofer = await run_proofer(link_pre, CheckType.FILE)
+    const linkPre = path.join(FIXTURES_DIR, 'links', 'links_in_pre.html')
+    const proofer = await run_proofer(linkPre, CheckType.FILE)
     expect(proofer.failed_checks).toEqual([])
   })
 
   it('works for pipes in the URL', async () => {
-    const escape_pipes = path.join(FIXTURES_DIR, 'links', 'escape_pipes.html')
-    const proofer = await run_proofer(escape_pipes, CheckType.FILE)
+    const escapePipes = path.join(FIXTURES_DIR, 'links', 'escape_pipes.html')
+    const proofer = await run_proofer(escapePipes, CheckType.FILE)
     expect(proofer.failed_checks).toEqual([])
   })
 
   it('fails for broken hash with query', async () => {
-    const broken_hash = path.join(FIXTURES_DIR, 'links', 'broken_hash_with_query.html')
-    const proofer = await run_proofer(broken_hash, CheckType.FILE)
+    const brokenHash = path.join(FIXTURES_DIR, 'links', 'broken_hash_with_query.html')
+    const proofer = await run_proofer(brokenHash, CheckType.FILE)
     expect(proofer.failed_checks[0].description).toMatch(/#example; the file exists, but the hash 'example' does not/)
   })
 
   it('passes when linking to hash on another page', async () => {
-    const hash_on_another_page = path.join(FIXTURES_DIR, 'links', 'hash_on_another_page.html')
-    const proofer = await run_proofer(hash_on_another_page, CheckType.FILE)
+    const hashOnAnotherPage = path.join(FIXTURES_DIR, 'links', 'hash_on_another_page.html')
+    const proofer = await run_proofer(hashOnAnotherPage, CheckType.FILE)
     expect(proofer.failed_checks).toEqual([])
   })
 
   it('fails for mismatched hash casing', async () => {
-    const hash_on_another_page = path.join(FIXTURES_DIR, 'links', 'hash_mismatched_case.html')
-    const proofer = await run_proofer(hash_on_another_page, CheckType.FILE)
+    const hashOnAnotherPage = path.join(FIXTURES_DIR, 'links', 'hash_mismatched_case.html')
+    const proofer = await run_proofer(hashOnAnotherPage, CheckType.FILE)
     expect(proofer.failed_checks[0].description).toMatch('#MainMenu; the file exists, but the hash \'MainMenu\' does not')
   })
 
   it('works for directory index file', async () => {
     const options = {directory_index_file: 'index.php'}
-    const link_pointing_to_directory = path.join(FIXTURES_DIR, 'links', 'link_pointing_to_directory.html')
-    const proofer = await run_proofer(link_pointing_to_directory, CheckType.FILE, options)
+    const linkPointingToDirectory = path.join(FIXTURES_DIR, 'links', 'link_pointing_to_directory.html')
+    const proofer = await run_proofer(linkPointingToDirectory, CheckType.FILE, options)
     expect(proofer.failed_checks).toEqual([])
   })
 
   it('fails if directory index file doesn\'t exist', async () => {
     const options = {directory_index_file: 'README.md'}
-    const link_pointing_to_directory = path.join(FIXTURES_DIR, 'links', 'link_pointing_to_directory.html')
-    const proofer = await run_proofer(link_pointing_to_directory, CheckType.FILE, options)
+    const linkPointingToDirectory = path.join(FIXTURES_DIR, 'links', 'link_pointing_to_directory.html')
+    const proofer = await run_proofer(linkPointingToDirectory, CheckType.FILE, options)
     expect(proofer.failed_checks[0].description).toMatch('internally linking to folder-php/, which does not exist')
   })
 
   it('ensures Typhoeus options are passed', async () => {
     const options = {typhoeus: {ssl_verifypeer: false}}
-    const typhoeus_options_link = path.join(FIXTURES_DIR, 'links', 'ensure_typhoeus_options.html')
-    const proofer = await run_proofer(typhoeus_options_link, CheckType.FILE, options)
+    const typhoeusOptionsLink = path.join(FIXTURES_DIR, 'links', 'ensure_typhoeus_options.html')
+    const proofer = await run_proofer(typhoeusOptionsLink, CheckType.FILE, options)
     expect(proofer.failed_checks).toEqual([])
   })
 
   it('works if subdirectory }s with .html', async () => {
-    const with_subdirectory_html = path.join(FIXTURES_DIR, 'links', '_site')
-    const proofer = await run_proofer(with_subdirectory_html, CheckType.FILE)
+    const withSubdirectoryHtml = path.join(FIXTURES_DIR, 'links', '_site')
+    const proofer = await run_proofer(withSubdirectoryHtml, CheckType.FILE)
     expect(proofer.failed_checks).toEqual([])
   })
 
   it('works for hash referring to itself', async () => {
-    const hash_referring_to_self = path.join(FIXTURES_DIR, 'links', 'hash_referring_to_self.html')
-    const proofer = await run_proofer(hash_referring_to_self, CheckType.FILE)
+    const hashReferringToSelf = path.join(FIXTURES_DIR, 'links', 'hash_referring_to_self.html')
+    const proofer = await run_proofer(hashReferringToSelf, CheckType.FILE)
     expect(proofer.failed_checks).toEqual([])
   })
 
   it('ignores placeholder with name', async () => {
-    const placeholder_with_name = path.join(FIXTURES_DIR, 'links', 'placeholder_with_name.html')
-    const proofer = await run_proofer(placeholder_with_name, CheckType.FILE, {allow_missing_href: true})
+    const placeholderWithName = path.join(FIXTURES_DIR, 'links', 'placeholder_with_name.html')
+    const proofer = await run_proofer(placeholderWithName, CheckType.FILE, {allow_missing_href: true})
     expect(proofer.failed_checks).toEqual([])
   })
 
   it('ignores placeholder with id', async () => {
-    const placeholder_with_id = path.join(FIXTURES_DIR, 'links', 'placeholder_with_id.html')
-    const proofer = await run_proofer(placeholder_with_id, CheckType.FILE, {allow_missing_href: true})
+    const placeholderWithId = path.join(FIXTURES_DIR, 'links', 'placeholder_with_id.html')
+    const proofer = await run_proofer(placeholderWithId, CheckType.FILE, {allow_missing_href: true})
     expect(proofer.failed_checks).toEqual([])
   })
 
   it('allows placeholder with empty id', async () => {
-    const empty_id = path.join(FIXTURES_DIR, 'links', 'placeholder_with_empty_id.html')
-    const proofer = await run_proofer(empty_id, CheckType.FILE, {allow_missing_href: true})
+    const emptyId = path.join(FIXTURES_DIR, 'links', 'placeholder_with_empty_id.html')
+    const proofer = await run_proofer(emptyId, CheckType.FILE, {allow_missing_href: true})
     expect(proofer.failed_checks).toEqual([])
   })
 
   it('ignores non-http(s) protocols', async () => {
-    const other_protocols = path.join(FIXTURES_DIR, 'links', 'other_protocols.html')
-    const proofer = await run_proofer(other_protocols, CheckType.FILE)
+    const otherProtocols = path.join(FIXTURES_DIR, 'links', 'other_protocols.html')
+    const proofer = await run_proofer(otherProtocols, CheckType.FILE)
     expect(proofer.failed_checks).toEqual([])
   })
 
@@ -508,7 +508,7 @@ describe('Links test', () => {
   })
 
   describe('automatically adding default extensions to files', () => {
-    let context: { fixture?: string } = {}
+    const context: { fixture?: string } = {}
 
     beforeEach(() => {
       context.fixture = path.join(FIXTURES_DIR, 'links', 'no_html_extension.html')
@@ -546,72 +546,72 @@ describe('Links test', () => {
   })
 
   it('passes for non-HTTPS links when asked', async () => {
-    const non_https = path.join(FIXTURES_DIR, 'links', 'non_https.html')
-    const proofer = await run_proofer(non_https, CheckType.FILE, {enforce_https: false})
+    const nonHttps = path.join(FIXTURES_DIR, 'links', 'non_https.html')
+    const proofer = await run_proofer(nonHttps, CheckType.FILE, {enforce_https: false})
     expect(proofer.failed_checks.length).toEqual(0)
   })
 
   it('fails for non-HTTPS links by default', async () => {
-    const non_https = path.join(FIXTURES_DIR, 'links', 'non_https.html')
-    const proofer = await run_proofer(non_https, CheckType.FILE)
+    const nonHttps = path.join(FIXTURES_DIR, 'links', 'non_https.html')
+    const proofer = await run_proofer(nonHttps, CheckType.FILE)
     expect(proofer.failed_checks[0].description).toMatch(/ben.balter.com is not an HTTPS link/)
   })
 
   it('passes for hash href', async () => {
-    const hash_href = path.join(FIXTURES_DIR, 'links', 'hash_href.html')
-    const proofer = await run_proofer(hash_href, CheckType.FILE)
+    const hashHref = path.join(FIXTURES_DIR, 'links', 'hash_href.html')
+    const proofer = await run_proofer(hashHref, CheckType.FILE)
     expect(proofer.failed_checks.length).toEqual(0)
   })
 
   it('fails for hash href when asked', async () => {
-    const hash_href = path.join(FIXTURES_DIR, 'links', 'hash_href.html')
-    const proofer = await run_proofer(hash_href, CheckType.FILE, {allow_hash_href: false})
+    const hashHref = path.join(FIXTURES_DIR, 'links', 'hash_href.html')
+    const proofer = await run_proofer(hashHref, CheckType.FILE, {allow_hash_href: false})
     expect(proofer.failed_checks[0].description).toMatch(/linking to internal hash #, which points to nowhere/)
   })
 
   it('fails for broken IP address links', async () => {
-    const hash_href = path.join(FIXTURES_DIR, 'links', 'ip_href.html')
-    const proofer = await run_proofer(hash_href, CheckType.FILE)
+    const hashHref = path.join(FIXTURES_DIR, 'links', 'ip_href.html')
+    const proofer = await run_proofer(hashHref, CheckType.FILE)
     expect(proofer.failed_checks[0].description).toMatch(/failed/)
   }, 60000) // todo: can we make this test faster?
 
   it('works for internal links to weird encoding IDs', async () => {
-    const hash_href = path.join(FIXTURES_DIR, 'links', 'encodingLink.html')
-    const proofer = await run_proofer(hash_href, CheckType.FILE)
+    const hashHref = path.join(FIXTURES_DIR, 'links', 'encodingLink.html')
+    const proofer = await run_proofer(hashHref, CheckType.FILE)
     expect(proofer.failed_checks.length).toEqual(0)
   })
 
   // even though this is valid in HTML5, flag it as an error because it's
   // possibly a mistake
   it('does expect href for anchors in HTML5', async () => {
-    const missing_href = path.join(FIXTURES_DIR, 'links', 'blank_href_html5.html')
-    const proofer = await run_proofer(missing_href, CheckType.FILE)
+    const missingHref = path.join(FIXTURES_DIR, 'links', 'blank_href_html5.html')
+    const proofer = await run_proofer(missingHref, CheckType.FILE)
     expect(proofer.failed_checks.length).toEqual(1)
   })
 
   it('does expect href for anchors in non-HTML5', async () => {
-    let missing_href = path.join(FIXTURES_DIR, 'links', 'blank_href_html4.html')
-    let proofer = await run_proofer(missing_href, CheckType.FILE)
+    let missingHref = path.join(FIXTURES_DIR, 'links', 'blank_href_html4.html')
+    let proofer = await run_proofer(missingHref, CheckType.FILE)
     expect(proofer.failed_checks.length).toEqual(1)
 
-    missing_href = path.join(FIXTURES_DIR, 'links', 'blank_href_htmlunknown.html')
-    proofer = await run_proofer(missing_href, CheckType.FILE)
+    missingHref = path.join(FIXTURES_DIR, 'links', 'blank_href_htmlunknown.html')
+    proofer = await run_proofer(missingHref, CheckType.FILE)
     expect(proofer.failed_checks.length).toEqual(1)
   })
 
   it('can skip expecting href for anchors in non-HTML5', async () => {
-    let missing_href = path.join(FIXTURES_DIR, 'links', 'blank_href_html4.html')
-    let proofer = await run_proofer(missing_href, CheckType.FILE, {allow_missing_href: true})
+    let missingHref = path.join(FIXTURES_DIR, 'links', 'blank_href_html4.html')
+    let proofer = await run_proofer(missingHref, CheckType.FILE, {allow_missing_href: true})
     expect(proofer.failed_checks.length).toEqual(0)
 
-    missing_href = path.join(FIXTURES_DIR, 'links', 'blank_href_htmlunknown.html')
-    proofer = await run_proofer(missing_href, CheckType.FILE, {allow_missing_href: true})
+    missingHref = path.join(FIXTURES_DIR, 'links', 'blank_href_htmlunknown.html')
+    proofer = await run_proofer(missingHref, CheckType.FILE, {allow_missing_href: true})
     expect(proofer.failed_checks.length).toEqual(0)
   })
 
   it('passes for relative links with a base', async () => {
-    const relative_links = path.join(FIXTURES_DIR, 'links', 'relative_links_with_base.html')
-    const proofer = await run_proofer(relative_links, CheckType.FILE)
+    const relativeLinks = path.join(FIXTURES_DIR, 'links', 'relative_links_with_base.html')
+    const proofer = await run_proofer(relativeLinks, CheckType.FILE)
     expect(proofer.failed_checks).toEqual([])
   })
 
@@ -622,8 +622,8 @@ describe('Links test', () => {
   })
 
   it('ignores links when the parent element is ignored', async () => {
-    const parent_ignore = path.join(FIXTURES_DIR, 'links', 'ignored_by_parent.html')
-    const proofer = await run_proofer(parent_ignore, CheckType.FILE)
+    const parentIgnore = path.join(FIXTURES_DIR, 'links', 'ignored_by_parent.html')
+    const proofer = await run_proofer(parentIgnore, CheckType.FILE)
     expect(proofer.failed_checks).toEqual([])
   })
 
@@ -634,14 +634,14 @@ describe('Links test', () => {
   })
 
   it('works with quotes in the hash href', async () => {
-    const hash_href = path.join(FIXTURES_DIR, 'links', 'quote.html')
-    const proofer = await run_proofer(hash_href, CheckType.FILE, {allow_hash_href: true})
+    const hashHref = path.join(FIXTURES_DIR, 'links', 'quote.html')
+    const proofer = await run_proofer(hashHref, CheckType.FILE, {allow_hash_href: true})
     expect(proofer.failed_checks.length).toEqual(0)
   })
 
   it('works with base without href', async () => {
-    const base_no_href = path.join(FIXTURES_DIR, 'links', 'base_no_href.html')
-    const proofer = await run_proofer(base_no_href, CheckType.FILE)
+    const baseNoHref = path.join(FIXTURES_DIR, 'links', 'base_no_href.html')
+    const proofer = await run_proofer(baseNoHref, CheckType.FILE)
     expect(proofer.failed_checks).toEqual([])
   })
 
@@ -735,9 +735,9 @@ describe('Links test', () => {
   })
 
   it('knows how to find internal link with additional sources', async () => {
-    const empty_dir = path.join(FIXTURES_DIR, 'links', 'same_name_as_dir')
-    const valid_dir = path.join(FIXTURES_DIR, 'links', 'internals')
-    const proofer = await run_proofer([valid_dir, empty_dir], CheckType.DIRECTORIES)
+    const emptyDir = path.join(FIXTURES_DIR, 'links', 'same_name_as_dir')
+    const validDir = path.join(FIXTURES_DIR, 'links', 'internals')
+    const proofer = await run_proofer([validDir, emptyDir], CheckType.DIRECTORIES)
     expect(proofer.failed_checks.length).toEqual(0)
   })
 
