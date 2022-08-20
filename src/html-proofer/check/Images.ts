@@ -74,15 +74,15 @@ export class Images extends Check {
   }
 
   missing_alt_tag(img: Element): boolean {
-    return img.node['alt'] == null
+    return img.node.attributes['alt'] == null
   }
 
   empty_alt_tag(img: Element): boolean {
-    return !this.missing_alt_tag(img) && img.node['alt'] === ''
+    return !this.missing_alt_tag(img) && img.node.attributes['alt'] === ''
   }
 
   alt_all_spaces(img: Element): boolean {
-    return !this.missing_alt_tag(img) && img.node['alt'].trim() === ''
+    return !this.missing_alt_tag(img) && img.node.attributes['alt'].trim() === ''
   }
 
   terrible_filename(img: Element): boolean {

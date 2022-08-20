@@ -8,14 +8,14 @@ describe('Utils', () => {
       const noko = create_nokogiri('<html lang="jp">')
       const nokoNode = noko.css('html')[0]
       const node = adapt_nokogiri_node(noko, nokoNode)
-      expect(node['lang']).toEqual('jp')
+      expect(node.attributes['lang']).toEqual('jp')
     })
 
     it('passes for a file', () => {
       const noko = create_nokogiri(path.join(FIXTURES_DIR, 'utils', 'lang-jp.html'))
       const nokoNode = noko.css('html')[0];
       const node = adapt_nokogiri_node(noko, nokoNode)
-      expect(node['lang']).toEqual('jp')
+      expect(node.attributes['lang']).toEqual('jp')
     })
 
     it('ignores directories', () => {

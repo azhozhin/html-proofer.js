@@ -37,15 +37,15 @@ export class Scripts extends Check {
   }
 
   missing_src(script: Element): boolean {
-    return script.node['src'] == undefined
+    return script.node.attributes['src'] == undefined
   }
 
   check_sri(script: Element) {
-    if (isNullOrEmpty(script.node['integrity']) && isNullOrEmpty(script.node['crossorigin'])) {
+    if (isNullOrEmpty(script.node.attributes['integrity']) && isNullOrEmpty(script.node.attributes['crossorigin'])) {
       this.add_failure(`SRI and CORS not provided in: #{@script.url.raw_attribute}`, script.line, null, script.content)
-    } else if (isNullOrEmpty(script.node['integrity'])) {
+    } else if (isNullOrEmpty(script.node.attributes['integrity'])) {
       this.add_failure(`Integrity is missing in: #{@script.url.raw_attribute}`, script.line, null, script.content)
-    } else if (isNullOrEmpty(script.node['crossorigin'])) {
+    } else if (isNullOrEmpty(script.node.attributes['crossorigin'])) {
       this.add_failure(`CORS not provided for external resource in: #{@script.url.raw_attribute}`, script.line, null, script.content)
     }
   }

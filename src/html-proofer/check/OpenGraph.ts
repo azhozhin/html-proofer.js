@@ -37,10 +37,10 @@ export class OpenGraph extends Check {
   }
 
   missing_content(element:Element) {
-    return element.node['content'] == null
+    return element.node.attributes['content'] == null
   }
 
   empty_content(element:Element) {
-    return element.node['content'] === ''
+    return element.node.attributes['content'] === ''
   }
 }

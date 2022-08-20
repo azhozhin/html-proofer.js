@@ -6,15 +6,15 @@ import {ICheckResult} from "../../interfaces";
 export class Favicon extends Check {
   public run(): ICheckResult {
     let found = false
-    let favicon: Element | null = null
+    let el: Element | null = null
     this.html.css('link').each((i: number, node: any) => {
-      favicon = this.create_element(node)
+      el = this.create_element(node)
 
-      if (favicon.ignore()) {
+      if (el.ignore()) {
         return
       }
 
-      found = last(favicon.node['rel'].split(' ')) === 'icon'
+      found = last(el.node.attributes['rel'].split(' ')) === 'icon'
       if (found) {
         return false
       }
@@ -24,10 +24,10 @@ export class Favicon extends Check {
       // do nothing
     } else {
       if (found) {
-        if (favicon!.url.remote()) {
-          this.add_to_external_urls(favicon!.url, favicon!.line)
-        } else if (!favicon!.url.exists()) {
-          this.add_failure(`internal favicon ${favicon!.url.raw_attribute} does not exist`, favicon!.line, null, favicon!.content)
+        if (el!.url.remote()) {
+          this.add_to_external_urls(el!.url, el!.line)
+        } else if (!el!.url.exists()) {
+          this.add_failure(`internal favicon ${el!.url.raw_attribute} does not exist`, el!.line, null, el!.content)
         }
       } else {
         this.add_failure('no favicon provided')
@@ -48,6 +48,7 @@ export class Favicon extends Check {
       return false
     }
 
+    // todo: inconsistent API
     return content[0].attribs['content'].startsWith('0;')
   }
 }

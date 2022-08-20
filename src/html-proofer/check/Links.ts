@@ -14,7 +14,7 @@ export class Links extends Check implements ICheck {
         return
       }
 
-      if (!this.allow_hash_href() && link.node['href'] === '#') {
+      if (!this.allow_hash_href() && link.node.attributes['href'] === '#') {
         this.add_failure('linking to internal hash #, which points to nowhere', link.line, null, link.content)
         return
       }
@@ -48,7 +48,7 @@ export class Links extends Check implements ICheck {
 
         // we need to skip these for now; although the domain main be valid,
         // curl/Typheous inaccurately return 404s for some links. cc https://git.io/vyCFx
-        if (link.node['rel'] == 'dns-prefetch') {
+        if (link.node.attributes['rel'] == 'dns-prefetch') {
           return
         }
 
@@ -132,15 +132,15 @@ export class Links extends Check implements ICheck {
   SRI_REL_TYPES = ['stylesheet']
 
   check_sri(link: Element) {
-    if (!this.SRI_REL_TYPES.includes(link.node['rel'])) {
+    if (!this.SRI_REL_TYPES.includes(link.node.attributes['rel'])) {
       return
     }
 
-    if ((!link.node['integrity']) && (!link.node['crossorigin'])) {
+    if ((!link.node.attributes['integrity']) && (!link.node.attributes['crossorigin'])) {
       this.add_failure(`SRI and CORS not provided in: ${link.url.raw_attribute}`, link.line, null, link.content)
-    } else if (!link.node['integrity']) {
+    } else if (!link.node.attributes['integrity']) {
       this.add_failure(`Integrity is missing in: ${link.url.raw_attribute}`, link.line, null, link.content)
-    } else if (!link.node['crossorigin']) {
+    } else if (!link.node.attributes['crossorigin']) {
       this.add_failure(`CORS not provided for external resource in: ${link.url.raw_attribute}`, link.line, null, link.content)
     }
   }

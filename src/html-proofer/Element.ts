@@ -34,7 +34,7 @@ export class Element implements IElement {
     if (this.attribute_swapped()) {
       return this.swap_attributes('content')
     }
-    return this.node['content']
+    return this.node.attributes['content']
   }
 
   meta_tag() {
@@ -48,7 +48,7 @@ export class Element implements IElement {
     if (this.attribute_swapped()) {
       return this.swap_attributes('src')
     }
-    return this.node['src']
+    return this.node.attributes['src']
   }
 
   img_tag() {
@@ -66,7 +66,7 @@ export class Element implements IElement {
     if (this.attribute_swapped()) {
       this.swap_attributes('srcset')
     }
-    return this.node['srcset']
+    return this.node.attributes['srcset']
   }
 
   source_tag() {
@@ -80,7 +80,7 @@ export class Element implements IElement {
     if (this.attribute_swapped()) {
       this.swap_attributes('href')
     }
-    return this.node['href']
+    return this.node.attributes['href']
   }
 
   a_tag(): boolean {

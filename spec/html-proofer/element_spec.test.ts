@@ -22,7 +22,7 @@ describe('HTMLProofer::Element', () => {
       const noko = create_nokogiri('<a xmlns:cc="http://creativecommons.org/ns#">Creative Commons</a>')
       const nokoNode = noko.css('a')[0];
       const element = new Element(context.runner!, noko, nokoNode)
-      expect(element.node['xmlns:cc']).toEqual('http://creativecommons.org/ns#')
+      expect(element.node.attributes['xmlns:cc']).toEqual('http://creativecommons.org/ns#')
     })
 
     it('assigns the text node', () => {
@@ -37,7 +37,7 @@ describe('HTMLProofer::Element', () => {
       const noko = create_nokogiri('<meta name="twitter:card" content="summary">')
       const nokoNode = noko.css('meta')[0];
       const element = new Element(context.runner!, noko, nokoNode)
-      expect(element.node['content']).toEqual('summary')
+      expect(element.node.attributes['content']).toEqual('summary')
     })
 
   })

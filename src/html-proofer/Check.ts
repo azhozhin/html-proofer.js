@@ -83,7 +83,7 @@ export abstract class Check implements ICheck {
       return null
     }
     const node = adapt_nokogiri_node(this.html, base[0])
-    this._base_url = node['href']
+    this._base_url = node.attributes['href']
     return this._base_url
   }
 
