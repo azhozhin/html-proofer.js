@@ -12,7 +12,7 @@ export class Scripts extends Check {
         continue
       }
 
-      if (!isNullOrEmpty((script.content || '').trim())) {
+      if (!isNullOrEmpty(script.content)) {
         continue
       }
 
