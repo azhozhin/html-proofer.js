@@ -6,7 +6,7 @@ import {Url} from "./attribute/Url";
 import {ICheck, ICheckResult, IExtMetadata, IHtml, IIntMetadata, IRunner} from "../interfaces";
 
 
-export class Check implements ICheck {
+export abstract class Check implements ICheck {
   html: IHtml
   public failures: Array<Failure>
   public internal_urls: Map<string, Array<IIntMetadata>> = new Map()
@@ -22,39 +22,28 @@ export class Check implements ICheck {
     this.failures = []
   }
 
-  create_element(node: any): Element {
+  protected create_element(node: any): Element {
     return new Element(this.runner, this.html, node, this.base_url())
   }
 
-  public run(): ICheckResult {
-    throw new Error('NotImplementedError')
+  public abstract run(): ICheckResult
+
+  protected add_failure(description: string, line: (number | null) = null, status: (string | null) = null, content: (string | null) = null) {
+    this.failures.push(new Failure(this.runner.current_filename!, this.name, description, line, status, content))
   }
 
-  add_failure(description: string, line: (number | null) = null, status: (string | null) = null, content: (string | null) = null) {
-    this.failures.push(new Failure(this.runner.current_filename!, this.short_name, description, line, status, content))
-  }
-
-  removeIgnoredTags(html: IHtml) {
+  private removeIgnoredTags(html: IHtml) {
     for (const node of html.css("code, pre, tt")) {
       html.css(node).remove()
     }
     return html
   }
 
-  public get short_name(): string {
-    // self.class.name.split("::").last
-    return this.constructor.name
-  }
-
   public get name(): string {
     return this.constructor.name
   }
 
-  static getClassName() {
-    return this.constructor.name
-  }
-
-  add_to_internal_urls(url: Url, line: number | null) {
+  protected add_to_internal_urls(url: Url, line: number | null) {
     const url_string = url.raw_attribute || ''
 
     if (!this.internal_urls.has(url_string)) {
@@ -71,7 +60,7 @@ export class Check implements ICheck {
     this.internal_urls.get(url_string)!.push(metadata)
   }
 
-  add_to_external_urls(url: Url, line: number | null): void {
+  protected add_to_external_urls(url: Url, line: number | null): void {
     const url_string = url.toString()
 
     if (!this.external_urls.has(url_string)) {

@@ -78,10 +78,10 @@ export class Url extends Attribute {
   }
 
   private swap_urls(url: string): string {
-    if (!this.runner.options['swap_urls']) {
+    if (!this.runner.options.swap_urls) {
       return url
     }
-    const replacements: Map<string, string> = this.runner.options['swap_urls']
+    const replacements: Map<string, string> = this.runner.options.swap_urls
 
     for (const [link, replacement] of replacements) {
       // this is workaround for javascript as it is not possible to use RegExp as key for dictionary
