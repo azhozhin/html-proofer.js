@@ -2,21 +2,22 @@ import {Url} from './attribute/Url'
 import {IElement, IHtml, INode, IRunner} from "../interfaces";
 
 export class Element implements IElement {
+  node: INode
+  url: Url
+  line: number | null
+  content: string | null
+  baseUrl: string | null
+
   private runner: IRunner
   private html: IHtml
-  public node: INode
-  public url: Url
-  public line: number | null
-  public content: string | null
-  public base_url: string | null
 
-  constructor(runner: IRunner, html: IHtml, node: INode, base_url: string | null = null) {
+  constructor(runner: IRunner, html: IHtml, node: INode, baseUrl: string | null = null) {
     this.runner = runner
     this.html = html
     this.node = node
 
-    this.base_url = base_url
-    this.url = new Url(runner, this.link_attribute, base_url)
+    this.baseUrl = baseUrl
+    this.url = new Url(runner, this.link_attribute, baseUrl)
 
     this.line = node.sourceCodeLocation.startLine
     this.content = this.node.content
@@ -91,8 +92,8 @@ export class Element implements IElement {
   }
 
   aria_hidden(): boolean {
-    const aria_hidden = this.node.attributes['aria-hidden']
-    return aria_hidden ? aria_hidden.value === 'true' : false
+    const ariaHidden = this.node.attributes['aria-hidden']
+    return ariaHidden ? ariaHidden.value === 'true' : false
   }
 
   multiple_srcsets() {
@@ -114,34 +115,34 @@ export class Element implements IElement {
   }
 
   attribute_swapped() {
-    if (Object.keys(this.runner.options['swap_attributes']).length === 0) {
+    if (Object.keys(this.runner.options.swap_attributes).length === 0) {
       return false
     }
 
-    const attrs = this.runner.options['swap_attributes'][this.node.name]
+    const attrs = this.runner.options.swap_attributes[this.node.name]
     if (attrs) {
       return true
     }
     return false
   }
 
-  swap_attributes(old_attr: string) {
-    const attrs = this.runner.options['swap_attributes'][this.node.name]
+  swap_attributes(oldAttr: string) {
+    const attrs = this.runner.options.swap_attributes[this.node.name]
 
     // todo: too complicated
-    let new_attr
+    let newAttr
     if (attrs) {
-      const n = attrs.find((o:any) => o[0] === old_attr)
+      const n = attrs.find((o:any) => o[0] === oldAttr)
       if (n) {
-        new_attr = n[1]
+        newAttr = n[1]
       }
     }
 
-    if (!new_attr) {
+    if (!newAttr) {
       return null
     }
 
-    return this.node.attributes[new_attr]
+    return this.node.attributes[newAttr]
   }
 
   node_ancestors(node:any) {
@@ -149,23 +150,23 @@ export class Element implements IElement {
       return []
     }
 
-    let current_node = node
+    let currentNode = node
     const ancestors = []
     while (true) {
-      if (current_node.parent == null) {
+      if (currentNode.parent == null) {
         break
       }
-      ancestors.push(current_node)
-      current_node = current_node.parent
+      ancestors.push(currentNode)
+      currentNode = currentNode.parent
     }
     return ancestors.reverse()
   }
 
   ancestors_ignorable() {
-    const ancestors_attributes = this.node_ancestors(this.node).map(a => a.attributes)
-    ancestors_attributes.pop() // remove document at the end
-    const any_ancestor = ancestors_attributes.some(a => a['data-proofer-ignore'] != null)
-    return any_ancestor
+    const ancestorsAttributes = this.node_ancestors(this.node).map(a => a.attributes)
+    ancestorsAttributes.pop() // remove document at the end
+    const anyAncestor = ancestorsAttributes.some(a => a['data-proofer-ignore'] != null)
+    return anyAncestor
 
   }
 

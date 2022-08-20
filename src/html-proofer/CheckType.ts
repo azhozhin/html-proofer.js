@@ -1,6 +1,6 @@
 export enum CheckType {
-  LINKS,
-  FILE,
-  DIRECTORY,
-  DIRECTORIES,
+  LINKS = 'links',
+  FILE = 'file',
+  DIRECTORY = 'directory',
+  DIRECTORIES = 'directories',
 }

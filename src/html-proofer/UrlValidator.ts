@@ -5,7 +5,7 @@ export class UrlValidator {
   protected cache: ICache
   protected logger: ILogger
 
-  protected failed_checks: any[];
+  protected failedChecks: any[] // todo: use specific type here
 
   constructor(runner: IRunner) {
     this.runner = runner
@@ -13,6 +13,6 @@ export class UrlValidator {
     this.cache = runner.cache
     this.logger = runner.logger
 
-    this.failed_checks = []
+    this.failedChecks = []
   }
 }

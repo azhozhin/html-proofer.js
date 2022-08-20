@@ -4,8 +4,8 @@ import * as https from 'node:https'
 import {ILogger, IExternalRequest} from "../interfaces";
 
 export class Hydra {
-  private logger: ILogger;
-  private requests: Array<IExternalRequest>;
+  private logger: ILogger
+  private requests: IExternalRequest[]
   private requestVerboseInterceptor: number | null = null
   private responseVerboseInterceptor: number | null = null
 
@@ -36,33 +36,33 @@ export class Hydra {
 
   async run() {
 
-    const http_agent = new http.Agent()
-    const https_insecure_agent = new https.Agent({
+    const httpAgent = new http.Agent()
+    const httpsInsecureAgent = new https.Agent({
       rejectUnauthorized: false,
     })
-    const https_secure_agent = new https.Agent()
+    const httpsSecureAgent = new https.Agent()
 
     for (const request of this.requests) {
       // axios expects protocol (http/https) and rejects urls without it, so we need to fix urls for it
       const fixedUrl = request.url.slice(0, 4).toLowerCase() !== 'http' ? 'http://' + request.url : request.url
-      let https_agent = (request.options['ssl_verifypeer'] != null && request.options['ssl_verifypeer'] === false)
-          ? https_insecure_agent
-          : https_secure_agent
+      const httpsAgent = (request.options.ssl_verifypeer != null && request.options.ssl_verifypeer === false)
+          ? httpsInsecureAgent
+          : httpsSecureAgent
 
       const url = new URL(fixedUrl) // for unicode urls it should be converted to punycode
       const config = {
         url: url.toString(),
-        method: request.options['method'],
+        method: request.options.method,
         timeout: 30000,
 
-        headers: request.options['headers'],
+        headers: request.options.headers,
         maxRedirects: request.options.followlocation ? 50 : 0,
         // we need promise to be resolved anyway
-        validateStatus: function(status:any) {
+        validateStatus(status:any) {
           return true
         },
-        httpAgent: http_agent,
-        httpsAgent: https_agent,
+        httpAgent,
+        httpsAgent,
       }
 
       if (request.options.verbose) {
@@ -85,7 +85,7 @@ export class Hydra {
 }
 
 function serialize(response: AxiosResponse<any, any>) {
-  let meta = {
+  const meta = {
     url: response.config.url,
     method: response.config.method,
     data: response.config.data,
@@ -93,7 +93,7 @@ function serialize(response: AxiosResponse<any, any>) {
   }
 
   return {
-    meta: meta,
+    meta,
     fixture: true,
 
     originalResponseData: {
@@ -101,7 +101,6 @@ function serialize(response: AxiosResponse<any, any>) {
       statusText: response.statusText,
       headers: response.headers,
       data: response.data,
-      //config: meta,
     },
   }
 }

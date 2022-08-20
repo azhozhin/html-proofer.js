@@ -27,7 +27,7 @@ export class Favicon extends Check {
         if (el!.url.remote()) {
           this.add_to_external_urls(el!.url, el!.line)
         } else if (!el!.url.exists()) {
-          this.add_failure(`internal favicon ${el!.url.raw_attribute} does not exist`, el!.line, null, el!.content)
+          this.add_failure(`internal favicon ${el!.url.rawAttribute} does not exist`, el!.line, null, el!.content)
         }
       } else {
         this.add_failure('no favicon provided')
@@ -35,8 +35,8 @@ export class Favicon extends Check {
     }
 
     return {
-      external_urls: this.external_urls,
-      internal_urls: this.internal_urls,
+      externalUrls: this.externalUrls,
+      internalUrls: this.internalUrls,
       failures: this.failures
     }
   }

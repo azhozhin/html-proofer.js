@@ -4,8 +4,8 @@ import log4js from 'log4js'
 import {ILogger} from "../interfaces";
 
 export class Log implements ILogger {
-  logger: log4js.Logger
-  err_logger: log4js.Logger
+  private outLogger: log4js.Logger
+  private errLogger: log4js.Logger
 
   constructor() {
 
@@ -19,16 +19,16 @@ export class Log implements ILogger {
         err: {appenders: ['stderr'], level: 'error'},
       },
     })
-    this.logger = inst.getLogger()
+    this.outLogger = inst.getLogger()
     // we want only error level to be published into stderr, this is really weird that I need two loggers to archive it
-    this.err_logger = inst.getLogger('err')
+    this.errLogger = inst.getLogger('err')
   }
 
   log(level: string, message: string) {
     if (level === 'error') {
-      this.err_logger.log(level, message)
+      this.errLogger.log(level, message)
     } else {
-      this.logger.log(level, message)
+      this.outLogger.log(level, message)
     }
   }
 

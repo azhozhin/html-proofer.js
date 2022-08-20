@@ -12,7 +12,7 @@ export class HTMLProofer {
       throw new Error(`ArgumentError: ${file} does not exist`)
     }
 
-    let options = (opts || EmptyOptions)
+    const options = (opts || EmptyOptions)
     options.type = CheckType.FILE
     return new Runner(file, options)
   }
@@ -22,17 +22,17 @@ export class HTMLProofer {
       throw new Error(`ArgumentError: ${directory} does not exist`)
     }
 
-    let options = (opts || EmptyOptions)
+    const options = (opts || EmptyOptions)
     options.type = CheckType.DIRECTORY
     return new Runner([directory], options)
   }
 
-  static check_directories(directories: Array<string>, opts?: IOptions) {
+  static check_directories(directories: string[], opts?: IOptions) {
     if (!Array.isArray(directories)) {
       throw new Error('ArgumentError')
     }
 
-    let options = (opts || EmptyOptions)
+    const options = (opts || EmptyOptions)
     options.type = CheckType.DIRECTORY
     for (const directory of directories) {
       if (!fs.existsSync(directory)) {
@@ -42,11 +42,11 @@ export class HTMLProofer {
     return new Runner(directories, options)
   }
 
-  static check_links(links: Array<string>, opts?:IOptions) {
+  static check_links(links: string[], opts?:IOptions) {
     if (!Array.isArray(links)) {
       throw new Error('ArgumentError')
     }
-    let options = (opts || EmptyOptions)
+    const options = (opts || EmptyOptions)
     options.type = CheckType.LINKS
     return new Runner(links, options)
   }

@@ -4,7 +4,7 @@ import {Failure} from "./Failure";
 
 
 export class Reporter implements IReporter {
-  failures: Array<Failure> = []
+  failures: Failure[] = []
 
   protected logger: ILogger
 
@@ -12,11 +12,11 @@ export class Reporter implements IReporter {
     this.logger = logger
   }
 
-  set_failures(failures: Array<Failure>) {
+  set_failures(failures: Failure[]) {
     this.failures = failures
     // this.failures = groupBy(failures, e=>e.check_name)
-    //.transform_values { |issues| issues.sort_by { |issue| [issue.path, issue.line] } } \
-    //.sort
+    // .transform_values { |issues| issues.sort_by { |issue| [issue.path, issue.line] } } \
+    // .sort
 
   }
 

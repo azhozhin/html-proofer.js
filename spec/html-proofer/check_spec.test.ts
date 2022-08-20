@@ -21,14 +21,14 @@ class MailToOctocat extends Check {
     }
 
     return {
-      external_urls: this.external_urls,
-      internal_urls: this.internal_urls,
+      externalUrls: this.externalUrls,
+      internalUrls: this.internalUrls,
       failures: this.failures
     }
   }
 
   mailto_octocat(link: Element) {
-    return link.url.raw_attribute === 'mailto:octocat@github.com'
+    return link.url.rawAttribute === 'mailto:octocat@github.com'
   }
 }
 

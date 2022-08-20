@@ -36,8 +36,8 @@ export function createDocument(src: string): IHtml {
 
   // simulation of nokogiri API
   return {
-    css: (selector): Array<INode> => {
-      const result: Array<INode> = []
+    css: (selector): INode[] => {
+      const result: INode[] = []
       $(selector).each((i, node) => {
         result.push(adapt_nokogiri_node($, node))
       })
@@ -83,7 +83,7 @@ export function isNullOrEmpty(str: string | null): boolean {
   return str == null || str === ''
 }
 
-export function mergeConcat(a: Map<string, Array<any>>, b: Map<string, Array<any>>) {
+export function mergeConcat(a: Map<string, any[]>, b: Map<string, any[]>) {
   for (const [k, v] of b) {
     if (!a.has(k)) {
       a.set(k, [])
@@ -120,10 +120,10 @@ export function hasUnicode(str: string): boolean {
  *
  * @returns Map of the array grouped by the grouping function.
  */
-//export function groupBy<K, V>(list: Array<V>, keyGetter: (input: V) => K): Map<K, Array<V>> {
+// export function groupBy<K, V>(list: Array<V>, keyGetter: (input: V) => K): Map<K, Array<V>> {
 //    const map = new Map<K, Array<V>>();
-export function groupBy<K, V>(list: Array<V>, keyGetter: (input: V) => K): Map<K, Array<V>> {
-  const map = new Map<K, Array<V>>()
+export function groupBy<K, V>(list: V[], keyGetter: (input: V) => K): Map<K, V[]> {
+  const map = new Map<K, V[]>()
   list.forEach((item) => {
     const key = keyGetter(item)
     const collection = map.get(key)
@@ -137,20 +137,20 @@ export function groupBy<K, V>(list: Array<V>, keyGetter: (input: V) => K): Map<K
 }
 
 // Simulation of Ruby
-export function last(arr: Array<any>): any {
+export function last(arr: any[]): any {
   if (arr.length === 0) {
     return null
   }
   return arr[arr.length - 1]
 }
 
-export function first(arr: Array<any>): any {
+export function first(arr: any[]): any {
   if (arr.length === 0) {
     return null
   }
   return arr[0]
 }
 
-export function unique(arr: Array<string>): Array<string> {
+export function unique(arr: string[]): string[] {
   return [...new Set(arr)]
 }

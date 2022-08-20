@@ -12,7 +12,7 @@ export class OpenGraph extends Check {
         continue
       }
 
-      //does the openGraph exist?
+      // does the openGraph exist?
       if (this.missing_content(openGraph)) {
         this.add_failure('open graph has no content attribute', openGraph.line, null, openGraph.content)
       } else if (this.empty_content(openGraph)) {
@@ -23,15 +23,15 @@ export class OpenGraph extends Check {
         this.add_to_external_urls(openGraph.url, openGraph.line)
       } else {
         if (!openGraph.url.exists()) {
-          this.add_failure(`internal open graph ${openGraph.url.raw_attribute} does not exist`,
+          this.add_failure(`internal open graph ${openGraph.url.rawAttribute} does not exist`,
               openGraph.line, null, openGraph.content)
         }
       }
     }
 
     return {
-      external_urls: this.external_urls,
-      internal_urls: this.internal_urls,
+      externalUrls: this.externalUrls,
+      internalUrls: this.internalUrls,
       failures: this.failures
     }
   }

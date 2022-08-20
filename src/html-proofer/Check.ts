@@ -7,9 +7,9 @@ import {ICheck, ICheckResult, IExtMetadata, IHtml, IIntMetadata, IRunner} from "
 
 export abstract class Check implements ICheck {
   html: IHtml
-  public failures: Array<Failure>
-  public internal_urls: Map<string, Array<IIntMetadata>> = new Map()
-  public external_urls: Map<string, Array<IExtMetadata>> = new Map()
+  public failures: Failure[]
+  public internalUrls: Map<string, IIntMetadata[]> = new Map()
+  public externalUrls: Map<string, IExtMetadata[]> = new Map()
 
   protected runner: IRunner
   private _base_url: string | null = null
@@ -28,7 +28,7 @@ export abstract class Check implements ICheck {
   public abstract run(): ICheckResult
 
   protected add_failure(description: string, line: (number | null) = null, status: (string | null) = null, content: (string | null) = null) {
-    this.failures.push(new Failure(this.runner.current_filename!, this.name, description, line, status, content))
+    this.failures.push(new Failure(this.runner.currentFilename!, this.name, description, line, status, content))
   }
 
   private removeIgnoredTags(html: IHtml) {
@@ -43,32 +43,32 @@ export abstract class Check implements ICheck {
   }
 
   protected add_to_internal_urls(url: Url, line: number | null) {
-    const url_string = url.raw_attribute || ''
+    const urlString = url.rawAttribute || ''
 
-    if (!this.internal_urls.has(url_string)) {
-      this.internal_urls.set(url_string, [])
+    if (!this.internalUrls.has(urlString)) {
+      this.internalUrls.set(urlString, [])
     }
 
     const metadata: IIntMetadata = {
-      source: this.runner.current_source,
-      filename: this.runner.current_filename,
-      line: line,
+      source: this.runner.currentSource,
+      filename: this.runner.currentFilename,
+      line,
       base_url: this.base_url(),
       found: false,
     }
-    this.internal_urls.get(url_string)!.push(metadata)
+    this.internalUrls.get(urlString)!.push(metadata)
   }
 
   protected add_to_external_urls(url: Url, line: number | null): void {
-    const url_string = url.toString()
+    const urlString = url.toString()
 
-    if (!this.external_urls.has(url_string)) {
-      this.external_urls.set(url_string, [])
+    if (!this.externalUrls.has(urlString)) {
+      this.externalUrls.set(urlString, [])
     }
 
-    this.external_urls.get(url_string)!.push({
-      filename: this.runner.current_filename!,
-      line: line,
+    this.externalUrls.get(urlString)!.push({
+      filename: this.runner.currentFilename!,
+      line,
     })
   }
 
@@ -77,12 +77,12 @@ export abstract class Check implements ICheck {
       return this._base_url
     }
     const base = this.html.css('base')
-    if (base && base.length == 0) {
+    if (base && base.length === 0) {
       this._base_url = null
       return null
     }
     const node = base[0]
-    this._base_url = node.attributes['href']
+    this._base_url = node.attributes.href
     return this._base_url
   }
 

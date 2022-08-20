@@ -16,7 +16,7 @@ export class Scripts extends Check {
         continue
       }
 
-      //# does the script exist?
+      // does the script exist?
       if (this.missing_src(script)) {
         this.add_failure('script is empty and has no src attribute', script.line, null, script.content)
       } else if (script.url.remote()) {
@@ -30,14 +30,14 @@ export class Scripts extends Check {
     }
 
     return {
-      external_urls: this.external_urls,
-      internal_urls: this.internal_urls,
+      externalUrls: this.externalUrls,
+      internalUrls: this.internalUrls,
       failures: this.failures
     }
   }
 
   missing_src(script: Element): boolean {
-    return script.node.attributes['src'] == undefined
+    return script.node.attributes['src'] === undefined
   }
 
   check_sri(script: Element) {

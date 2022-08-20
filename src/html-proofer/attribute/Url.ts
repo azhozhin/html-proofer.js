@@ -11,15 +11,15 @@ export class Url extends Attribute {
   private _parts: any;
 
 
-  constructor(runner: IRunner, link_attribute: string | null, base_url: string | null = null) {
-    super(runner, link_attribute)
+  constructor(runner: IRunner, linkAttribute: string | null, baseUrl: string | null = null) {
+    super(runner, linkAttribute)
 
-    if (this.raw_attribute == null) {
+    if (this.rawAttribute == null) {
       this.url = null
     } else {
-      this.url = (this.raw_attribute as string).replace('\u200b', '').trim()
-      if (base_url) {
-        this.url = joinUrl(base_url, this.url as string)
+      this.url = (this.rawAttribute as string).replace('\u200b', '').trim()
+      if (baseUrl) {
+        this.url = joinUrl(baseUrl, this.url as string)
       }
 
       this.url = this.swap_urls(this.url)
@@ -45,17 +45,17 @@ export class Url extends Attribute {
 
     // no extension means we use the assumed one
     if (!ext) {
-      return this.runner.options['extensions']!.includes(this.runner.options['assume_extension']!)
+      return this.runner.options.extensions!.includes(this.runner.options.assume_extension!)
     }
 
-    return this.runner.options['extensions']!.includes(ext)
+    return this.runner.options.extensions!.includes(ext)
   }
 
   ignore() {
     if (this.url && this.url.match(/^javascript:/)) {
       return true
     }
-    if (this.ignores_pattern(this.runner.options['ignore_urls']!)) {
+    if (this.ignores_pattern(this.runner.options.ignore_urls!)) {
       return true
     }
   }
@@ -95,20 +95,20 @@ export class Url extends Attribute {
     return url
   }
 
-  ignores_pattern(links_to_ignore: Array<string | RegExp>) {
-    if (!(links_to_ignore.constructor.name === 'Array')) {
+  ignores_pattern(linksToIgnore: (string | RegExp)[]) {
+    if (!(linksToIgnore.constructor.name === 'Array')) {
       return false
     }
 
-    for (const link_to_ignore of links_to_ignore) {
-      switch (link_to_ignore.constructor.name) {
+    for (const linkToIgnore of linksToIgnore) {
+      switch (linkToIgnore.constructor.name) {
         case 'String':
-          if (link_to_ignore === this.raw_attribute) {
+          if (linkToIgnore === this.rawAttribute) {
             return true
           }
           break
         case 'RegExp':
-          if (this.raw_attribute?.match(link_to_ignore)) {
+          if (this.rawAttribute?.match(linkToIgnore)) {
             return true
           }
           break
@@ -187,23 +187,23 @@ export class Url extends Attribute {
     if (this.base64()) {
       return true
     }
-    if (this.runner.checked_paths.has(this.absolute_path)) {
-      return this.runner.checked_paths.get(this.absolute_path)!
+    if (this.runner.checkedPaths.has(this.absolute_path)) {
+      return this.runner.checkedPaths.get(this.absolute_path)!
     }
 
     const checkResult = fs.existsSync(this.absolute_path)
-    this.runner.checked_paths.set(this.absolute_path, checkResult)
+    this.runner.checkedPaths.set(this.absolute_path, checkResult)
     return checkResult
   }
 
   base64() {
-    return this.raw_attribute ? this.raw_attribute.match(/^data:image/) : false
+    return this.rawAttribute ? this.rawAttribute.match(/^data:image/) : false
   }
 
   get absolute_path() {
-    const current_path = this.file_path || this.runner.current_filename
+    const currentPath = this.file_path || this.runner.currentFilename
 
-    return path.resolve(current_path!)
+    return path.resolve(currentPath!)
   }
 
   get file_path() {
@@ -211,10 +211,10 @@ export class Url extends Attribute {
       return null
     }
 
-    let path_dot_ext = ''
+    let pathDotExt = ''
 
-    if (this.runner.options['assume_extension']) {
-      path_dot_ext = this.path + this.runner.options['assume_extension']
+    if (this.runner.options.assume_extension) {
+      pathDotExt = this.path + this.runner.options.assume_extension
     }
 
     let base
@@ -222,27 +222,27 @@ export class Url extends Attribute {
     // todo: this is too complicated
     if (this.is_absolute_path(this.path)) {
       // either overwrite with root_dir; or, if source is directory, use that; or, just get the current file's dirname
-      base = this.runner.options['root_dir'] ||
-        (isDirectory(this.runner.current_source!) ? this.runner.current_source : path.dirname(this.runner.current_source!))
-      //relative links, path is a file
-    } else if (fs.existsSync(path.resolve(this.runner.current_source!, this.path)) ||
-      fs.existsSync(path.resolve(this.runner.current_source!, path_dot_ext))) {
-      base = path.dirname(this.runner.current_filename!)
+      base = this.runner.options.root_dir ||
+        (isDirectory(this.runner.currentSource!) ? this.runner.currentSource : path.dirname(this.runner.currentSource!))
+      // relative links, path is a file
+    } else if (fs.existsSync(path.resolve(this.runner.currentSource!, this.path)) ||
+      fs.existsSync(path.resolve(this.runner.currentSource!, pathDotExt))) {
+      base = path.dirname(this.runner.currentFilename!)
       // relative links in nested dir, path is a file
-    } else if (fs.existsSync(path.join(path.dirname(this.runner.current_filename!), this.path)) ||
-      fs.existsSync(path.join(path.dirname(this.runner.current_filename!), path_dot_ext))) {
-      base = path.dirname(this.runner.current_filename!)
+    } else if (fs.existsSync(path.join(path.dirname(this.runner.currentFilename!), this.path)) ||
+      fs.existsSync(path.join(path.dirname(this.runner.currentFilename!), pathDotExt))) {
+      base = path.dirname(this.runner.currentFilename!)
       // relative link, path is a directory
     } else {
-      base = this.runner.current_filename
+      base = this.runner.currentFilename
     }
 
     let file = path.join(base || '', this.path)
 
-    if (this.runner.options['assume_extension'] && isFile(`${file}${this.runner.options['assume_extension']}`)) {
-      file = `${file}${this.runner.options['assume_extension']}`
-    } else if (isDirectory(file) && !this.unslashed_directory(file)) { //# implicit index support
-      file = path.join(file, this.runner.options['directory_index_file']!)
+    if (this.runner.options.assume_extension && isFile(`${file}${this.runner.options.assume_extension}`)) {
+      file = `${file}${this.runner.options.assume_extension}`
+    } else if (isDirectory(file) && !this.unslashed_directory(file)) { // # implicit index support
+      file = path.join(file, this.runner.options.directory_index_file!)
     }
 
     return file
@@ -256,11 +256,11 @@ export class Url extends Attribute {
   }
 
   follow_location() {
-    return this.runner.options['typhoeus'] && this.runner.options['typhoeus']['followlocation']
+    return this.runner.options.typhoeus && this.runner.options.typhoeus.followlocation
   }
 
-  is_absolute_path(path: string): boolean {
-    return path.startsWith('/')
+  is_absolute_path(p: string): boolean {
+    return p.startsWith('/')
   }
 
   get external(): boolean {

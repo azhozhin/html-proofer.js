@@ -1,20 +1,19 @@
 import {Failure} from "../html-proofer/Failure"
 import {CheckType} from "../html-proofer/CheckType"
 import * as cheerio from "cheerio";
+import {Url} from "../html-proofer/attribute/Url";
 
 export interface ICache {
   add_internal(url: any, metadata: any, found: any): void
 
-  add_external(url: any, filenames: any, status_code: any, msg: any): void
+  add_external(url: any, filenames: any, statusCode: any, msg: any): void
 
   write(): void
 
   enabled(): boolean
 }
 
-export interface ICheckConstructor {
-  new(runner: IRunner, html: IHtml): ICheck
-}
+export type ICheckConstructor = new(runner: IRunner, html: IHtml) => ICheck
 
 export interface ICheck {
   name: string
@@ -28,12 +27,17 @@ export function createCheck(ctor: ICheckConstructor, runner: IRunner, html: IHtm
 }
 
 export interface ICheckResult {
-  internal_urls: Map<string, Array<IIntMetadata>>,
-  external_urls: Map<string, Array<IExtMetadata>>,
-  failures: Array<Failure>
+  internalUrls: Map<string, IIntMetadata[]>,
+  externalUrls: Map<string, IExtMetadata[]>,
+  failures: Failure[]
 }
 
 export interface IElement {
+  node: INode
+  url: Url
+  line: number | null
+  content: string | null
+  baseUrl: string | null
 }
 
 
@@ -79,13 +83,13 @@ export interface IExtMetadata {
 
 export interface IOptions {
   type?: CheckType
-  checks?: Array<any>
+  checks?: any[]
   cache?: ICache
 
-  extensions?: Array<string>
-  ignore_files?: Array<string | RegExp>
-  ignore_urls?: Array<string | RegExp>
-  ignore_status_codes?: Array<string | number>
+  extensions?: string[]
+  ignore_files?: (string | RegExp)[]
+  ignore_urls?: (string | RegExp)[]
+  ignore_status_codes?: (string | number)[]
   swap_attributes?: any // todo: make it strongly typed
   typhoeus?: any // todo: make it strongly typed
   hydra?: any // todo: make it strongly typed
@@ -127,9 +131,9 @@ export const EmptyOptions: IOptions = {}
 export interface IReporter {
   report(): void
 
-  set_failures(failures: Array<Failure>): void
+  set_failures(failures: Failure[]): void
 
-  failures: Array<Failure>
+  failures: Failure[]
 }
 
 export interface IRunner {
@@ -138,8 +142,8 @@ export interface IRunner {
   options: IOptions
   reporter: IReporter
 
-  current_source: string | null // todo: is it a real string?
-  current_filename: string | null
+  currentSource: string | null // todo: is it a real string?
+  currentFilename: string | null
 
   run(): void
 
@@ -151,14 +155,14 @@ export interface IRunner {
 
   load_external_cache(): any
 
-  checked_paths: Map<string, boolean>
-  checked_hashes: Map<string, Map<string, boolean>>
+  checkedPaths: Map<string, boolean>
+  checkedHashes: Map<string, Map<string, boolean>>
 
-  failed_checks: Array<Failure>
+  failed_checks: Failure[]
 
   add_before_request(block: (request: any) => any): void
 
-  external_urls: Map<string, Array<IExtMetadata>>
+  externalUrls: Map<string, IExtMetadata[]>
 }
 
 export interface INode {
@@ -172,5 +176,5 @@ export interface INode {
   nativeNode: any,
 }
 
-export type ISource = string | Array<string>
+export type ISource = string | string[]
 

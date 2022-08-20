@@ -20,7 +20,7 @@ export class Links extends Check implements ICheck {
       }
 
       // is there even a href?
-      if (!link.url.raw_attribute) {
+      if (!link.url.rawAttribute) {
         if (this.allow_missing_href()) {
           continue
         }
@@ -48,12 +48,12 @@ export class Links extends Check implements ICheck {
 
         // we need to skip these for now; although the domain main be valid,
         // curl/Typheous inaccurately return 404s for some links. cc https://git.io/vyCFx
-        if (link.node.attributes['rel'] == 'dns-prefetch') {
+        if (link.node.attributes['rel'] === 'dns-prefetch') {
           continue
         }
 
         if (!link.url.is_path()) {
-          this.add_failure(`${link.url.raw_attribute} is an invalid URL`, link.line, null, link.content)
+          this.add_failure(`${link.url.rawAttribute} is an invalid URL`, link.line, null, link.content)
           continue
         }
 
@@ -61,7 +61,7 @@ export class Links extends Check implements ICheck {
       } else if (link.url.internal) {
         // does the local directory have a trailing slash?
         if (link.url.unslashed_directory(link.url.absolute_path)) {
-          this.add_failure(`internally linking to a directory ${link.url.raw_attribute} without trailing slash`,
+          this.add_failure(`internally linking to a directory ${link.url.rawAttribute} without trailing slash`,
             link.line, null, link.content)
           continue
         }
@@ -70,18 +70,18 @@ export class Links extends Check implements ICheck {
     }
 
     return {
-      external_urls: this.external_urls,
-      internal_urls: this.internal_urls,
+      externalUrls: this.externalUrls,
+      internalUrls: this.internalUrls,
       failures: this.failures
     }
   }
 
   allow_missing_href() {
-    return this.runner.options['allow_missing_href']
+    return this.runner.options.allow_missing_href
   }
 
   allow_hash_href() {
-    return this.runner.options['allow_hash_href']
+    return this.runner.options.allow_hash_href
   }
 
   check_schemes(link: Element) {
@@ -96,21 +96,21 @@ export class Links extends Check implements ICheck {
         if (!this.runner.options.enforce_https) {
           return
         }
-        this.add_failure(`${link.url.raw_attribute} is not an HTTPS link`, link.line, null, link.content)
+        this.add_failure(`${link.url.rawAttribute} is not an HTTPS link`, link.line, null, link.content)
     }
   }
 
   handle_mailto(link: Element) {
     if (!link.url.path) {
       if (!this.ignore_empty_mailto()) {
-        this.add_failure(`${link.url.raw_attribute} contains no email address`, link.line, null, link.content)
+        this.add_failure(`${link.url.rawAttribute} contains no email address`, link.line, null, link.content)
       }
     } else {
       const mailto = decodeURI(link.url.path)
       const recipients = mailto.split(/[;,]/).map(e => e.trim())
       recipients.forEach(email => {
         if (!email.match(this.EMAIL_REGEXP)) {
-          this.add_failure(`${link.url.raw_attribute} contains an invalid email address`, link.line, null, link.content)
+          this.add_failure(`${link.url.rawAttribute} contains an invalid email address`, link.line, null, link.content)
         }
         return false // we need to find only first broken email as we don't want to create multiple failures
       })
@@ -119,12 +119,12 @@ export class Links extends Check implements ICheck {
 
   handle_tel(link: Element) {
     if (!link.url.path) {
-      this.add_failure(`${link.url.raw_attribute} contains no phone number`, link.line, null, link.content)
+      this.add_failure(`${link.url.rawAttribute} contains no phone number`, link.line, null, link.content)
     }
   }
 
   ignore_empty_mailto() {
-    return this.runner.options['ignore_empty_mailto']
+    return this.runner.options.ignore_empty_mailto
   }
 
   // Allowed elements from Subresource Integrity specification
@@ -137,11 +137,11 @@ export class Links extends Check implements ICheck {
     }
 
     if ((!link.node.attributes['integrity']) && (!link.node.attributes['crossorigin'])) {
-      this.add_failure(`SRI and CORS not provided in: ${link.url.raw_attribute}`, link.line, null, link.content)
+      this.add_failure(`SRI and CORS not provided in: ${link.url.rawAttribute}`, link.line, null, link.content)
     } else if (!link.node.attributes['integrity']) {
-      this.add_failure(`Integrity is missing in: ${link.url.raw_attribute}`, link.line, null, link.content)
+      this.add_failure(`Integrity is missing in: ${link.url.rawAttribute}`, link.line, null, link.content)
     } else if (!link.node.attributes['crossorigin']) {
-      this.add_failure(`CORS not provided for external resource in: ${link.url.raw_attribute}`, link.line, null, link.content)
+      this.add_failure(`CORS not provided for external resource in: ${link.url.rawAttribute}`, link.line, null, link.content)
     }
   }
 

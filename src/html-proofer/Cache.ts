@@ -19,7 +19,7 @@ export class Cache implements ICache {
     // todo
   }
 
-  public add_external(url: any, filenames: any, status_code: any, msg: any) {
+  public add_external(url: any, filenames: any, statusCode: any, msg: any) {
     if (!this.enabled()) {
       return
     }
@@ -34,7 +34,7 @@ export class Cache implements ICache {
   }
 
   public enabled() {
-    //return this.options.cache != null
+    // return this.options.cache != null
     return false
   }
 }

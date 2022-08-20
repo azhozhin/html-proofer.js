@@ -530,7 +530,7 @@ describe('Links test', () => {
   it('does check links with parameters multiple times', async () => {
     const fixture = path.join(FIXTURES_DIR, 'links', 'check_just_once.html')
     const proofer = await run_proofer(fixture, CheckType.FILE)
-    expect(proofer.external_urls.size).toEqual(4)
+    expect(proofer.externalUrls.size).toEqual(4)
   })
 
   it('does not explode on bad external links in files', async () => {

@@ -2,7 +2,6 @@ import {Failure} from './Failure.js'
 import * as path from 'path'
 import {Cli} from './reporter/Cli'
 import {createDocument, mergeConcat, pluralize} from './Utils'
-import {Check} from './Check.js'
 import {External} from './url_validator/External'
 import {Internal} from './url_validator/Internal'
 import {Url} from './attribute/Url'
@@ -27,31 +26,31 @@ import {
   IRunner, ISource
 } from "../interfaces";
 
-function normalize_path(source: string | Array<string>) {
+function normalize_path(source: string | string[]) {
   if (source.constructor.name === 'String') {
     return (source as string).replaceAll('\\', '/')
   } else if (source.constructor.name === 'Array') {
-    return (source as Array<string>).map(e => e.replaceAll('\\', '/'))
+    return (source as string[]).map(e => e.replaceAll('\\', '/'))
   }
 }
 
 export class Runner implements IRunner {
-  current_source: string | null
-  current_filename: string | null;
+  currentSource: string | null
+  currentFilename: string | null;
   logger: ILogger
   cache: ICache
   options: IOptions
 
-  checked_paths: Map<string, boolean>
-  checked_hashes: Map<string, Map<string, boolean>>
+  checkedPaths: Map<string, boolean>
+  checkedHashes: Map<string, Map<string, boolean>>
 
   private readonly type: CheckType
   private readonly sources: ISource
-  private failures: Array<Failure>
+  private failures: Failure[]
   reporter: IReporter
-  private internal_urls: Map<string, Array<IIntMetadata>> = new Map()
-  external_urls: Map<string, Array<IExtMetadata>> = new Map()
-  private before_request: any[]
+  private internalUrls: Map<string, IIntMetadata[]> = new Map()
+  externalUrls: Map<string, IExtMetadata[]> = new Map()
+  private beforeRequest: any[]
   private _checks: any[] | null = null
 
   constructor(sources: ISource, opts: IOptions | null = null) {
@@ -66,12 +65,12 @@ export class Runner implements IRunner {
 
     this.failures = []
 
-    this.before_request = []
-    this.checked_paths = new Map<string, boolean>()
-    this.checked_hashes = new Map<string, Map<string, boolean>>()
+    this.beforeRequest = []
+    this.checkedPaths = new Map<string, boolean>()
+    this.checkedHashes = new Map<string, Map<string, boolean>>()
 
-    this.current_source = null
-    this.current_filename = null
+    this.currentSource = null
+    this.currentFilename = null
 
     this.reporter = new Cli(this.logger)
   }
@@ -82,13 +81,13 @@ export class Runner implements IRunner {
     if (this.type === CheckType.LINKS) {
       this.logger.log('info',
         `Running ${checkText} (${this.format_checks_list(this.checks)}) on ${this.sources} ... \n\n`)
-      if (!this.options['disable_external']) {
+      if (!this.options.disable_external) {
         await this.check_list_of_links()
       }
     } else {
       const checkNames = this.format_checks_list(this.checks)
       const localPath = normalize_path(this.sources)
-      const extensions = this.options['extensions']!.join(', ')
+      const extensions = this.options.extensions!.join(', ')
       this.logger.log('info', `Running ${checkText} (${checkNames}) in ${localPath} on *${extensions} files...\n\n`)
       await this.check_files()
       this.logger.log('info', `Ran on ${pluralize(this.files.length, 'file', 'files')}!\n\n`)
@@ -101,7 +100,7 @@ export class Runner implements IRunner {
     if (this.failures.length === 0) {
       this.logger.log('info', 'HTML-Proofer finished successfully.')
     } else {
-      //@failures.uniq!
+      // @failures.uniq!
       this.report_failed_checks()
       process.exitCode = 1
     }
@@ -110,7 +109,7 @@ export class Runner implements IRunner {
   async check_list_of_links() {
     for (const src of this.sources) {
       const url = new Url(this, src, null).toString()
-      this.external_urls.set(url, [])
+      this.externalUrls.set(url, [])
     }
 
     await this.validate_external_urls()
@@ -120,12 +119,12 @@ export class Runner implements IRunner {
   // Sends the collected external URLs to Typhoeus for batch processing.
   async check_files() {
     for (const result of this.process_files) {
-      mergeConcat(this.external_urls, result.external_urls)
-      mergeConcat(this.internal_urls, result.internal_urls)
+      mergeConcat(this.externalUrls, result.externalUrls)
+      mergeConcat(this.internalUrls, result.internalUrls)
       this.failures = this.failures.concat(result.failures)
     }
 
-    if (!this.options['disable_external']) {
+    if (!this.options.disable_external) {
       await this.validate_external_urls()
     }
 
@@ -140,46 +139,46 @@ export class Runner implements IRunner {
     return result
   }
 
-  load_file(path: string, source: string) {
-    const doc = createDocument(path)
-    return this.check_parsed(doc, path, source)
+  load_file(p: string, source: string) {
+    const doc = createDocument(p)
+    return this.check_parsed(doc, p, source)
   }
 
   // Collects any external URLs found in a directory of files. Also collectes
   // every failed test from process_files.
   check_parsed(html: IHtml, p: string, source: string): ICheckResult {
     const result: ICheckResult = {
-      internal_urls: new Map<string, Array<IIntMetadata>>(),
-      external_urls: new Map<string, Array<IExtMetadata>>(),
+      internalUrls: new Map<string, IIntMetadata[]>(),
+      externalUrls: new Map<string, IExtMetadata[]>(),
       failures: new Array<Failure>()
     }
 
     for (const ch of this.checks) {
-      this.current_source = source
-      this.current_filename = p
+      this.currentSource = source
+      this.currentFilename = p
 
       const check: ICheck = createCheck(ch, this, html)
       this.logger.log('debug', `Running ${check.name} in ${p}`)
 
       const checkResult = check.run()
 
-      mergeConcat(result.external_urls, checkResult.external_urls)
-      mergeConcat(result.internal_urls, checkResult.internal_urls)
+      mergeConcat(result.externalUrls, checkResult.externalUrls)
+      mergeConcat(result.internalUrls, checkResult.internalUrls)
       result.failures = result.failures.concat(checkResult.failures)
     }
     return result
   }
 
   private async validate_external_urls() {
-    const external_url_validator = new External(this, this.external_urls)
-    external_url_validator.before_request = this.before_request
-    const validated = await external_url_validator.validate()
+    const externalUrlValidator = new External(this, this.externalUrls)
+    externalUrlValidator.beforeRequest = this.beforeRequest
+    const validated = await externalUrlValidator.validate()
     this.failures = this.failures.concat(validated)
   }
 
   private async validate_internal_urls() {
-    const internal_link_validator = new Internal(this, this.internal_urls)
-    const validated = await internal_link_validator.validate()
+    const internalLinkValidator = new Internal(this, this.internalUrls)
+    const validated = await internalLinkValidator.validate()
     this.failures = this.failures.concat(validated)
   }
 
@@ -187,9 +186,9 @@ export class Runner implements IRunner {
   get files(): { source: string, path: string }[] {
     if (this.type === CheckType.DIRECTORY) {
       // todo: this is too complicated
-      let files = (this.sources as Array<string>).map((src) => {
+      const files = (this.sources as string[]).map((src) => {
         // glob accepts only forward slashes, on Windows path separator is backslash, thus should be converted
-        const pattern = path.join(src, '**', `*${this.options['extensions']!.join(',')}`).replace(/\\/g, '/')
+        const pattern = path.join(src, '**', `*${this.options.extensions!.join(',')}`).replace(/\\/g, '/')
         return glob.sync(pattern)
           .filter(file => (fs.existsSync(file) && !this.ignore_file(file)))
           .map(f => ({
@@ -199,8 +198,8 @@ export class Runner implements IRunner {
       }).flat()
       return files
     }
-    if (this.type === CheckType.FILE && this.options['extensions']!.includes(path.extname((this.sources as string)))) {
-      let files = [(this.sources as string)].filter(f => !this.ignore_file(f)).map(f => ({
+    if (this.type === CheckType.FILE && this.options.extensions!.includes(path.extname((this.sources as string)))) {
+      const files = [(this.sources as string)].filter(f => !this.ignore_file(f)).map(f => ({
         source: f,
         path: f
       }))
@@ -210,7 +209,7 @@ export class Runner implements IRunner {
   }
 
   ignore_file(file: string): boolean {
-    for (const pattern of this.options['ignore_files']!) {
+    for (const pattern of this.options.ignore_files!) {
       if (pattern.constructor.name === 'String' && pattern === file) {
         return true
       }
@@ -229,7 +228,7 @@ export class Runner implements IRunner {
     return this.options.enforce_https || false
   }
 
-  get checks(): Array<any> {
+  get checks(): any[] {
     if (this._checks) {
       return this._checks
     }
@@ -243,7 +242,7 @@ export class Runner implements IRunner {
     return this._checks
   }
 
-  get failed_checks(): Array<Failure> {
+  get failed_checks(): Failure[] {
     // todo: should it flatten?
     return this.reporter.failures.flat().filter(f => f.constructor.name === 'Failure')
   }
@@ -251,8 +250,8 @@ export class Runner implements IRunner {
   report_failed_checks() {
     this.reporter.report()
 
-    const failure_text = pluralize(this.failures.length, 'failure', 'failures')
-    this.logger.log('error', `\nHTML-Proofer found ${failure_text}!`)
+    const failureText = pluralize(this.failures.length, 'failure', 'failures')
+    this.logger.log('error', `\nHTML-Proofer found ${failureText}!`)
   }
 
   // # Set before_request callback.
@@ -266,11 +265,11 @@ export class Runner implements IRunner {
   // #
   // # @return [ Array<Block> ] All before_request blocks.
   add_before_request(block:any) {
-    this.before_request = this.before_request ? this.before_request : []
+    this.beforeRequest = this.beforeRequest ? this.beforeRequest : []
     if (block) {
-      this.before_request.push(block)
+      this.beforeRequest.push(block)
     }
-    return this.before_request
+    return this.beforeRequest
   }
 
   public load_internal_cache(): any {
@@ -281,7 +280,7 @@ export class Runner implements IRunner {
     return this.load_cache('external')
   }
 
-  format_checks_list(checks: Array<ICheck>) {
+  format_checks_list(checks: ICheck[]) {
     return checks.map(x => x.name).join(', ')
   }
 

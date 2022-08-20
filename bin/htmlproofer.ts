@@ -115,87 +115,85 @@ program.
     action(async () => {
       const opts = program.opts()
       const path = program.args.length === 0 ? '.' : program.args[0]
-      //console.debug(opts)
 
       const options = EmptyOptions
-      const checks:Array<Check> = []
+      const checks:Check[] = []
       if (opts.checks) {
-        let checks_str = opts.checks
-        for (const checkName of checks_str.split(',')) {
+        for (const checkName of opts.checks.split(',')) {
           if (AllChecks[checkName] == null) {
             throw new Error(`Unknown check ${checkName}`)
           }
           checks.push(AllChecks[checkName])
         }
-        options['checks'] = checks
+        options.checks = checks
       }
 
       if (opts.allowHashHref != null) {
-        options['allow_hash_href'] = opts.allowHashHref
+        options.allow_hash_href = opts.allowHashHref
       }
 
       if (opts.allowMissingHref != null) {
-        options['allow_missing_href'] = opts.allowMissingHref
+        options.allow_missing_href = opts.allowMissingHref
       }
 
       if (opts.assumeExtension != null) {
-        options['assume_extension'] = opts.assumeExtension
+        options.assume_extension = opts.assumeExtension
       }
 
       if (opts.checkExternalHash != null) {
-        options['check_external_hash'] = opts.checkExternalHash
+        options.check_external_hash = opts.checkExternalHash
       }
 
       if (opts.ignoreEmptyAlt != null ) {
-        options['ignore_empty_alt'] = opts.ignoreEmptyAlt
+        options.ignore_empty_alt = opts.ignoreEmptyAlt
       }
 
       if (opts.ignoreEmptyMailto != null) {
-        options['ignore_empty_mailto'] = opts.ignoreEmptyMailto
+        options.ignore_empty_mailto = opts.ignoreEmptyMailto
       }
 
       if (opts.ignoreMissingAlt != null) {
-        options['ignore_missing_alt'] = opts.ignoreMissingAlt
+        options.ignore_missing_alt = opts.ignoreMissingAlt
       }
 
       if (opts.extensions) {
         if (opts.extensions.constructor.name === 'String') {
-          options['extensions'] = opts.extensions.split(',')
+          options.extensions = opts.extensions.split(',')
         }
       }
 
 
       if (opts.directoryIndexFile) {
-        options['directory_index_file'] = opts.directoryIndexFile
+        options.directory_index_file = opts.directoryIndexFile
       }
 
       if (opts.disableExternal != null ) {
-        options['disable_external'] = opts.disableExternal
+        options.disable_external = opts.disableExternal
       }
 
       if (opts.ignoreFiles) {
-        options['ignore_files'] = opts.ignoreFiles.split(',')
+        options.ignore_files = opts.ignoreFiles.split(',')
       }
 
       if (opts.ignoreUrls) {
-        options['ignore_urls'] = opts.ignoreUrls.split(',').
+        options.ignore_urls = opts.ignoreUrls.split(',').
             map((e:string) => (e.startsWith('/') && e.endsWith('/')) ? new RegExp(e.slice(1, -1)) : e)
       }
 
       if (opts.ignoreStatusCodes) {
-        options['ignore_status_codes'] = opts.ignoreStatusCodes.split(',')
+        options.ignore_status_codes = opts.ignoreStatusCodes.split(',')
       }
 
       if (opts.only4xx != null ) {
-        options['only_4xx'] = opts.only4xx
+        options.only_4xx = opts.only4xx
       }
 
       if (opts.swapAttributes) {
-        options['swap_attributes'] = Configuration.parse_json_option('swap_attributes', opts.swapAttributes)
+        options.swap_attributes = Configuration.parse_json_option('swap_attributes', opts.swapAttributes)
       }
 
       if (opts.typhoeus) {
-        options['typhoeus'] = Configuration.parse_json_option('typhoeus', opts.typhoeus)
+        options.typhoeus = Configuration.parse_json_option('typhoeus', opts.typhoeus)
       }
 
       if (opts.swapUrls) {
@@ -205,19 +203,19 @@ program.
           const re = sp[0].replaceAll(/\\:/g, ':')
           map.set(re, sp[1].replaceAll(/\\:/g, ':'))
         }
-        options['swap_urls'] = map
+        options.swap_urls = map
       }
 
       if (opts.rootDir) {
-        options['root_dir'] = opts.rootDir
+        options.root_dir = opts.rootDir
       }
 
       if (opts.enforceHttps != null) {
-        options['enforce_https'] = opts.enforceHttps
+        options.enforce_https = opts.enforceHttps
       }
 
       if (opts.logLevel) {
-        options['log_level'] = opts.logLevel
+        options.log_level = opts.logLevel
       }
 
       const paths = path.split(',')
