@@ -17,11 +17,11 @@ import {
   createCheck,
   ICache,
   ICheck,
-  IChecksResult,
+  ICheckResult,
   IExtMetadata,
   IHtml,
   ILogger,
-  IMetadata,
+  IIntMetadata,
   IOptions,
   IReporter,
   IRunner, ISource
@@ -49,9 +49,8 @@ export class Runner implements IRunner {
   private readonly sources: ISource
   private failures: Array<Failure>
   reporter: IReporter
-  private internal_urls: Map<string, Array<IMetadata>> = new Map()
+  private internal_urls: Map<string, Array<IIntMetadata>> = new Map()
   external_urls: Map<string, Array<IExtMetadata>> = new Map()
-  private current_check: ICheck | null
   private before_request: any[]
   private _checks: any[] | null = null
 
@@ -71,7 +70,6 @@ export class Runner implements IRunner {
     this.checked_paths = new Map<string, boolean>()
     this.checked_hashes = new Map<string, Map<string, boolean>>()
 
-    this.current_check = null
     this.current_source = null
     this.current_filename = null
 
@@ -137,7 +135,8 @@ export class Runner implements IRunner {
   get process_files() {
     // todo: this is partial implementation
     const files = this.files
-    const result = files.map(file => this.load_file(file.path, file.source))
+    const result = files
+      .map(file => this.load_file(file.path, file.source))
     return result
   }
 
@@ -148,9 +147,9 @@ export class Runner implements IRunner {
 
   // Collects any external URLs found in a directory of files. Also collectes
   // every failed test from process_files.
-  check_parsed(html: IHtml, p: string, source: string): IChecksResult {
-    const result: IChecksResult = {
-      internal_urls: new Map<string, Array<IMetadata>>(),
+  check_parsed(html: IHtml, p: string, source: string): ICheckResult {
+    const result: ICheckResult = {
+      internal_urls: new Map<string, Array<IIntMetadata>>(),
       external_urls: new Map<string, Array<IExtMetadata>>(),
       failures: new Array<Failure>()
     }
@@ -159,17 +158,14 @@ export class Runner implements IRunner {
       this.current_source = source
       this.current_filename = p
 
-      const check:ICheck = createCheck(ch, this, html)
+      const check: ICheck = createCheck(ch, this, html)
       this.logger.log('debug', `Running ${check.name} in ${p}`)
 
-      this.current_check = check
+      const checkResult = check.run()
 
-      // todo: it is better to return all stuff as result rather than properties
-      check.run()
-
-      mergeConcat(result.external_urls, check.external_urls)
-      mergeConcat(result.internal_urls, check.internal_urls)
-      result.failures = result.failures.concat(check.failures)
+      mergeConcat(result.external_urls, checkResult.external_urls)
+      mergeConcat(result.internal_urls, checkResult.internal_urls)
+      result.failures = result.failures.concat(checkResult.failures)
     }
     return result
   }

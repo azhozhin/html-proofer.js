@@ -1,9 +1,10 @@
 import {Check} from '../Check'
 import {Element} from "../Element";
 import {last} from "../Utils";
+import {ICheckResult} from "../../interfaces";
 
 export class Favicon extends Check {
-  run() {
+  public run(): ICheckResult {
     let found = false
     let favicon: Element | null = null
     this.html.css('link').each((i: number, node: any) => {
@@ -20,17 +21,23 @@ export class Favicon extends Check {
     })
 
     if (this.immediate_redirect()) {
-      return
+      // do nothing
+    } else {
+      if (found) {
+        if (favicon!.url.remote()) {
+          this.add_to_external_urls(favicon!.url, favicon!.line)
+        } else if (!favicon!.url.exists()) {
+          this.add_failure(`internal favicon ${favicon!.url.raw_attribute} does not exist`, favicon!.line, null, favicon!.content)
+        }
+      } else {
+        this.add_failure('no favicon provided')
+      }
     }
 
-    if (found) {
-      if (favicon!.url.remote()) {
-        this.add_to_external_urls(favicon!.url, favicon!.line)
-      } else if (!favicon!.url.exists()) {
-        this.add_failure(`internal favicon ${favicon!.url.raw_attribute} does not exist`, favicon!.line, null, favicon!.content)
-      }
-    } else {
-      this.add_failure('no favicon provided')
+    return {
+      external_urls: this.external_urls,
+      internal_urls: this.internal_urls,
+      failures: this.failures
     }
   }
 

@@ -2,11 +2,12 @@ import {Check} from '../Check'
 import {Url} from '../attribute/Url'
 import {isNullOrEmpty} from '../Utils'
 import {Element} from "../Element";
+import {ICheckResult} from "../../interfaces";
 
 export class Images extends Check {
   SCREEN_SHOT_REGEX = /Screen(?: |%20)Shot(?: |%20)\d+-\d+-\d+(?: |%20)at(?: |%20)\d+.\d+.\d+/
 
-  run() {
+  public run(): ICheckResult {
     this.html.css('img').each((i: number, node: any) => {
       let img = this.create_element(node)
 
@@ -52,6 +53,12 @@ export class Images extends Check {
 
       return this.external_urls
     })
+
+    return {
+      external_urls: this.external_urls,
+      internal_urls: this.internal_urls,
+      failures: this.failures
+    }
   }
 
   ignore_missing_alt(): boolean {

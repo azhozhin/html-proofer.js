@@ -3,9 +3,10 @@ import {FIXTURES_DIR, make_proofer} from '../spec-helper'
 import * as path from 'path'
 import {Element} from '../../src/html-proofer/Element'
 import {CheckType} from "../../src/html-proofer/CheckType";
+import {ICheckResult} from "../../src/interfaces";
 
 class MailToOctocat extends Check {
-  run() {
+  public run(): ICheckResult {
     this.html.css('a').each((i: number, node: any) => {
       const link = this.create_element(node)
 
@@ -18,6 +19,12 @@ class MailToOctocat extends Check {
         return
       }
     })
+
+    return {
+      external_urls: this.external_urls,
+      internal_urls: this.internal_urls,
+      failures: this.failures
+    }
   }
 
   mailto_octocat(link: Element) {

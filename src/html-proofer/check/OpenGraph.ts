@@ -1,9 +1,10 @@
 import {Check} from '../Check'
 import {Element} from "../Element";
+import {ICheckResult} from "../../interfaces";
 
 export class OpenGraph extends Check {
 
-  run() {
+  public run():ICheckResult {
     this.html.css('meta[property="og:url"], meta[property="og:image"]').each((i:number, node:any) => {
       const openGraph = this.create_element(node)
 
@@ -27,7 +28,12 @@ export class OpenGraph extends Check {
         }
       }
     })
-    return this.external_urls
+
+    return {
+      external_urls: this.external_urls,
+      internal_urls: this.internal_urls,
+      failures: this.failures
+    }
   }
 
   missing_content(element:Element) {

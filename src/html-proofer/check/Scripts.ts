@@ -1,10 +1,11 @@
 import {Check} from '../Check'
 import {isNullOrEmpty} from '../Utils'
 import {Element} from "../Element";
+import {ICheckResult} from "../../interfaces";
 
 export class Scripts extends Check {
-  run() {
-    this.html.css('script').each((i:number, node:any) => {
+  public run(): ICheckResult {
+    this.html.css('script').each((i: number, node: any) => {
       const script = this.create_element(node)
 
       if (script.ignore()) {
@@ -27,8 +28,12 @@ export class Scripts extends Check {
         this.add_failure(`internal script reference ${script.src} does not exist`, script.line, null, script.content)
       }
     })
-    return this.external_urls
 
+    return {
+      external_urls: this.external_urls,
+      internal_urls: this.internal_urls,
+      failures: this.failures
+    }
   }
 
   missing_src(script: Element): boolean {

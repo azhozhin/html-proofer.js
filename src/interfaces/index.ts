@@ -18,11 +18,7 @@ export interface ICheckConstructor {
 export interface ICheck {
   name: string
 
-  run(): void
-
-  failures: Array<Failure>
-  internal_urls: Map<string, Array<IMetadata>>
-  external_urls: Map<string, Array<IExtMetadata>>
+  run(): ICheckResult
 }
 
 
@@ -30,8 +26,8 @@ export function createCheck(ctor: ICheckConstructor, runner: IRunner, html: IHtm
   return new ctor(runner, html)
 }
 
-export interface IChecksResult{
-  internal_urls: Map<string, Array<IMetadata>>,
+export interface ICheckResult {
+  internal_urls: Map<string, Array<IIntMetadata>>,
   external_urls: Map<string, Array<IExtMetadata>>,
   failures: Array<Failure>
 }
@@ -52,10 +48,6 @@ export interface IExternalRequest {
   base_url(): string
 }
 
-export interface IExtMetadata {
-  filename: string,
-  line: number | null,
-}
 
 export interface IHtml {
   css(selector:string): any
@@ -68,13 +60,19 @@ export interface ILogger {
   log(level: string, message: string): void
 }
 
-export interface IMetadata {
+export interface IIntMetadata {
   source: string | null,
   filename: string | null,
   line: number | null,
   base_url: string | null,
   found: boolean,
 }
+
+export interface IExtMetadata {
+  filename: string,
+  line: number | null,
+}
+
 
 export interface IOptions {
   type?: CheckType

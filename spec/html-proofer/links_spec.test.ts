@@ -493,7 +493,7 @@ describe('Links test', () => {
     const fixture = path.join(FIXTURES_DIR, 'links', 'redirected_error.html')
     const proofer = await run_proofer(fixture, CheckType.FILE, {enforce_https: false})
     expect(proofer.failed_checks[0].description).toMatch('http://stackoverflow.com/asdadsads failed')
-  }, 10000) // todo: can we make this test faster?
+  }, 15000) // todo: can we make this test faster?
 
   it('does not complain for files with attributes containing dashes', async () => {
     const fixture = path.join(FIXTURES_DIR, 'links', 'attribute_with_dash.html')

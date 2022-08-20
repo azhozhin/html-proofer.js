@@ -17,7 +17,6 @@ export function isDirectory(filepath: string): boolean {
   } catch (err) {
     return false
   }
-
 }
 
 export function pluralize(count: number, single: string, plural: string): string {
@@ -43,7 +42,7 @@ export function create_nokogiri(src: string): IHtml {
   }
 }
 
-export function adapt_nokogiri_node(doc: IHtml, node: any) {
+export function adapt_nokogiri_node(html: IHtml, node: any) {
   const handler = {
     get: function (target: any, name: string) {
       if (target.hasOwnProperty(name)) {
@@ -54,7 +53,7 @@ export function adapt_nokogiri_node(doc: IHtml, node: any) {
         return target.attribs
       }
       if (name === 'text') {
-        return doc.css(node).text()
+        return html.css(node).text()
       }
       if (name === 'content') {
         if (target.attribs && target.attribs['content'] != null) {
@@ -70,7 +69,7 @@ export function adapt_nokogiri_node(doc: IHtml, node: any) {
           }
           return '' // for everything else we return empty string
         }
-        return doc.css(node).html()
+        return html.css(node).html()
       }
       return target.attribs[name]
     },

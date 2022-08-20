@@ -1,11 +1,11 @@
 import {Check} from '../Check'
-import {ICheck} from "../../interfaces";
+import {ICheck, ICheckResult} from "../../interfaces";
 import {Element} from "../Element";
 
 export class Links extends Check implements ICheck {
   EMAIL_REGEXP = /^\S+@\S+\.\S+$/
 
-  public run() {
+  public run(): ICheckResult {
     const nodes = []
     this.html.css('a, link, source').each((i: number, node: any) => {
       const link = this.create_element(node)
@@ -68,6 +68,12 @@ export class Links extends Check implements ICheck {
         this.add_to_internal_urls(link.url, link.line)
       }
     })
+
+    return {
+      external_urls: this.external_urls,
+      internal_urls: this.internal_urls,
+      failures: this.failures
+    }
   }
 
   allow_missing_href() {

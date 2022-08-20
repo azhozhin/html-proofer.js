@@ -3,12 +3,12 @@ import {Failure} from '../Failure'
 import * as fs from 'fs'
 import {create_nokogiri, unique} from '../Utils'
 import {Url} from '../attribute/Url'
-import {IRunner, IMetadata} from "../../interfaces/"
+import {IRunner, IIntMetadata} from "../../interfaces/"
 
 export class Internal extends UrlValidator {
-  private readonly internal_urls: Map<string, Array<IMetadata>>;
+  private readonly internal_urls: Map<string, Array<IIntMetadata>>;
 
-  constructor(runner: IRunner, internal_urls: Map<string, Array<IMetadata>>) {
+  constructor(runner: IRunner, internal_urls: Map<string, Array<IIntMetadata>>) {
     super(runner)
 
     this.internal_urls = internal_urls
@@ -25,7 +25,7 @@ export class Internal extends UrlValidator {
     return this.failed_checks
   }
 
-  run_internal_link_checker(links: Map<string, Array<IMetadata>>) {
+  run_internal_link_checker(links: Map<string, Array<IIntMetadata>>) {
     const to_add = []
     for (const [link, matched_files] of links) {
       for (const metadata of matched_files) {

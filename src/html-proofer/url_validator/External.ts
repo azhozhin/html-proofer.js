@@ -1,7 +1,7 @@
 import {UrlValidator} from '../UrlValidator'
 import {Url} from '../attribute/Url'
 import {Hydra} from '../Hydra'
-import {create_nokogiri} from '../Utils'
+import {create_nokogiri, unique} from '../Utils'
 import {Failure} from '../Failure'
 import {outdent} from 'outdent'
 import {IRunner, IExternalRequest, IExtMetadata} from '../../interfaces/'
@@ -153,8 +153,7 @@ export class External extends UrlValidator {
     const body_doc = create_nokogiri(response.data)
 
     const unencoded_hash = decodeURI(hash)
-    // todo: hash and unencoded hash might match, so there is no need to query the same thing
-    const csss = [
+    const cssSelectors = [
       `[name="${hash}"]`,
       `[name="${unencoded_hash}"]`,
       `[id="${hash}"]`,
@@ -163,18 +162,19 @@ export class External extends UrlValidator {
 
     //# user-content is a special addition by GitHub.
     if (url.host.match(/github\.com/i)) {
-      csss.push(`[name="user-content-${hash}"]`)
-      csss.push(`[id="user-content-${hash}"]`)
+      cssSelectors.push(`[name="user-content-${hash}"]`)
+      cssSelectors.push(`[id="user-content-${hash}"]`)
 
       // when linking to a file on GitHub, like #L12-L34, only the first "L" portion
       // will be identified as a linkable portion
       const match = hash.match(/^(L\d)+/)
       if (match) {
-        csss.push(`[id="${match[0]}"]`)
+        cssSelectors.push(`[id="${match[0]}"]`)
       }
     }
 
-    const full_selector = csss.join(',')
+    // some (encoded and decoded) selectors could match thus do need to query twice
+    const full_selector = unique(cssSelectors).join(',')
     if (body_doc.css(full_selector).length > 0) {
       return
     }

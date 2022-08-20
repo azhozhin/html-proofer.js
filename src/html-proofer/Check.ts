@@ -3,13 +3,13 @@ import {Element} from './Element'
 import {adapt_nokogiri_node} from './Utils'
 
 import {Url} from "./attribute/Url";
-import {ICheck, IExtMetadata, IHtml, IMetadata, IRunner} from "../interfaces";
+import {ICheck, ICheckResult, IExtMetadata, IHtml, IIntMetadata, IRunner} from "../interfaces";
 
 
 export class Check implements ICheck {
   html: IHtml
   public failures: Array<Failure>
-  public internal_urls: Map<string, Array<IMetadata>> = new Map()
+  public internal_urls: Map<string, Array<IIntMetadata>> = new Map()
   public external_urls: Map<string, Array<IExtMetadata>> = new Map()
 
   protected runner: IRunner
@@ -26,7 +26,7 @@ export class Check implements ICheck {
     return new Element(this.runner, this.html, node, this.base_url())
   }
 
-  public run() {
+  public run(): ICheckResult {
     throw new Error('NotImplementedError')
   }
 
@@ -61,7 +61,7 @@ export class Check implements ICheck {
       this.internal_urls.set(url_string, [])
     }
 
-    const metadata: IMetadata = {
+    const metadata: IIntMetadata = {
       source: this.runner.current_source,
       filename: this.runner.current_filename,
       line: line,
