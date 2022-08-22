@@ -17,32 +17,28 @@ export class Element implements IElement {
     this.node = node
 
     this.baseUrl = baseUrl
-    this.url = new Url(runner, this.link_attribute, baseUrl)
+    this.url = new Url(runner, this.linkAttribute, baseUrl)
 
     this.line = node.sourceCodeLocation.startLine
     this.content = this.node.content
   }
 
-  get link_attribute() {
+  get linkAttribute() {
     return this.meta_content || this.src || this.srcset || this.href
   }
 
   get meta_content() {
-    if (!this.meta_tag()) {
+    if (!this.isMetaTag()) {
       return null
     }
     if (this.attribute_swapped()) {
       return this.swap_attributes('content')
     }
-    return this.node.attributes['content']
-  }
-
-  meta_tag() {
-    return this.node.name === 'meta'
+    return this.node.attributes.content
   }
 
   get src() {
-    if (!this.img_tag() && !this.script_tag() && !this.source_tag()) {
+    if (!this.isImgTag() && !this.isScriptTag() && !this.isSourceTag()) {
       return null
     }
     if (this.attribute_swapped()) {
@@ -51,16 +47,32 @@ export class Element implements IElement {
     return this.node.attributes['src']
   }
 
-  img_tag() {
+  private isMetaTag(): boolean {
+    return this.node.name === 'meta'
+  }
+
+  private isImgTag() {
     return this.node.name === 'img'
   }
 
-  script_tag() {
+  private isScriptTag() {
     return this.node.name === 'script'
   }
 
+  private isSourceTag() {
+    return this.node.name === 'source'
+  }
+
+  private isAnchorTag(): boolean {
+    return this.node.name === 'a'
+  }
+
+  isLinkTag(): boolean {
+    return this.node.name === 'link'
+  }
+
   get srcset() {
-    if (!this.img_tag() && !this.source_tag()) {
+    if (!this.isImgTag() && !this.isSourceTag()) {
       return null
     }
     if (this.attribute_swapped()) {
@@ -69,12 +81,8 @@ export class Element implements IElement {
     return this.node.attributes['srcset']
   }
 
-  source_tag() {
-    return this.node.name === 'source'
-  }
-
   get href() {
-    if (!this.a_tag() && !this.link_tag()) {
+    if (!this.isAnchorTag() && !this.isLinkTag()) {
       return null
     }
     if (this.attribute_swapped()) {
@@ -83,13 +91,7 @@ export class Element implements IElement {
     return this.node.attributes['href']
   }
 
-  a_tag(): boolean {
-    return this.node.name === 'a'
-  }
 
-  link_tag(): boolean {
-    return this.node.name === 'link'
-  }
 
   aria_hidden(): boolean {
     const ariaHidden = this.node.attributes['aria-hidden']
@@ -132,7 +134,7 @@ export class Element implements IElement {
     // todo: too complicated
     let newAttr
     if (attrs) {
-      const n = attrs.find((o:any) => o[0] === oldAttr)
+      const n = attrs.find((o: any) => o[0] === oldAttr)
       if (n) {
         newAttr = n[1]
       }
@@ -145,7 +147,7 @@ export class Element implements IElement {
     return this.node.attributes[newAttr]
   }
 
-  node_ancestors(node:any) {
+  private nodeAncestors(node: INode) {
     if (!node) {
       return []
     }
@@ -163,11 +165,11 @@ export class Element implements IElement {
   }
 
   ancestors_ignorable() {
-    const ancestorsAttributes = this.node_ancestors(this.node).map(a => a.attributes)
+    // todo: do we want to traverse to the top if we got ignore on lower level?
+    const ancestorsAttributes = this.nodeAncestors(this.node).map(a => a.attributes)
     ancestorsAttributes.pop() // remove document at the end
     const anyAncestor = ancestorsAttributes.some(a => a['data-proofer-ignore'] != null)
     return anyAncestor
-
   }
 
 }

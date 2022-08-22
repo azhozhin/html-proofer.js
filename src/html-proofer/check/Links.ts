@@ -2,7 +2,7 @@ import {Check} from '../Check'
 import {ICheck, ICheckResult} from "../../interfaces";
 import {Element} from "../Element";
 
-export class Links extends Check implements ICheck {
+export class Links extends Check {
   EMAIL_REGEXP = /^\S+@\S+\.\S+$/
 
   public run(): ICheckResult {
@@ -42,7 +42,7 @@ export class Links extends Check implements ICheck {
       }
 
       if (!link.url.internal && link.url.remote()) {
-        if (this.runner.check_sri() && link.link_tag()) {
+        if (this.runner.check_sri() && link.isLinkTag()) {
           this.check_sri(link)
         }
 

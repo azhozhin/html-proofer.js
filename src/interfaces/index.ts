@@ -55,7 +55,7 @@ export interface IExternalRequest {
 
 
 export interface IHtml {
-  css(selector: string | any): any
+  css(selector: string | any): INode[]
 
   remove(node: any): void
 
