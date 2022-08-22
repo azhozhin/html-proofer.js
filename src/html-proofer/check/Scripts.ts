@@ -17,11 +17,11 @@ export class Scripts extends Check {
       }
 
       // does the script exist?
-      if (this.missing_src(script)) {
+      if (this.isMissingSrc(script)) {
         this.add_failure('script is empty and has no src attribute', script.line, null, script.content)
       } else if (script.url.remote()) {
         this.add_to_external_urls(script.src, script.line)
-        if (this.runner.check_sri()) {
+        if (this.runner.checkSriOption()) {
           this.check_sri(script)
         }
       } else if (!script.url.exists()) {
@@ -36,17 +36,17 @@ export class Scripts extends Check {
     }
   }
 
-  missing_src(script: Element): boolean {
-    return script.node.attributes['src'] === undefined
+  isMissingSrc(script: Element): boolean {
+    return script.node.attributes.src === undefined
   }
 
   check_sri(script: Element) {
-    if (isNullOrEmpty(script.node.attributes['integrity']) && isNullOrEmpty(script.node.attributes['crossorigin'])) {
-      this.add_failure(`SRI and CORS not provided in: #{@script.url.raw_attribute}`, script.line, null, script.content)
-    } else if (isNullOrEmpty(script.node.attributes['integrity'])) {
-      this.add_failure(`Integrity is missing in: #{@script.url.raw_attribute}`, script.line, null, script.content)
-    } else if (isNullOrEmpty(script.node.attributes['crossorigin'])) {
-      this.add_failure(`CORS not provided for external resource in: #{@script.url.raw_attribute}`, script.line, null, script.content)
+    if (isNullOrEmpty(script.node.attributes.integrity) && isNullOrEmpty(script.node.attributes.crossorigin)) {
+      this.add_failure(`SRI and CORS not provided in: ${script.url.rawAttribute}`, script.line, null, script.content)
+    } else if (isNullOrEmpty(script.node.attributes.integrity)) {
+      this.add_failure(`Integrity is missing in: ${script.url.rawAttribute}`, script.line, null, script.content)
+    } else if (isNullOrEmpty(script.node.attributes.crossorigin)) {
+      this.add_failure(`CORS not provided for external resource in: ${script.url.rawAttribute}`, script.line, null, script.content)
     }
   }
 

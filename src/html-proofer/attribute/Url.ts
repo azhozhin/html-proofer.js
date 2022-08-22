@@ -167,7 +167,7 @@ export class Url extends Attribute {
     return this.scheme === 'https'
   }
 
-  non_http_remote() {
+  isNonHttpRemote():boolean {
     return !isNullOrEmpty(this.scheme) && !this.remote()
   }
 
@@ -184,7 +184,7 @@ export class Url extends Attribute {
   }
 
   exists(): boolean {
-    if (this.base64()) {
+    if (this.isBase64()) {
       return true
     }
     if (this.runner.checkedPaths.has(this.absolute_path)) {
@@ -196,8 +196,8 @@ export class Url extends Attribute {
     return checkResult
   }
 
-  base64() {
-    return this.rawAttribute ? this.rawAttribute.match(/^data:image/) : false
+  isBase64():boolean {
+    return this.rawAttribute ? this.rawAttribute.match(/^data:image/) != null : false
   }
 
   get absolute_path() {

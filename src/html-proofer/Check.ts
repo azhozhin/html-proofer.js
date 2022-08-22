@@ -59,7 +59,10 @@ export abstract class Check implements ICheck {
     this.internalUrls.get(urlString)!.push(metadata)
   }
 
-  protected add_to_external_urls(url: Url, line: number | null): void {
+  protected add_to_external_urls(url: Url | string | null, line: number | null): void {
+    if (url == null) {
+      return
+    }
     const urlString = url.toString()
 
     if (!this.externalUrls.has(urlString)) {

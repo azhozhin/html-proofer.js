@@ -19,7 +19,7 @@ export class Element implements IElement {
     this.baseUrl = baseUrl
     this.url = new Url(runner, this.linkAttribute, baseUrl)
 
-    this.line = node.sourceCodeLocation.startLine
+    this.line = node.sourceCodeLocation!.startLine
     this.content = this.node.content
   }
 
@@ -31,35 +31,35 @@ export class Element implements IElement {
     if (!this.isMetaTag()) {
       return null
     }
-    if (this.attribute_swapped()) {
-      return this.swap_attributes('content')
+    if (this.isSwapAttributeOption()) {
+      return this.swapAttributes('content')
     }
     return this.node.attributes.content
   }
 
-  get src() {
+  get src(): string | null {
     if (!this.isImgTag() && !this.isScriptTag() && !this.isSourceTag()) {
       return null
     }
-    if (this.attribute_swapped()) {
-      return this.swap_attributes('src')
+    if (this.isSwapAttributeOption()) {
+      return this.swapAttributes('src')
     }
-    return this.node.attributes['src']
+    return this.node.attributes.src
   }
 
   private isMetaTag(): boolean {
     return this.node.name === 'meta'
   }
 
-  private isImgTag() {
+  private isImgTag(): boolean {
     return this.node.name === 'img'
   }
 
-  private isScriptTag() {
+  private isScriptTag(): boolean {
     return this.node.name === 'script'
   }
 
-  private isSourceTag() {
+  private isSourceTag(): boolean {
     return this.node.name === 'source'
   }
 
@@ -71,38 +71,36 @@ export class Element implements IElement {
     return this.node.name === 'link'
   }
 
-  get srcset() {
+  get srcset(): string | null {
     if (!this.isImgTag() && !this.isSourceTag()) {
       return null
     }
-    if (this.attribute_swapped()) {
-      this.swap_attributes('srcset')
+    if (this.isSwapAttributeOption()) {
+      this.swapAttributes('srcset')
     }
-    return this.node.attributes['srcset']
+    return this.node.attributes.srcset
   }
 
   get href() {
     if (!this.isAnchorTag() && !this.isLinkTag()) {
       return null
     }
-    if (this.attribute_swapped()) {
-      this.swap_attributes('href')
+    if (this.isSwapAttributeOption()) {
+      this.swapAttributes('href')
     }
-    return this.node.attributes['href']
+    return this.node.attributes.href
   }
 
-
-
-  aria_hidden(): boolean {
+  isAriaHidden(): boolean {
     const ariaHidden = this.node.attributes['aria-hidden']
-    return ariaHidden ? ariaHidden.value === 'true' : false
+    return ariaHidden ? ariaHidden === 'true' : false
   }
 
-  multiple_srcsets() {
-    return this.srcset && this.srcset.split(',').length > 1
+  isMultipleSrcsets() {
+    return this.srcset && this.srcset?.split(',').length > 1
   }
 
-  ignore() {
+  ignore(): boolean {
     if (this.node.attributes['data-proofer-ignore'] != null) {
       return true
     }
@@ -116,7 +114,7 @@ export class Element implements IElement {
     return false
   }
 
-  attribute_swapped() {
+  private isSwapAttributeOption() {
     if (Object.keys(this.runner.options.swap_attributes).length === 0) {
       return false
     }
@@ -128,7 +126,7 @@ export class Element implements IElement {
     return false
   }
 
-  swap_attributes(oldAttr: string) {
+  private swapAttributes(oldAttr: string) {
     const attrs = this.runner.options.swap_attributes[this.node.name]
 
     // todo: too complicated

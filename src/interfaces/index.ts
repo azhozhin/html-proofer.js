@@ -147,9 +147,9 @@ export interface IRunner {
 
   run(): void
 
-  check_sri(): boolean
+  checkSriOption(): boolean
 
-  enforce_https(): boolean
+  enforceHttpsOption(): boolean
 
   load_internal_cache(): any
 
@@ -169,10 +169,14 @@ export interface INode {
   name: string,
   content: string | null,
   text: string | null,
-  attributes: any
+  attributes: {
+    [name: string]: string;
+  }
   parent: INode | null,
-  // technical details from parser
-  sourceCodeLocation: any,
+  // technical details from parser, this is very reduced version
+  sourceCodeLocation?: {
+    startLine: number
+  } | null,
   nativeNode: any,
 }
 

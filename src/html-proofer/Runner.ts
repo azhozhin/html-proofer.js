@@ -220,11 +220,11 @@ export class Runner implements IRunner {
     return false
   }
 
-  check_sri(): boolean {
+  checkSriOption(): boolean {
     return this.options.check_sri || false
   }
 
-  enforce_https(): boolean {
+  enforceHttpsOption(): boolean {
     return this.options.enforce_https || false
   }
 
