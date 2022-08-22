@@ -14,7 +14,7 @@ export class HTMLProofer {
 
     const options = (opts || EmptyOptions)
     options.type = CheckType.FILE
-    return new Runner(file, options)
+    return new Runner([file], options)
   }
 
   static check_directory(directory: string, opts?: IOptions) {

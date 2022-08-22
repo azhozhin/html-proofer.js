@@ -8,13 +8,13 @@ export class Favicon extends Check {
     let found = false
     let el: Element | null = null
     for (const node of this.html.css('link')) {
-      el = this.create_element(node)
+      el = this.createElement(node)
 
       if (el.ignore()) {
         continue
       }
 
-      found = last(el.node.attributes['rel'].split(' ')) === 'icon'
+      found = last(el.node.attributes.rel.split(' ')) === 'icon'
       if (found) {
         break
       }
@@ -25,12 +25,12 @@ export class Favicon extends Check {
     } else {
       if (found) {
         if (el!.url.remote()) {
-          this.add_to_external_urls(el!.url, el!.line)
+          this.addToExternalUrls(el!.url, el!.line)
         } else if (!el!.url.exists()) {
-          this.add_failure(`internal favicon ${el!.url.rawAttribute} does not exist`, el!.line, null, el!.content)
+          this.addFailure(`internal favicon ${el!.url.rawAttribute} does not exist`, el!.line, null, el!.content)
         }
       } else {
-        this.add_failure('no favicon provided')
+        this.addFailure('no favicon provided')
       }
     }
 
@@ -49,6 +49,6 @@ export class Favicon extends Check {
     }
 
     // todo: inconsistent API
-    return content[0].attributes['content'].startsWith('0;')
+    return content[0].attributes.content.startsWith('0;')
   }
 }

@@ -4,6 +4,7 @@ import {FIXTURES_DIR, runProoferCli} from '../spec-helper'
 import {Configuration} from '../../src/html-proofer/Configuration'
 import * as fs from 'fs'
 import * as path from 'path'
+import {IOptions} from '../../src/interfaces'
 
 describe('Command test', () => {
   it('works with as-links', async () => {
@@ -58,7 +59,10 @@ describe('Command test', () => {
 
   it('works with ignore-urls', async () => {
     const ignorableLinks = path.join(FIXTURES_DIR, 'links', 'ignorable_links_via_options.html')
-    const {output, exitCode} = await runProoferCli(`--ignore-urls "/^http:\/\//,/sdadsad/,../whaadadt.html" ${ignorableLinks}`)
+    const {
+      output,
+      exitCode
+    } = await runProoferCli(`--ignore-urls "/^http:\/\//,/sdadsad/,../whaadadt.html" ${ignorableLinks}`)
     expect(output).toMatch('successfully')
     expect(exitCode).toBe(0)
   })
@@ -107,7 +111,10 @@ describe('Command test', () => {
 
   it('works with swap-attributes', async () => {
     const customDataSrcCheck = path.join(FIXTURES_DIR, 'images', 'data_src_attribute.html')
-    const {output, exitCode} = await runProoferCli(`--swap-attributes "{'img': [['src', 'data-src']] }" ${customDataSrcCheck}`)
+    const {
+      output,
+      exitCode
+    } = await runProoferCli(`--swap-attributes "{'img': [['src', 'data-src']] }" ${customDataSrcCheck}`)
     expect(output).toMatch('successfully')
     expect(exitCode).toBe(0)
   })
@@ -127,30 +134,34 @@ describe('Command test', () => {
   describe('nested options', () => {
     it('supports typhoeus', async () => {
       const linkWithRedirectFilepath = path.join(FIXTURES_DIR, 'links', 'link_with_redirect.html')
-      const {output, exitCode} = await runProoferCli(`--typhoeus "{'followlocation': false}" ${linkWithRedirectFilepath}`)
+      const {
+        output,
+        exitCode
+      } = await runProoferCli(`--typhoeus "{'followlocation': false}" ${linkWithRedirectFilepath}`)
       expect(output).toMatch(/failed/)
       expect(exitCode).not.toBe(0)
     })
 
     it('has only one UA', async () => {
       const {output, exitCode} = await runProoferCli(
-          `--typhoeus="{'verbose':true,'headers':{'User-Agent':'Mozilla/5.0 (Macintosh; My New User-Agent)'}}" --as-links https://linkedin.com`)
+        `--typhoeus="{'verbose':true,'headers':{'User-Agent':'Mozilla/5.0 (Macintosh; My New User-Agent)'}}" --as-links https://linkedin.com`)
       expect(output.search(/"User-Agent": "Typhoeus"/)).toEqual(-1)
-      expect(output.split('\n').
-          filter(e => e.match(/"User-Agent": "Mozilla\/5.0 \(Macintosh; My New User-Agent\)"/)).length).
-          toEqual(2)
+      expect(output.split('\n').filter(e => e.match(/"User-Agent": "Mozilla\/5.0 \(Macintosh; My New User-Agent\)"/)).length).toEqual(2)
       expect(exitCode).toBe(0)
     })
 
     it('supports hydra', async () => {
-      const {output, exitCode} = await runProoferCli(`--hydra "{\"max_concurrency\": 5}" --as-links http://www.github.com`)
+      const {
+        output,
+        exitCode
+      } = await runProoferCli(`--hydra "{\"max_concurrency\": 5}" --as-links http://www.github.com`)
       expect(output.search(/max_concurrency is invalid/)).toEqual(-1)
       expect(exitCode).toBe(0)
     })
   })
 })
 
-async function match_command_help(config:any) {
+async function match_command_help(config: IOptions) {
   const configKeys = Object.keys(config)
   const binFile = fs.readFileSync('bin/htmlproofer.ts').toString()
   const {output, exitCode} = await runProoferCli('--help')

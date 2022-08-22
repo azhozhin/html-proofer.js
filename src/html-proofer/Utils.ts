@@ -154,3 +154,11 @@ export function first(arr: any[]): any {
 export function unique(arr: string[]): string[] {
   return [...new Set(arr)]
 }
+
+export function normalizePath(source: string): string {
+//  if (source.constructor.name === 'String') {
+  return (source as string).replaceAll('\\', '/')
+//  } else if (source.constructor.name === 'Array') {
+//    return (source as string[]).map(e => e.replaceAll('\\', '/'))
+//  }
+}

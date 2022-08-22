@@ -9,7 +9,7 @@ export class Images extends Check {
 
   public run(): ICheckResult {
     for (const node of this.html.css('img')){
-      const img = this.create_element(node)
+      const img = this.createElement(node)
 
       if (img.ignore()) {
         continue
@@ -17,38 +17,38 @@ export class Images extends Check {
 
       // screenshot filenames should return because of terrible names
       if (this.terrible_filename(img)) {
-        this.add_failure(`image has a terrible filename (${img.url.rawAttribute})`, img.line, null, img.content)
+        this.addFailure(`image has a terrible filename (${img.url.rawAttribute})`, img.line, null, img.content)
       }
 
       // does the image exist?
       if (this.missing_src(img)) {
-        this.add_failure('image has no src or srcset attribute', img.line, null, img.content)
+        this.addFailure('image has no src or srcset attribute', img.line, null, img.content)
       } else if (img.url.remote()) {
-        this.add_to_external_urls(img.url, img.line)
+        this.addToExternalUrls(img.url, img.line)
       } else if (!img.url.exists() && !img.isMultipleSrcsets()) {
-        this.add_failure(`internal image ${img.url.rawAttribute} does not exist`, img.line, null, img.content)
+        this.addFailure(`internal image ${img.url.rawAttribute} does not exist`, img.line, null, img.content)
       } else if (img.isMultipleSrcsets()) {
         const srcsets = img.srcset!.split(',').map((x: string) => x.trim())
         for (const srcset of srcsets) {
           const srcsetUrl = new Url(this.runner, srcset, img.baseUrl)
 
           if (srcsetUrl.remote()) {
-            this.add_to_external_urls(srcsetUrl, img.line)
+            this.addToExternalUrls(srcsetUrl, img.line)
           } else if (!srcsetUrl.exists()) {
-            this.add_failure(`internal image ${srcset} does not exist`, img.line, null, img.content)
+            this.addFailure(`internal image ${srcset} does not exist`, img.line, null, img.content)
           }
         }
       }
 
       if (!this.isIgnoreElement(img)) {
         if (this.isMissingAltAttribute(img) && !this.ignoreMissingAltAttributeOption()) {
-          this.add_failure(`image ${img.url.rawAttribute} does not have an alt attribute`, img.line, null, img.content)
+          this.addFailure(`image ${img.url.rawAttribute} does not have an alt attribute`, img.line, null, img.content)
         } else if ((this.isEmptyAltAttribute(img) || this.alt_all_spaces(img)) && !this.ignoreEmptyAltAttributeOption()) {
-          this.add_failure(`image ${img.url.rawAttribute} has an alt attribute, but no content`, img.line, null, img.content)
+          this.addFailure(`image ${img.url.rawAttribute} has an alt attribute, but no content`, img.line, null, img.content)
         }
       }
       if (this.runner.enforceHttpsOption() && img.url.http()) {
-        this.add_failure(`image ${img.url.rawAttribute} uses the http scheme`, img.line, null, img.content)
+        this.addFailure(`image ${img.url.rawAttribute} uses the http scheme`, img.line, null, img.content)
       }
     }
 

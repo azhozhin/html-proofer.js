@@ -2,17 +2,17 @@ import {Failure} from './Failure'
 import {Element} from './Element'
 
 import {Url} from "./attribute/Url";
-import {ICheck, ICheckResult, IExtMetadata, IHtml, IIntMetadata, IRunner} from "../interfaces";
+import {ICheck, ICheckResult, IExtMetadata, IHtml, IIntMetadata, INode, IRunner} from "../interfaces";
 
 
 export abstract class Check implements ICheck {
-  html: IHtml
-  public failures: Failure[]
-  public internalUrls: Map<string, IIntMetadata[]> = new Map()
-  public externalUrls: Map<string, IExtMetadata[]> = new Map()
+  protected readonly html: IHtml
+  protected readonly failures: Failure[]
+  protected readonly internalUrls: Map<string, IIntMetadata[]> = new Map()
+  protected readonly externalUrls: Map<string, IExtMetadata[]> = new Map()
 
   protected runner: IRunner
-  private _base_url: string | null = null
+  private _baseUrl: string | null = null
 
   constructor(runner: IRunner, html: IHtml) {
     this.runner = runner
@@ -21,13 +21,13 @@ export abstract class Check implements ICheck {
     this.failures = []
   }
 
-  protected create_element(node: any): Element {
-    return new Element(this.runner, this.html, node, this.base_url())
+  protected createElement(node: INode): Element {
+    return new Element(this.runner, this.html, node, this.baseUrl())
   }
 
   public abstract run(): ICheckResult
 
-  protected add_failure(description: string, line: (number | null) = null, status: (string | null) = null, content: (string | null) = null) {
+  protected addFailure(description: string, line: (number | null) = null, status: (string | null) = null, content: (string | null) = null) {
     this.failures.push(new Failure(this.runner.currentFilename!, this.name, description, line, status, content))
   }
 
@@ -42,7 +42,7 @@ export abstract class Check implements ICheck {
     return this.constructor.name
   }
 
-  protected add_to_internal_urls(url: Url, line: number | null) {
+  protected addToInternalUrls(url: Url, line: number | null) {
     const urlString = url.rawAttribute || ''
 
     if (!this.internalUrls.has(urlString)) {
@@ -53,13 +53,13 @@ export abstract class Check implements ICheck {
       source: this.runner.currentSource,
       filename: this.runner.currentFilename,
       line,
-      base_url: this.base_url(),
+      baseUrl: this.baseUrl(),
       found: false,
     }
     this.internalUrls.get(urlString)!.push(metadata)
   }
 
-  protected add_to_external_urls(url: Url | string | null, line: number | null): void {
+  protected addToExternalUrls(url: Url | string | null, line: number | null): void {
     if (url == null) {
       return
     }
@@ -75,18 +75,18 @@ export abstract class Check implements ICheck {
     })
   }
 
-  base_url() {
-    if (this._base_url) {
-      return this._base_url
+  private baseUrl() {
+    if (this._baseUrl) {
+      return this._baseUrl
     }
     const base = this.html.css('base')
     if (base && base.length === 0) {
-      this._base_url = null
+      this._baseUrl = null
       return null
     }
     const node = base[0]
-    this._base_url = node.attributes.href
-    return this._base_url
+    this._baseUrl = node.attributes.href
+    return this._baseUrl
   }
 
 }

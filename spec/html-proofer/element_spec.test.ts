@@ -9,11 +9,11 @@ import {createDocument} from '../../src/html-proofer/Utils'
 
 describe('HTMLProofer::Element', () => {
 
-  let context: { runner: IRunner | null } = {runner: null}
+  const context: { runner: IRunner | null } = {runner: null}
 
   beforeEach(() => {
-    context.runner = new Runner('')
-    //# @check = HTMLProofer::Check.new('', '', Nokogiri::HTML5(''), nil, nil, HTMLProofer::Configuration::PROOFER_DEFAULTS)
+    context.runner = new Runner([''])
+    // # @check = HTMLProofer::Check.new('', '', Nokogiri::HTML5(''), nil, nil, HTMLProofer::Configuration::PROOFER_DEFAULTS)
   })
 
   describe('#initialize', () => {
@@ -37,7 +37,7 @@ describe('HTMLProofer::Element', () => {
       const doc = createDocument('<meta name="twitter:card" content="summary">')
       const node = doc.css('meta')[0];
       const element = new Element(context.runner!, doc, node)
-      expect(element.node.attributes['content']).toEqual('summary')
+      expect(element.node.attributes.content).toEqual('summary')
     })
 
   })
@@ -65,9 +65,9 @@ describe('HTMLProofer::Element', () => {
   // todo: this should be in proofer_spec.test.ts
   describe('ivar setting', () => {
     it('does not explode if given a bad attribute', async () => {
-      const broken_attribute = path.join(FIXTURES_DIR, 'html', 'invalid_attribute.html')
-      const proofer = await createAndRunProofer(broken_attribute, CheckType.FILE)
-      expect(proofer.failed_checks).toEqual([])
+      const brokenAttribute = path.join(FIXTURES_DIR, 'html', 'invalid_attribute.html')
+      const proofer = await createAndRunProofer(brokenAttribute, CheckType.FILE)
+      expect(proofer.failedChecks).toEqual([])
     })
   })
 
@@ -76,7 +76,7 @@ describe('HTMLProofer::Element', () => {
       const doc = createDocument('<meta content="abc">')
       const node = doc.css('meta')[0];
       const element = new Element(context.runner!, doc, node)
-      expect(element.node.attributes['content']).toEqual('abc')
+      expect(element.node.attributes.content).toEqual('abc')
     })
 
     it('1', () => {

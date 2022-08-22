@@ -8,14 +8,14 @@ export class Links extends Check {
   public run(): ICheckResult {
     const nodes = []
     for (const node of this.html.css('a, link, source')) {
-      const link = this.create_element(node)
+      const link = this.createElement(node)
 
       if (link.ignore()) {
         continue
       }
 
       if (!this.allow_hash_href() && link.node.attributes.href === '#') {
-        this.add_failure('linking to internal hash #, which points to nowhere', link.line, null, link.content)
+        this.addFailure('linking to internal hash #, which points to nowhere', link.line, null, link.content)
         continue
       }
 
@@ -25,12 +25,12 @@ export class Links extends Check {
           continue
         }
 
-        this.add_failure(`'${link.node.name}' tag is missing a reference`, link.line, null, link.content)
+        this.addFailure(`'${link.node.name}' tag is missing a reference`, link.line, null, link.content)
         continue
       }
       // is it even a valid URL?
       if (!link.url.valid()) {
-        this.add_failure(`${link.href} is an invalid URL`, link.line, null, link.content)
+        this.addFailure(`${link.href} is an invalid URL`, link.line, null, link.content)
         continue
       }
 
@@ -53,19 +53,19 @@ export class Links extends Check {
         }
 
         if (!link.url.is_path()) {
-          this.add_failure(`${link.url.rawAttribute} is an invalid URL`, link.line, null, link.content)
+          this.addFailure(`${link.url.rawAttribute} is an invalid URL`, link.line, null, link.content)
           continue
         }
 
-        this.add_to_external_urls(link.url, link.line)
+        this.addToExternalUrls(link.url, link.line)
       } else if (link.url.internal) {
         // does the local directory have a trailing slash?
         if (link.url.unslashed_directory(link.url.absolute_path)) {
-          this.add_failure(`internally linking to a directory ${link.url.rawAttribute} without trailing slash`,
+          this.addFailure(`internally linking to a directory ${link.url.rawAttribute} without trailing slash`,
             link.line, null, link.content)
           continue
         }
-        this.add_to_internal_urls(link.url, link.line)
+        this.addToInternalUrls(link.url, link.line)
       }
     }
 
@@ -96,21 +96,21 @@ export class Links extends Check {
         if (!this.runner.options.enforce_https) {
           return
         }
-        this.add_failure(`${link.url.rawAttribute} is not an HTTPS link`, link.line, null, link.content)
+        this.addFailure(`${link.url.rawAttribute} is not an HTTPS link`, link.line, null, link.content)
     }
   }
 
   handle_mailto(link: Element) {
     if (!link.url.path) {
       if (!this.ignore_empty_mailto()) {
-        this.add_failure(`${link.url.rawAttribute} contains no email address`, link.line, null, link.content)
+        this.addFailure(`${link.url.rawAttribute} contains no email address`, link.line, null, link.content)
       }
     } else {
       const mailto = decodeURI(link.url.path)
       const recipients = mailto.split(/[;,]/).map(e => e.trim())
       recipients.forEach(email => {
         if (!email.match(this.EMAIL_REGEXP)) {
-          this.add_failure(`${link.url.rawAttribute} contains an invalid email address`, link.line, null, link.content)
+          this.addFailure(`${link.url.rawAttribute} contains an invalid email address`, link.line, null, link.content)
         }
         return false // we need to find only first broken email as we don't want to create multiple failures
       })
@@ -119,7 +119,7 @@ export class Links extends Check {
 
   handle_tel(link: Element) {
     if (!link.url.path) {
-      this.add_failure(`${link.url.rawAttribute} contains no phone number`, link.line, null, link.content)
+      this.addFailure(`${link.url.rawAttribute} contains no phone number`, link.line, null, link.content)
     }
   }
 
@@ -137,11 +137,11 @@ export class Links extends Check {
     }
 
     if ((!link.node.attributes.integrity) && (!link.node.attributes.crossorigin)) {
-      this.add_failure(`SRI and CORS not provided in: ${link.url.rawAttribute}`, link.line, null, link.content)
+      this.addFailure(`SRI and CORS not provided in: ${link.url.rawAttribute}`, link.line, null, link.content)
     } else if (!link.node.attributes.integrity) {
-      this.add_failure(`Integrity is missing in: ${link.url.rawAttribute}`, link.line, null, link.content)
+      this.addFailure(`Integrity is missing in: ${link.url.rawAttribute}`, link.line, null, link.content)
     } else if (!link.node.attributes.crossorigin) {
-      this.add_failure(`CORS not provided for external resource in: ${link.url.rawAttribute}`, link.line, null, link.content)
+      this.addFailure(`CORS not provided for external resource in: ${link.url.rawAttribute}`, link.line, null, link.content)
     }
   }
 

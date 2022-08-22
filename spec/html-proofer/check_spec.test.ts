@@ -8,14 +8,14 @@ import {ICheckResult} from "../../src/interfaces";
 class MailToOctocat extends Check {
   public run(): ICheckResult {
     for (const node of this.html.css('a')) {
-      const link = this.create_element(node)
+      const link = this.createElement(node)
 
       if (link.ignore()) {
         continue
       }
 
       if (this.mailto_octocat(link)) {
-        this.add_failure(`Don't email the Octocat directly!`, link.line)
+        this.addFailure(`Don't email the Octocat directly!`, link.line)
         continue
       }
     }
@@ -43,7 +43,7 @@ describe('HTMLProofer::Reporter', () => {
     // VCR.ejectCassette(cassette_name)
     // const output = capture_stderr { proofer.run }
     // expect(output).to(include("At #{file}:1"))
-    const failure = proofer.failed_checks[0]
+    const failure = proofer.failedChecks[0]
     expect(failure.description).toEqual(`Don't email the Octocat directly!`)
     expect(failure.line).toEqual(1)
   })

@@ -15,8 +15,8 @@ export class Internal extends UrlValidator {
   }
 
   async validate(): Promise<Failure[]> {
-    if (this.cache.enabled()) {
-      const urlsToCheck = this.runner.load_internal_cache()
+    if (this.cache.isEnabled()) {
+      const urlsToCheck = this.runner.loadInternalCache()
       this.run_internal_link_checker(urlsToCheck)
     } else {
       this.run_internal_link_checker(this.internalUrls)
@@ -29,7 +29,7 @@ export class Internal extends UrlValidator {
     const toAdd = []
     for (const [link, matchedFiles] of links) {
       for (const metadata of matchedFiles) {
-        const url = new Url(this.runner, link, metadata.base_url)
+        const url = new Url(this.runner, link, metadata.baseUrl)
 
         this.runner.currentSource = metadata.source
         this.runner.currentFilename = metadata.filename
@@ -54,7 +54,7 @@ export class Internal extends UrlValidator {
     }
     // adding directly to the cache above results in an endless loop
     for (const [url, metadata, exists] of toAdd) {
-      this.cache.add_internal(url.toString(), metadata, exists)
+      this.cache.addInternalUrl(url.toString(), metadata, exists)
     }
 
     return this.failedChecks

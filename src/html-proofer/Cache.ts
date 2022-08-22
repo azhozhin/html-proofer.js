@@ -12,28 +12,28 @@ export class Cache implements ICache {
     this.options = opts || EmptyOptions
   }
 
-  public add_internal(url: any, metadata: any, found: any) {
-    if (!this.enabled()) {
+  public addInternalUrl(url: any, metadata: any, found: any) {
+    if (!this.isEnabled()) {
       return
     }
     // todo
   }
 
-  public add_external(url: any, filenames: any, statusCode: any, msg: any) {
-    if (!this.enabled()) {
+  public addExternalUrl(url: any, filenames: any, statusCode: any, msg: any) {
+    if (!this.isEnabled()) {
       return
     }
     // todo
   }
 
   public write() {
-    if (!this.enabled()) {
+    if (!this.isEnabled()) {
       return
     }
     // todo
   }
 
-  public enabled() {
+  public isEnabled() {
     // return this.options.cache != null
     return false
   }

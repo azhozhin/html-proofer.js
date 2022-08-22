@@ -11,7 +11,7 @@ describe('HTMLProofer::Runner', () => {
       const proofer = createProofer([url], CheckType.LINKS, opts)
       let request: any = null
       const auth = 'Bearer <TOKEN>'
-      proofer.add_before_request((r: any) => {
+      proofer.addBeforeRequest((r: any) => {
         if (r.base_url() === url) {
           r.options['headers']['Authorization'] = auth
         }
@@ -55,7 +55,7 @@ describe('HTMLProofer::Runner', () => {
       const proofer = createProofer(dir, CheckType.DIRECTORY, opts)
       let request: any = null
       const auth = 'Bearer <TOKEN>'
-      proofer.add_before_request((r) => {
+      proofer.addBeforeRequest((r) => {
         r.options['headers']['Authorization'] = auth
         request = r
       })

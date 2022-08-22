@@ -3,15 +3,16 @@ import {captureProoferHttp, captureProoferOutput, FIXTURES_DIR, createAndRunProo
 import {HTMLProofer} from '../../src/html-proofer'
 import {CheckType} from "../../src/html-proofer/CheckType"
 import {IOptions} from "../../src/interfaces/"
+import {normalizePath} from "../../src/html-proofer/Utils";
 
 describe('HTMLProofer', () => {
   describe('#failed_checks', () => {
     it('is an array of Failures', async () => {
       const broken_link_internal_filepath = path.join(FIXTURES_DIR, 'links', 'broken_link_internal.html')
       const proofer = await createAndRunProofer(broken_link_internal_filepath, CheckType.FILE, {})
-      expect(proofer.failed_checks.length).toEqual(2)
+      expect(proofer.failedChecks.length).toEqual(2)
 
-      const check = proofer.failed_checks[0]
+      const check = proofer.failedChecks[0]
       expect(check.constructor.name).toEqual('Failure')
       expect(check.path).toEqual(broken_link_internal_filepath)
       expect(check.description).toEqual('internally linking to ./notreal.html, which does not exist')
@@ -21,7 +22,7 @@ describe('HTMLProofer', () => {
 
   describe('#files', () => {
     it('works for directory that ends with .html', async () => {
-      const folder = path.join(FIXTURES_DIR, 'links', '_site/folder.html').replace(/\\/g, '/')
+      const folder = normalizePath(path.join(FIXTURES_DIR, 'links', '_site', 'folder.html'))
       const proofer = HTMLProofer.check_directory(folder)
       expect(proofer.files).toEqual([{source: folder, path: `${folder}/index.html`}])
     })
@@ -64,28 +65,28 @@ describe('HTMLProofer', () => {
       }
       const brokenHashInternalFilepath = path.join(FIXTURES_DIR, 'links', 'broken_hash_internal.html')
       const proofer = await createAndRunProofer(brokenHashInternalFilepath, CheckType.FILE, options)
-      expect(proofer.failed_checks).toEqual([])
+      expect(proofer.failedChecks).toEqual([])
     })
 
     it('knows how to ignore a file by regexp', async () => {
       const options = {ignore_files: [/broken_hash/]}
       const brokenHashInternalFilepath = path.join(FIXTURES_DIR, 'links', 'broken_hash_internal.html')
       const proofer = await createAndRunProofer(brokenHashInternalFilepath, CheckType.FILE, options)
-      expect(proofer.failed_checks).toEqual([])
+      expect(proofer.failedChecks).toEqual([])
     })
 
     it('knows how to ignore multiple files by regexp', async () => {
       const options = {ignore_files: [/.*\/javadoc\/.*/, /.*\/catalog\/.*/]}
       const brokenFolders = path.join(FIXTURES_DIR, 'links', 'folder/multiples')
       const proofer = await createAndRunProofer([brokenFolders], CheckType.DIRECTORIES, options)
-      expect(proofer.failed_checks).toEqual([])
+      expect(proofer.failedChecks).toEqual([])
     })
 
     it('knows how to ignore a directory by regexp', async () => {
       const options = {ignore_files: [/\S\.html/]}
       const linksDir = path.join(FIXTURES_DIR, 'links')
       const proofer = await createAndRunProofer([linksDir], CheckType.DIRECTORIES, options)
-      expect(proofer.failed_checks).toEqual([])
+      expect(proofer.failedChecks).toEqual([])
     })
   })
 
@@ -93,7 +94,7 @@ describe('HTMLProofer', () => {
     it('ignores status codes when asked', async () => {
       const options: IOptions = {ignore_status_codes: [404]}
       const proofer = await createAndRunProofer(['http://www.github.com/github/notreallyhere'], CheckType.LINKS, options)
-      expect(proofer.failed_checks).toEqual([])
+      expect(proofer.failedChecks).toEqual([])
     })
   })
 

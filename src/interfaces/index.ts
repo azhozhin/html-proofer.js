@@ -4,13 +4,13 @@ import * as cheerio from "cheerio";
 import {Url} from "../html-proofer/attribute/Url";
 
 export interface ICache {
-  add_internal(url: any, metadata: any, found: any): void
+  addInternalUrl(url: string, metadata: any, found: any): void
 
-  add_external(url: any, filenames: any, statusCode: any, msg: any): void
+  addExternalUrl(url: string, filenames: any, statusCode: any, msg: any): void
 
   write(): void
 
-  enabled(): boolean
+  isEnabled(): boolean
 }
 
 export type ICheckConstructor = new(runner: IRunner, html: IHtml) => ICheck
@@ -27,6 +27,7 @@ export function createCheck(ctor: ICheckConstructor, runner: IRunner, html: IHtm
 }
 
 export interface ICheckResult {
+  // files: string[],
   internalUrls: Map<string, IIntMetadata[]>,
   externalUrls: Map<string, IExtMetadata[]>,
   failures: Failure[]
@@ -71,7 +72,7 @@ export interface IIntMetadata {
   source: string | null,
   filename: string | null,
   line: number | null,
-  base_url: string | null,
+  baseUrl: string | null,
   found: boolean,
 }
 
@@ -121,8 +122,6 @@ export interface IOptions {
   method?: string
   headers?: any
   ssl_verifypeer?: boolean
-
-
 }
 
 export const EmptyOptions: IOptions = {}
@@ -151,16 +150,16 @@ export interface IRunner {
 
   enforceHttpsOption(): boolean
 
-  load_internal_cache(): any
+  loadInternalCache(): any
 
-  load_external_cache(): any
+  loadExternalCache(): any
 
   checkedPaths: Map<string, boolean>
   checkedHashes: Map<string, Map<string, boolean>>
 
-  failed_checks: Failure[]
+  failedChecks: Failure[]
 
-  add_before_request(block: (request: any) => any): void
+  addBeforeRequest(block: (request: any) => any): void
 
   externalUrls: Map<string, IExtMetadata[]>
 }
@@ -179,6 +178,4 @@ export interface INode {
   } | null,
   nativeNode: any,
 }
-
-export type ISource = string | string[]
 

@@ -5,7 +5,7 @@ describe('HTMLProofer::Attribute::Url', () => {
   const context: { runner?: Runner } = {}
 
   beforeEach(() => {
-    context.runner = new Runner('')
+    context.runner = new Runner([''])
   })
 
   describe('#ignores_pattern_check', () => {

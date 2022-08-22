@@ -24,8 +24,8 @@ export class External extends UrlValidator {
   }
 
   async validate(): Promise<Failure[]> {
-    if (this.cache.enabled()) {
-      const urlsToCheck = this.runner.load_external_cache()
+    if (this.cache.isEnabled()) {
+      const urlsToCheck = this.runner.loadExternalCache()
       await this.run_external_link_checker(urlsToCheck)
     } else {
       await this.run_external_link_checker(this.externalUrls)
@@ -105,7 +105,7 @@ export class External extends UrlValidator {
 
     if (responseCode >= 200 && responseCode <= 299) {
       if (!this.check_hash_in_2xx_response(href, url, response, filenames)) {
-        this.cache.add_external(href, filenames, responseCode, 'OK')
+        this.cache.addExternalUrl(href!, filenames, responseCode, 'OK')
       }
       // } else if (false/* todo: responseCode.zero()*/) {
       //   this.handle_connection_failure(href, filenames, responseCode, response.status_message);
@@ -119,13 +119,13 @@ export class External extends UrlValidator {
       const statusMessage = (response.statusText) ? `: ${response.statusText}` : ''
       const msg = `External link ${href} failed${statusMessage}`
       this.add_failure(filenames, msg, responseCode)
-      this.cache.add_external(href, filenames, responseCode, msg)
+      this.cache.addExternalUrl(href!, filenames, responseCode, msg)
     }
   }
 
   handle_timeout(href: string | null, filenames: IExtMetadata[], responseCode: string) {
     const msg = `External link ${href} failed: got a time out (response code ${responseCode})`
-    this.cache.add_external(href, filenames, 0, msg)
+    this.cache.addExternalUrl(href!, filenames, 0, msg)
     if (this.runner.options.only_4xx) {
       return
     }
@@ -179,7 +179,7 @@ export class External extends UrlValidator {
 
     const msg = `External link ${href} failed: ${url.sans_hash()} exists, but the hash '${hash}' does not`
     this.add_failure(filenames, msg, response.status)
-    this.cache.add_external(href, filenames, response.status, msg)
+    this.cache.addExternalUrl(href!, filenames, response.status, msg)
     return true
   }
 
@@ -194,9 +194,9 @@ export class External extends UrlValidator {
       msgs.push(`Either way, the return message from the server is: ${statusMessage}`)
     }
 
-    const msg = msgs.join('\n').trim()
+    const msg: string = msgs.join('\n').trim()
 
-    this.cache.add_external(href, metadata, 0, msg)
+    this.cache.addExternalUrl(href!, metadata, 0, msg)
     if (this.runner.options.only_4xx) {
       return
     }
