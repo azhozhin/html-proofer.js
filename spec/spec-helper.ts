@@ -12,8 +12,8 @@ export let FIXTURES_DIR = 'spec/html-proofer/fixtures'
 class Executor {
   static exec(command: string): Promise<{ stdout: string, stderr: string, exitCode: number | null }> {
     return new Promise((resolve, reject) => {
-      let out: Array<string> = []
-      let err: Array<string> = []
+      const out: string[] = []
+      const err: string[] = []
       const childProcess = exec(command, {
         maxBuffer: 1 * 1024 * 1024, // 1 Mb
       })
@@ -29,26 +29,25 @@ class Executor {
   }
 }
 
-export const capture_stderr = async (block: any): Promise<string> => {
+export const captureProoferStderr = async (block: any): Promise<string> => {
   // todo: this does not work with current logger configuration
-  let stderr_output = ''
+  let stderrOutput = ''
 
-  // it seems that stderr and stdout are the same
-  let process_stderr_write = process.stderr.write
+  const write = process.stderr.write
 
   process.stderr.write = (data: string) => {
-    stderr_output += data
+    stderrOutput += data
     return true
   }
 
   await block()
 
-  process.stderr.write = process_stderr_write
+  process.stderr.write = write
 
-  return stderr_output
+  return stderrOutput
 }
 
-export function make_proofer(item: any, type: CheckType, opts: any): IRunner {
+export function createProofer(item: any, type: CheckType, opts: any): IRunner {
   switch (type) {
     case CheckType.FILE:
       return HTMLProofer.check_file(item, opts)
@@ -61,9 +60,9 @@ export function make_proofer(item: any, type: CheckType, opts: any): IRunner {
   }
 }
 
-export async function run_proofer(item: any, type: CheckType, opts?: IOptions) {
-  const proofer = make_proofer(item, type, opts)
-  //const cassette_name = make_cassette_name(item, opts)
+export async function createAndRunProofer(item: any, type: CheckType, opts?: IOptions) {
+  const proofer = createProofer(item, type, opts)
+  // const cassette_name = make_cassette_name(item, opts)
   // VCR.mountCassette(cassette_name/*, record: :new_episodes*/)
   //    capture_stderr { proofer.run }
   await proofer.run()
@@ -71,73 +70,73 @@ export async function run_proofer(item: any, type: CheckType, opts?: IOptions) {
   return proofer
 }
 
-export const capture_proofer_output = async (file: string | Array<string>, type: CheckType, opts: IOptions) => {
-  const proofer = make_proofer(file, type, opts)
-  const cassette_name = make_cassette_name(file, opts)
-  if (opts['use_vcr']) {
-    VCR.mountCassette(cassette_name/*, record: :new_episodes*/)
+export const captureProoferOutput = async (file: string | string[], type: CheckType, opts: IOptions) => {
+  const proofer = createProofer(file, type, opts)
+  const cassetteName = createCassetteName(file, opts)
+  if (opts.use_vcr) {
+    VCR.mountCassette(cassetteName/*, record: :new_episodes*/)
   }
 
-  const output = await capture_stderr(async () => {
+  const output = await captureProoferStderr(async () => {
     await proofer.run()
   })
-  if (opts['use_vcr']) {
-    VCR.ejectCassette(cassette_name)
+  if (opts.use_vcr) {
+    VCR.ejectCassette(cassetteName)
   }
   return output
 }
 
-export const capture_proofer_http = async (item: any, type: CheckType, opts: any = {}) => {
-  const proofer = make_proofer(item, type, opts)
+export const captureProoferHttp = async (item: any, type: CheckType, opts: any = {}) => {
+  const proofer = createProofer(item, type, opts)
   // const cassette_name = make_cassette_name(item, opts)
   // VCR.mountCassette(cassette_name/*, record: :new_episodes*/)
 
   const captured: { request?: any, response?: any } = {}
-  const my_request_interceptor = axios.interceptors.request.use((request) => {
+  const requestInterceptor = axios.interceptors.request.use((request) => {
     captured.request = request
     return request
   }, (error) => {
     return Promise.reject(error)
   })
-  const my_response_interceptor = axios.interceptors.response.use((response) => {
+  const responseInterceptor = axios.interceptors.response.use((response) => {
     captured.response = response
     return response
   }, (error) => {
     return Promise.reject(error)
   })
 
-  await capture_stderr(async () => {
+  await captureProoferStderr(async () => {
     await proofer.run()
   })
 
-  axios.interceptors.request.eject(my_request_interceptor)
-  axios.interceptors.response.eject(my_response_interceptor)
+  axios.interceptors.request.eject(requestInterceptor)
+  axios.interceptors.response.eject(responseInterceptor)
   // VCR.ejectCassette(cassette_name)
   return captured
 }
 
-export const exec_cli = async (args: string) => {
+export const runProoferCli = async (args: string) => {
   const {stdout, stderr, exitCode} = await Executor.exec(`node dist/cjs/bin/htmlproofer.js ${args}`)
-  return {output: `${stdout}\n${stderr}`, exitCode: exitCode}
+  return {output: `${stdout}\n${stderr}`, exitCode}
 }
 
-export const make_cassette_name = (file: string | Array<string>, opts: any) => {
-  const cassette_library_dir = path.join(FIXTURES_DIR, 'vcr_cassettes')
+export const createCassetteName = (file: string | string[], opts: any) => {
+  const cassetteLibraryDir = path.join(FIXTURES_DIR, 'vcr_cassettes')
   let filename
   if (file.constructor.name === 'Array') {
-    filename = (file as Array<string>).join('_')
+    filename = (file as string[]).join('_')
   } else {
     filename = (file as string).split(path.sep).slice(2).join(path.sep)
   }
   if (opts && Object.keys(opts).length > 0) {
-    const suffix = sanitize_path(JSON.stringify(opts))
+    const suffix = sanitizePath(JSON.stringify(opts))
     filename += suffix
   }
-  return path.join(cassette_library_dir, filename + '.json')
+  return path.join(cassetteLibraryDir, filename + '.json')
 }
 
-const sanitize_path = (path: string): string => {
-  return path.replaceAll('"', '').replaceAll(':', '=').replaceAll('/', '_').replaceAll(' ', '_')
+const sanitizePath = (p: string): string => {
+  return p.replaceAll('"', '').replaceAll(':', '=').replaceAll('/', '_').replaceAll(' ', '_')
 }
 
 

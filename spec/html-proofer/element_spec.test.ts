@@ -1,7 +1,7 @@
 import {Runner} from '../../src/html-proofer/Runner'
 
 import * as path from 'path'
-import {FIXTURES_DIR, run_proofer} from '../spec-helper'
+import {FIXTURES_DIR, createAndRunProofer} from '../spec-helper'
 import {Element} from '../../src/html-proofer/Element'
 import {IRunner} from '../../src/interfaces/'
 import {CheckType} from '../../src/html-proofer/CheckType'
@@ -66,7 +66,7 @@ describe('HTMLProofer::Element', () => {
   describe('ivar setting', () => {
     it('does not explode if given a bad attribute', async () => {
       const broken_attribute = path.join(FIXTURES_DIR, 'html', 'invalid_attribute.html')
-      const proofer = await run_proofer(broken_attribute, CheckType.FILE)
+      const proofer = await createAndRunProofer(broken_attribute, CheckType.FILE)
       expect(proofer.failed_checks).toEqual([])
     })
   })

@@ -1,4 +1,4 @@
-import {capture_stderr, FIXTURES_DIR, make_proofer} from '../spec-helper'
+import {captureProoferStderr, FIXTURES_DIR, createProofer} from '../spec-helper'
 import * as fs from 'fs'
 import * as path from 'path'
 import {CheckType} from "../../src/html-proofer/CheckType"
@@ -8,7 +8,7 @@ describe('HTMLProofer::Runner', () => {
     it('sends authorization header to github.com', async () => {
       const opts = {}
       const url = 'https://github.com'
-      const proofer = make_proofer([url], CheckType.LINKS, opts)
+      const proofer = createProofer([url], CheckType.LINKS, opts)
       let request: any = null
       const auth = 'Bearer <TOKEN>'
       proofer.add_before_request((r: any) => {
@@ -20,7 +20,7 @@ describe('HTMLProofer::Runner', () => {
 
       // const cassette_name = make_cassette_name(path.join(FIXTURES_DIR, "links", "check_just_once.html"), opts)
       // VCR.mountCassette(cassette_name/*, record: :new_episodes*/)
-      await capture_stderr(async () => {
+      await captureProoferStderr(async () => {
         await proofer.run()
       })
       // VCR.ejectCassette(cassette_name)
@@ -52,7 +52,7 @@ describe('HTMLProofer::Runner', () => {
         cache: {timeframe: {external: '1d'}, cache_file: cache_file_name, storage_dir: storage_dir},
       }
       const dir = path.join(FIXTURES_DIR, 'links', '_site')
-      const proofer = make_proofer(dir, CheckType.DIRECTORY, opts)
+      const proofer = createProofer(dir, CheckType.DIRECTORY, opts)
       let request: any = null
       const auth = 'Bearer <TOKEN>'
       proofer.add_before_request((r) => {
@@ -62,7 +62,7 @@ describe('HTMLProofer::Runner', () => {
 
       //const cassette_name = make_cassette_name(dir, opts)
       //VCR.mountCassette(cassette_name/*, record: :new_episodes*/)
-      await capture_stderr(async () => {
+      await captureProoferStderr(async () => {
         await proofer.run()
       })
       //VCR.ejectCassette(cassette_name)

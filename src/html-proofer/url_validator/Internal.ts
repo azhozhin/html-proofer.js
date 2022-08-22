@@ -14,13 +14,13 @@ export class Internal extends UrlValidator {
     this.internalUrls = internalUrls
   }
 
-  async validate() {
-    // if (this.cache.enabled) {
-    //   const urls_to_check = this.runner.load_internal_cache()
-    //   this.run_internal_link_checker(urls_to_check)
-    // } else {
-    this.run_internal_link_checker(this.internalUrls)
-    // }
+  async validate(): Promise<Failure[]> {
+    if (this.cache.enabled()) {
+      const urlsToCheck = this.runner.load_internal_cache()
+      this.run_internal_link_checker(urlsToCheck)
+    } else {
+      this.run_internal_link_checker(this.internalUrls)
+    }
 
     return this.failedChecks
   }

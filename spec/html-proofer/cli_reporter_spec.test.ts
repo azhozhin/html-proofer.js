@@ -2,7 +2,7 @@ import {Favicon} from '../../src/html-proofer/check/Favicon'
 import {Scripts} from '../../src/html-proofer/check/Scripts'
 import {Images} from '../../src/html-proofer/check/Images'
 import {Links} from '../../src/html-proofer/check/Links'
-import {capture_proofer_output, FIXTURES_DIR} from '../spec-helper'
+import {captureProoferOutput, FIXTURES_DIR} from '../spec-helper'
 import * as path from 'path'
 import {CheckType} from "../../src/html-proofer/CheckType";
 
@@ -12,7 +12,7 @@ describe('HTMLProofer::Reporter::Cli', () => {
     it('reports all issues accurately', async () => {
       const opts = {checks: [Links, Images, Scripts, Favicon], ignore_missing_alt: false}
       const filename = path.join(FIXTURES_DIR, 'sorting', 'kitchen_sinkish.html')
-      const output = await capture_proofer_output(filename, CheckType.FILE, opts)
+      const output = await captureProoferOutput(filename, CheckType.FILE, opts)
 
       const msg = `For the Favicon check, the following failures were found:
 
@@ -83,7 +83,7 @@ HTML-Proofer found 13 failures!`
     })
 
     it('reports as-links accurately', async () => {
-      const output = await capture_proofer_output(['www.github.com', 'http://asdadsadsasdadaf.biz/'], CheckType.LINKS, {use_vcr: false})
+      const output = await captureProoferOutput(['www.github.com', 'http://asdadsadsasdadaf.biz/'], CheckType.LINKS, {use_vcr: false})
 
       const msg = `For the Links > External check, the following failures were found:
 

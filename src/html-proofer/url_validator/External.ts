@@ -8,7 +8,7 @@ import {IRunner, IExternalRequest, IExtMetadata} from '../../interfaces/'
 
 export class External extends UrlValidator {
 
-  beforeRequest: any[];
+  beforeRequest: any[]
 
   private readonly externalUrls: Map<string, any>
   private hydra: Hydra
@@ -23,7 +23,7 @@ export class External extends UrlValidator {
     this.hydra = new Hydra(runner.logger)
   }
 
-  async validate() {
+  async validate(): Promise<Failure[]> {
     if (this.cache.enabled()) {
       const urlsToCheck = this.runner.load_external_cache()
       await this.run_external_link_checker(urlsToCheck)

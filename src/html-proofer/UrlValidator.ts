@@ -1,11 +1,12 @@
 import {IRunner, ILogger, ICache} from "../interfaces";
+import {Failure} from "./Failure";
 
 export class UrlValidator {
   protected runner: IRunner
   protected cache: ICache
   protected logger: ILogger
 
-  protected failedChecks: any[] // todo: use specific type here
+  protected failedChecks: Failure[]
 
   constructor(runner: IRunner) {
     this.runner = runner
