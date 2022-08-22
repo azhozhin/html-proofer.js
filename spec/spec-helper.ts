@@ -50,13 +50,13 @@ export const captureProoferStderr = async (block: any): Promise<string> => {
 export function createProofer(item: any, type: CheckType, opts: any): IRunner {
   switch (type) {
     case CheckType.FILE:
-      return HTMLProofer.check_file(item, opts)
+      return HTMLProofer.checkFile(item, opts)
     case CheckType.DIRECTORY:
-      return HTMLProofer.check_directory(item, opts)
+      return HTMLProofer.checkDirectory(item, opts)
     case CheckType.DIRECTORIES:
-      return HTMLProofer.check_directories(item, opts)
+      return HTMLProofer.checkDirectories(item, opts)
     case CheckType.LINKS:
-      return HTMLProofer.check_links(item, opts)
+      return HTMLProofer.checkLinks(item, opts)
   }
 }
 

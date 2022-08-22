@@ -1,12 +1,11 @@
 import {Check} from '../Check'
-import {ICheck, ICheckResult} from "../../interfaces";
-import {Element} from "../Element";
+import {ICheckResult} from '../../interfaces'
+import {Element} from '../Element'
 
 export class Links extends Check {
   EMAIL_REGEXP = /^\S+@\S+\.\S+$/
 
-  public run(): ICheckResult {
-    const nodes = []
+  internalRun(): void {
     for (const node of this.html.css('a, link, source')) {
       const link = this.createElement(node)
 
@@ -14,14 +13,14 @@ export class Links extends Check {
         continue
       }
 
-      if (!this.allow_hash_href() && link.node.attributes.href === '#') {
+      if (!this.runner.options.allow_hash_href && link.node.attributes.href === '#') {
         this.addFailure('linking to internal hash #, which points to nowhere', link.line, null, link.content)
         continue
       }
 
       // is there even a href?
       if (!link.url.rawAttribute) {
-        if (this.allow_missing_href()) {
+        if (this.runner.options.allow_missing_href) {
           continue
         }
 
@@ -34,7 +33,7 @@ export class Links extends Check {
         continue
       }
 
-      this.check_schemes(link)
+      this.checkSchemes(link)
 
       // intentionally down here because we still want valid? & missing_href? to execute
       if (link.url.isNonHttpRemote()) {
@@ -43,7 +42,7 @@ export class Links extends Check {
 
       if (!link.url.isInternal() && link.url.isRemote()) {
         if (this.runner.options.check_sri && link.isLinkTag()) {
-          this.check_sri(link)
+          this.checkSri(link)
         }
 
         // we need to skip these for now; although the domain main be valid,
@@ -68,29 +67,15 @@ export class Links extends Check {
         this.addToInternalUrls(link.url, link.line)
       }
     }
-
-    return {
-      externalUrls: this.externalUrls,
-      internalUrls: this.internalUrls,
-      failures: this.failures
-    }
   }
 
-  allow_missing_href() {
-    return this.runner.options.allow_missing_href
-  }
-
-  allow_hash_href() {
-    return this.runner.options.allow_hash_href
-  }
-
-  check_schemes(link: Element) {
+  private checkSchemes(link: Element) {
     switch (link.url.scheme) {
       case 'mailto':
-        this.handle_mailto(link)
+        this.handleMailto(link)
         break
       case 'tel':
-        this.handle_tel(link)
+        this.handleTel(link)
         break
       case 'http':
         if (!this.runner.options.enforce_https) {
@@ -100,9 +85,9 @@ export class Links extends Check {
     }
   }
 
-  handle_mailto(link: Element) {
+  private handleMailto(link: Element) {
     if (!link.url.path) {
-      if (!this.ignore_empty_mailto()) {
+      if (!this.runner.options.ignore_empty_mailto) {
         this.addFailure(`${link.url.rawAttribute} contains no email address`, link.line, null, link.content)
       }
     } else {
@@ -117,21 +102,17 @@ export class Links extends Check {
     }
   }
 
-  handle_tel(link: Element) {
+  private handleTel(link: Element) {
     if (!link.url.path) {
       this.addFailure(`${link.url.rawAttribute} contains no phone number`, link.line, null, link.content)
     }
-  }
-
-  ignore_empty_mailto() {
-    return this.runner.options.ignore_empty_mailto
   }
 
   // Allowed elements from Subresource Integrity specification
   // https://w3c.github.io/webappsec-subresource-integrity/#link-element-for-stylesheets
   SRI_REL_TYPES = ['stylesheet']
 
-  check_sri(link: Element) {
+  private checkSri(link: Element) {
     if (!this.SRI_REL_TYPES.includes(link.node.attributes.rel)) {
       return
     }

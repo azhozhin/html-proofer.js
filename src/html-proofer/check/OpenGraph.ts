@@ -1,10 +1,9 @@
 import {Check} from '../Check'
-import {Element} from "../Element";
-import {ICheckResult} from "../../interfaces";
+import {Element} from '../Element'
 
 export class OpenGraph extends Check {
 
-  public run():ICheckResult {
+  internalRun(): void {
     for (const node of this.html.css('meta[property="og:url"], meta[property="og:image"]')) {
       const openGraph = this.createElement(node)
 
@@ -27,12 +26,6 @@ export class OpenGraph extends Check {
               openGraph.line, null, openGraph.content)
         }
       }
-    }
-
-    return {
-      externalUrls: this.externalUrls,
-      internalUrls: this.internalUrls,
-      failures: this.failures
     }
   }
 

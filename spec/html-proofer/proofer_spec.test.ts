@@ -23,7 +23,7 @@ describe('HTMLProofer', () => {
   describe('#files', () => {
     it('works for directory that ends with .html', async () => {
       const folder = normalizePath(path.join(FIXTURES_DIR, 'links', '_site', 'folder.html'))
-      const proofer = HTMLProofer.check_directory(folder)
+      const proofer = HTMLProofer.checkDirectory(folder)
       expect(proofer.files).toEqual([{source: folder, path: `${folder}/index.html`}])
     })
   })
@@ -31,7 +31,7 @@ describe('HTMLProofer', () => {
   describe('#options', () => {
     it('strips out undesired Typhoeus options', async () => {
       const folder = path.join(FIXTURES_DIR, 'links', '_site/folder.html')
-      const proofer = HTMLProofer.check_file(folder, {verbose: true})
+      const proofer = HTMLProofer.checkFile(folder, {verbose: true})
       expect(proofer.options['verbose']).toEqual(true)
       expect(proofer.options['typhoeus']['verbose']).toBeUndefined()
     })
@@ -39,7 +39,7 @@ describe('HTMLProofer', () => {
     it('takes options for Parallel', async () => {
       const folder = path.join(FIXTURES_DIR, 'links', '_site/folder.html')
       const options = {parallel: {in_processes: 3}}
-      const proofer = HTMLProofer.check_file(folder, options)
+      const proofer = HTMLProofer.checkFile(folder, options)
       expect(proofer.options['parallel']['in_processes']).toEqual(3)
       expect(proofer.options['typhoeus']['in_processes']).toBeUndefined()
     })

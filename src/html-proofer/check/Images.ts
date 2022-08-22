@@ -1,14 +1,13 @@
 import {Check} from '../Check'
 import {Url} from '../attribute/Url'
 import {isNullOrEmpty} from '../Utils'
-import {Element} from "../Element";
-import {ICheckResult} from "../../interfaces";
+import {Element} from '../Element'
 
 export class Images extends Check {
   SCREEN_SHOT_REGEX = /Screen(?: |%20)Shot(?: |%20)\d+-\d+-\d+(?: |%20)at(?: |%20)\d+.\d+.\d+/
 
-  public run(): ICheckResult {
-    for (const node of this.html.css('img')){
+  internalRun(): void {
+    for (const node of this.html.css('img')) {
       const img = this.createElement(node)
 
       if (img.isIgnore()) {
@@ -50,12 +49,6 @@ export class Images extends Check {
       if (this.runner.options.enforce_https && img.url.isHttp()) {
         this.addFailure(`image ${img.url.rawAttribute} uses the http scheme`, img.line, null, img.content)
       }
-    }
-
-    return {
-      externalUrls: this.externalUrls,
-      internalUrls: this.internalUrls,
-      failures: this.failures
     }
   }
 

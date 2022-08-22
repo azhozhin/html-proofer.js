@@ -1,10 +1,9 @@
 import {Check} from '../Check'
-import {Element} from "../Element";
-import {last} from "../Utils";
-import {ICheckResult} from "../../interfaces";
+import {Element} from '../Element'
+import {last} from '../Utils'
 
 export class Favicon extends Check {
-  public run(): ICheckResult {
+  internalRun():void {
     let found = false
     let el: Element | null = null
     for (const node of this.html.css('link')) {
@@ -32,12 +31,6 @@ export class Favicon extends Check {
       } else {
         this.addFailure('no favicon provided')
       }
-    }
-
-    return {
-      externalUrls: this.externalUrls,
-      internalUrls: this.internalUrls,
-      failures: this.failures
     }
   }
 

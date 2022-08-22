@@ -224,11 +224,11 @@ program.
         const links = opts.asLinks.split(',')
           .flatMap((e:string) => e.split(','))
           .map((e:string) => e.trim())
-        runner = HTMLProofer.check_links(links, options)
+        runner = HTMLProofer.checkLinks(links, options)
       } else if (isDirectory(paths[0])) {
-        runner = HTMLProofer.check_directories(paths, options)
+        runner = HTMLProofer.checkDirectories(paths, options)
       } else {
-        runner = HTMLProofer.check_file(path, options)
+        runner = HTMLProofer.checkFile(path, options)
       }
       await runner.run()
     })

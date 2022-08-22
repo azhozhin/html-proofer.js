@@ -25,7 +25,15 @@ export abstract class Check implements ICheck {
     return new Element(this.runner, this.html, node, this.baseUrl())
   }
 
-  public abstract run(): ICheckResult
+  abstract internalRun(): void
+  public run(): ICheckResult {
+    this.internalRun()
+    return {
+      externalUrls: this.externalUrls,
+      internalUrls: this.internalUrls,
+      failures: this.failures
+    }
+  }
 
   protected addFailure(description: string, line: (number | null) = null, status: (string | null) = null, content: (string | null) = null) {
     this.failures.push(new Failure(this.runner.currentFilename!, this.name, description, line, status, content))

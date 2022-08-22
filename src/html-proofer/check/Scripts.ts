@@ -1,10 +1,9 @@
 import {Check} from '../Check'
 import {isNullOrEmpty} from '../Utils'
-import {Element} from "../Element";
-import {ICheckResult} from "../../interfaces";
+import {Element} from '../Element'
 
 export class Scripts extends Check {
-  public run(): ICheckResult {
+  internalRun(): void {
     for (const node of this.html.css('script')) {
       const script = this.createElement(node)
 
@@ -22,17 +21,11 @@ export class Scripts extends Check {
       } else if (script.url.isRemote()) {
         this.addToExternalUrls(script.src, script.line)
         if (this.runner.options.check_sri) {
-          this.check_sri(script)
+          this.checkSri(script)
         }
       } else if (!script.url.exists()) {
         this.addFailure(`internal script reference ${script.src} does not exist`, script.line, null, script.content)
       }
-    }
-
-    return {
-      externalUrls: this.externalUrls,
-      internalUrls: this.internalUrls,
-      failures: this.failures
     }
   }
 
@@ -40,7 +33,7 @@ export class Scripts extends Check {
     return script.node.attributes.src === undefined
   }
 
-  check_sri(script: Element) {
+  private checkSri(script: Element) {
     if (isNullOrEmpty(script.node.attributes.integrity) && isNullOrEmpty(script.node.attributes.crossorigin)) {
       this.addFailure(`SRI and CORS not provided in: ${script.url.rawAttribute}`, script.line, null, script.content)
     } else if (isNullOrEmpty(script.node.attributes.integrity)) {

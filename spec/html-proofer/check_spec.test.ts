@@ -2,11 +2,10 @@ import {Check} from '../../src/html-proofer/Check'
 import {FIXTURES_DIR, createProofer} from '../spec-helper'
 import * as path from 'path'
 import {Element} from '../../src/html-proofer/Element'
-import {CheckType} from "../../src/html-proofer/CheckType";
-import {ICheckResult} from "../../src/interfaces";
+import {CheckType} from '../../src/html-proofer/CheckType'
 
 class MailToOctocat extends Check {
-  public run(): ICheckResult {
+  internalRun(): void {
     for (const node of this.html.css('a')) {
       const link = this.createElement(node)
 
@@ -18,12 +17,6 @@ class MailToOctocat extends Check {
         this.addFailure(`Don't email the Octocat directly!`, link.line)
         continue
       }
-    }
-
-    return {
-      externalUrls: this.externalUrls,
-      internalUrls: this.internalUrls,
-      failures: this.failures
     }
   }
 
