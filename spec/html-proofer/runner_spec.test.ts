@@ -13,7 +13,7 @@ describe('HTMLProofer::Runner', () => {
       const auth = 'Bearer <TOKEN>'
       proofer.addBeforeRequest((r: any) => {
         if (r.base_url() === url) {
-          r.options['headers']['Authorization'] = auth
+          r.options.headers['Authorization'] = auth
         }
         request = r
       })
@@ -56,16 +56,16 @@ describe('HTMLProofer::Runner', () => {
       let request: any = null
       const auth = 'Bearer <TOKEN>'
       proofer.addBeforeRequest((r) => {
-        r.options['headers']['Authorization'] = auth
+        r.options.headers['Authorization'] = auth
         request = r
       })
 
-      //const cassette_name = make_cassette_name(dir, opts)
-      //VCR.mountCassette(cassette_name/*, record: :new_episodes*/)
+      // const cassette_name = make_cassette_name(dir, opts)
+      // VCR.mountCassette(cassette_name/*, record: :new_episodes*/)
       await captureProoferStderr(async () => {
         await proofer.run()
       })
-      //VCR.ejectCassette(cassette_name)
+      // VCR.ejectCassette(cassette_name)
 
       expect(request).toEqual(expect.objectContaining({
         options: expect.any(Object),
@@ -73,11 +73,10 @@ describe('HTMLProofer::Runner', () => {
       expect(request.options).toEqual(expect.objectContaining({
         headers: expect.any(Object),
       }))
-      expect(request.options['headers']).toEqual(expect.objectContaining({
+      expect(request.options.headers).toEqual(expect.objectContaining({
         'Authorization': auth,
       }))
-      //end
-      //}
+
     })
   })
 })

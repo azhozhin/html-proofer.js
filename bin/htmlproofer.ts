@@ -6,7 +6,7 @@ import {isDirectory} from '../src/html-proofer/Utils'
 import {HTMLProofer} from '../src/html-proofer'
 import {AllChecks} from '../src/html-proofer/Checks'
 import {Configuration} from '../src/html-proofer/Configuration'
-import {EmptyOptions, IOptions} from '../src/interfaces/'
+import {EmptyOptions, IOptions, IRunner} from '../src/interfaces/'
 import {Check} from '../src/html-proofer/Check'
 
 program.
@@ -219,16 +219,18 @@ program.
       }
 
       const paths = path.split(',')
+      let runner: IRunner
       if (opts.asLinks) {
         const links = opts.asLinks.split(',')
           .flatMap((e:string) => e.split(','))
           .map((e:string) => e.trim())
-        await HTMLProofer.check_links(links, options).run()
+        runner = HTMLProofer.check_links(links, options)
       } else if (isDirectory(paths[0])) {
-        await HTMLProofer.check_directories(paths, options).run()
+        runner = HTMLProofer.check_directories(paths, options)
       } else {
-        await HTMLProofer.check_file(path, options).run()
+        runner = HTMLProofer.check_file(path, options)
       }
+      await runner.run()
     })
 
 program.parse(process.argv)

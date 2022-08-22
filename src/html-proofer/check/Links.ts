@@ -10,7 +10,7 @@ export class Links extends Check {
     for (const node of this.html.css('a, link, source')) {
       const link = this.createElement(node)
 
-      if (link.ignore()) {
+      if (link.isIgnore()) {
         continue
       }
 
@@ -29,7 +29,7 @@ export class Links extends Check {
         continue
       }
       // is it even a valid URL?
-      if (!link.url.valid()) {
+      if (!link.url.isValid()) {
         this.addFailure(`${link.href} is an invalid URL`, link.line, null, link.content)
         continue
       }
@@ -41,8 +41,8 @@ export class Links extends Check {
         continue
       }
 
-      if (!link.url.internal && link.url.remote()) {
-        if (this.runner.checkSriOption() && link.isLinkTag()) {
+      if (!link.url.isInternal() && link.url.isRemote()) {
+        if (this.runner.options.check_sri && link.isLinkTag()) {
           this.check_sri(link)
         }
 
@@ -52,15 +52,15 @@ export class Links extends Check {
           continue
         }
 
-        if (!link.url.is_path()) {
+        if (!link.url.isPath()) {
           this.addFailure(`${link.url.rawAttribute} is an invalid URL`, link.line, null, link.content)
           continue
         }
 
         this.addToExternalUrls(link.url, link.line)
-      } else if (link.url.internal) {
+      } else if (link.url.isInternal()) {
         // does the local directory have a trailing slash?
-        if (link.url.unslashed_directory(link.url.absolute_path)) {
+        if (link.url.isUnslashedDirectory(link.url.absolutePath)) {
           this.addFailure(`internally linking to a directory ${link.url.rawAttribute} without trailing slash`,
             link.line, null, link.content)
           continue

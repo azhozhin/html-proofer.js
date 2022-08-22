@@ -61,12 +61,12 @@ export class Internal extends UrlValidator {
   }
 
   file_exists(url: Url): boolean {
-    const absolute_path = url.absolute_path
+    const absolute_path = url.absolutePath
     if (this.runner.checkedPaths.has(absolute_path)) {
-      return this.runner.checkedPaths.get(url.absolute_path)!
+      return this.runner.checkedPaths.get(url.absolutePath)!
     }
     const checkResult = fs.existsSync(absolute_path);
-    this.runner.checkedPaths.set(url.absolute_path, checkResult)
+    this.runner.checkedPaths.set(url.absolutePath, checkResult)
     return checkResult
   }
 
@@ -78,14 +78,14 @@ export class Internal extends UrlValidator {
     }
 
     // prevents searching files we didn't ask about
-    if (!url.known_extension()) {
+    if (!url.isKnownExtension()) {
       return false
     }
 
     const decodedHrefHash = decodeURI(hrefHash)
     const fragmentIds = unique([hrefHash, decodedHrefHash])
     // https://www.w3.org/TR/html5/single-page.html#scroll-to-fragid
-    const absolute_path = url.absolute_path
+    const absolute_path = url.absolutePath
 
     const cacheKey = fragmentIds.join(':')
     if (this.runner.checkedHashes.has(absolute_path)) {
@@ -110,7 +110,7 @@ export class Internal extends UrlValidator {
         `[name = "${escapedFragId}"]`]
     })
 
-    const doc = createDocument(url.absolute_path)
+    const doc = createDocument(url.absolutePath)
     return doc.css(csss.join(','))
   }
 

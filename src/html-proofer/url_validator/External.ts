@@ -49,7 +49,7 @@ export class External extends UrlValidator {
     for (const [externalUrl, metadata] of links) {
       const url = new Url(this.runner, externalUrl)
 
-      if (!url.valid()) {
+      if (!url.isValid()) {
         this.add_failure(metadata, `${url} is an invalid URL`, '0')
         continue
       }
@@ -57,7 +57,7 @@ export class External extends UrlValidator {
       if (!this.new_url_query_values(url)) {
         continue
       }
-      const method = this.runner.options.check_external_hash && url.is_hash() ? 'get' : 'head'
+      const method = this.runner.options.check_external_hash && url.isHash() ? 'get' : 'head'
 
       this.queue_request(method, url, metadata)
     }
@@ -142,11 +142,11 @@ export class External extends UrlValidator {
     if (!this.runner.options.check_external_hash) {
       return false
     }
-    if (!url.is_hash()) {
+    if (!url.isHash()) {
       return false
     }
 
-    const hash = url.hash
+    const hash = url.hash!
 
     const doc = createDocument(response.data)
 
@@ -159,7 +159,7 @@ export class External extends UrlValidator {
     ]
 
     // # user-content is a special addition by GitHub.
-    if (url.host.match(/github\.com/i)) {
+    if (url.host!.match(/github\.com/i)) {
       cssSelectors.push(`[name="user-content-${hash}"]`)
       cssSelectors.push(`[id="user-content-${hash}"]`)
 
@@ -177,7 +177,7 @@ export class External extends UrlValidator {
       return
     }
 
-    const msg = `External link ${href} failed: ${url.sans_hash()} exists, but the hash '${hash}' does not`
+    const msg = `External link ${href} failed: ${url.sansHash()} exists, but the hash '${hash}' does not`
     this.add_failure(filenames, msg, response.status)
     this.cache.addExternalUrl(href!, filenames, response.status, msg)
     return true
@@ -214,12 +214,12 @@ export class External extends UrlValidator {
   }
 
   new_url_query_values(url: Url) {
-    if (url.query_values == null || Object.keys(url.query_values).length === 0) {
+    if (url.queryValues == null || Object.keys(url.queryValues).length === 0) {
       return true
     }
-    const query_values = url.query_values
+    const query_values = url.queryValues
     const queries = Object.keys(query_values).join('-')
-    const domain_path = url.domain_path
+    const domain_path = url.domainPath
 
     if (!this.pathsWithQueries.has(domain_path)) {
       this.pathsWithQueries.set(domain_path, [queries])

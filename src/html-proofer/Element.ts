@@ -81,7 +81,7 @@ export class Element implements IElement {
     return this.node.attributes.srcset
   }
 
-  get href() {
+  get href(): string | null {
     if (!this.isAnchorTag() && !this.isLinkTag()) {
       return null
     }
@@ -96,18 +96,18 @@ export class Element implements IElement {
     return ariaHidden ? ariaHidden === 'true' : false
   }
 
-  isMultipleSrcsets() {
-    return this.srcset && this.srcset?.split(',').length > 1
+  isMultipleSrcsets(): boolean {
+    return this.srcset != null && this.srcset?.split(',').length > 1
   }
 
-  ignore(): boolean {
+  isIgnore(): boolean {
     if (this.node.attributes['data-proofer-ignore'] != null) {
       return true
     }
     if (this.ancestors_ignorable()) {
       return true
     }
-    if (this.url && this.url.ignore()) {
+    if (this.url && this.url.isIgnore()) {
       return true
     }
 

@@ -49,13 +49,13 @@ describe('Links test', () => {
     expect(proofer.failedChecks[0].description).toMatch(/internally linking to #noHash; the file exists, but the hash 'noHash' does not/)
   })
 
-  it('finds internal hash with implict index', async () => {
+  it('finds internal hash with implicit index', async () => {
     const brokenHashInternalFilepath = path.join(FIXTURES_DIR, 'links', 'implicit_internal')
     const proofer = await createAndRunProofer(brokenHashInternalFilepath, CheckType.DIRECTORY)
     expect(proofer.failedChecks).toEqual([])
   })
 
-  it('fails to find internal hash with implict index if not asked to follow', async () => {
+  it('fails to find internal hash with implicit index if not asked to follow', async () => {
     const options = {typhoeus: {followlocation: false}}
     const brokenHashInternalFilepath = path.join(FIXTURES_DIR, 'links', 'implicit_internal')
     const proofer = await createAndRunProofer(brokenHashInternalFilepath, CheckType.DIRECTORY, options)

@@ -6,38 +6,40 @@ import {isDirectory, isFile, isNullOrEmpty, joinUrl} from '../Utils'
 import {IRunner} from "../../interfaces";
 
 export class Url extends Attribute {
-  REMOTE_SCHEMES = Array.from(['http', 'https'])
-  url: string | null;
-  private _parts: any;
+  public readonly url: string | null
 
+  private _parts: URI | any
+  private readonly REMOTE_SCHEMES = ['http', 'https']
 
   constructor(runner: IRunner, linkAttribute: string | null, baseUrl: string | null = null) {
     super(runner, linkAttribute)
 
+    let url
     if (this.rawAttribute == null) {
-      this.url = null
+      url = null
     } else {
-      this.url = (this.rawAttribute as string).replace('\u200b', '').trim()
-      if (baseUrl) {
-        this.url = joinUrl(baseUrl, this.url as string)
+      url = (this.rawAttribute as string).replace('\u200b', '').trim()
+      if (baseUrl != null) {
+        url = joinUrl(baseUrl, url as string)
       }
 
-      this.url = this.swap_urls(this.url)
-      this.url = this.clean_url(this.url)
+      url = this.swapUrls(url)
+      url = this.cleanUrl(url)
 
       // convert "//" links to "https://"
-      if ((this.url as string).startsWith('//')) {
-        this.url = `https:${this.url}`
+      if ((url as string).startsWith('//')) {
+        url = `https:${url}`
       }
     }
+    this.url = url
   }
 
-  toString() {
+  public toString() {
     return this.url || ''
   }
 
-  known_extension() {
-    if (this.hash_link()) {
+  public isKnownExtension(): boolean {
+    if (this.isHashLink()) {
       return true
     }
 
@@ -51,33 +53,34 @@ export class Url extends Attribute {
     return this.runner.options.extensions!.includes(ext)
   }
 
-  ignore() {
+  public isIgnore(): boolean {
     if (this.url && this.url.match(/^javascript:/)) {
       return true
     }
-    if (this.ignores_pattern(this.runner.options.ignore_urls!)) {
+    if (this.isIgnoresPattern(this.runner.options.ignore_urls!)) {
       return true
     }
+    return false
   }
 
-  sans_hash(): string {
+  public sansHash(): string {
     return this.url!.toString().replace(`#${this.hash}`, '')
   }
 
   // catch any obvious issues, like strings in port numbers
-  private clean_url(url: string): string {
+  private cleanUrl(url: string): string {
     if (url.match(/^([!-;=?-\[\]_a-z~]|%[0-9a-fA-F]{2})+$/)) {
       return url
     }
-    if (this.url === '') {
+    if (url === '') {
       return url
     }
 
-    url = URI(url).normalize().toString()
-    return url
+    const newUrl = URI(url).normalize().toString()
+    return newUrl
   }
 
-  private swap_urls(url: string): string {
+  private swapUrls(url: string): string {
     if (!this.runner.options.swap_urls) {
       return url
     }
@@ -95,7 +98,7 @@ export class Url extends Attribute {
     return url
   }
 
-  ignores_pattern(linksToIgnore: (string | RegExp)[]) {
+  isIgnoresPattern(linksToIgnore: (string | RegExp)[]): boolean {
     if (!(linksToIgnore.constructor.name === 'Array')) {
       return false
     }
@@ -114,19 +117,18 @@ export class Url extends Attribute {
           break
       }
     }
-
     return false
   }
 
-  valid() {
+  isValid(): boolean {
     return this.parts != null
   }
 
-  is_path() {
-    return this.parts.host() != null && this.parts.path() != null
+  isPath(): boolean {
+    return this.parts != null && this.parts.host() != null && this.parts.path() != null
   }
 
-  get parts() {
+  get parts(): URI | null {
     // todo: refactor this
     if (this._parts) {
       return this._parts
@@ -139,68 +141,64 @@ export class Url extends Attribute {
     return this._parts
   }
 
-  get path() {
+  get path(): string | null {
     return this.parts != null ? decodeURI(this.parts.path()) : null
   }
 
-  get hash() {
+  get hash(): string | null {
     return this.parts ? this.parts.fragment() : null
   }
 
-  is_hash() {
+  public isHash(): boolean {
     return !isNullOrEmpty(this.hash)
   }
 
-  get scheme() {
+  get scheme(): string | null {
     return this.parts ? this.parts.scheme() : null
   }
 
-  public remote(): boolean {
-    return this.REMOTE_SCHEMES.includes(this.scheme)
+  public isRemote(): boolean {
+    return this.scheme != null && this.REMOTE_SCHEMES.includes(this.scheme)
   }
 
-  http() {
+  public isHttp(): boolean {
     return this.scheme === 'http'
   }
 
-  https() {
-    return this.scheme === 'https'
-  }
-
-  isNonHttpRemote():boolean {
-    return !isNullOrEmpty(this.scheme) && !this.remote()
+  public isNonHttpRemote(): boolean {
+    return !isNullOrEmpty(this.scheme) && !this.isRemote()
   }
 
   get host() {
     return this.parts ? this.parts.hostname() : null
   }
 
-  get domain_path() {
+  get domainPath() {
     return (this.host || '') + this.path
   }
 
-  get query_values() {
+  get queryValues() {
     return this.parts ? this.parts.query(true) : null
   }
 
-  exists(): boolean {
+  public exists(): boolean {
     if (this.isBase64()) {
       return true
     }
-    if (this.runner.checkedPaths.has(this.absolute_path)) {
-      return this.runner.checkedPaths.get(this.absolute_path)!
+    if (this.runner.checkedPaths.has(this.absolutePath)) {
+      return this.runner.checkedPaths.get(this.absolutePath)!
     }
 
-    const checkResult = fs.existsSync(this.absolute_path)
-    this.runner.checkedPaths.set(this.absolute_path, checkResult)
+    const checkResult = fs.existsSync(this.absolutePath)
+    this.runner.checkedPaths.set(this.absolutePath, checkResult)
     return checkResult
   }
 
-  isBase64():boolean {
+  private isBase64(): boolean {
     return this.rawAttribute ? this.rawAttribute.match(/^data:image/) != null : false
   }
 
-  get absolute_path() {
+  get absolutePath() {
     const currentPath = this.file_path || this.runner.currentFilename
 
     return path.resolve(currentPath!)
@@ -220,7 +218,7 @@ export class Url extends Attribute {
     let base
     // path relative to root
     // todo: this is too complicated
-    if (this.is_absolute_path(this.path)) {
+    if (this.isAbsolutePath(this.path)) {
       // either overwrite with root_dir; or, if source is directory, use that; or, just get the current file's dirname
       base = this.runner.options.root_dir ||
         (isDirectory(this.runner.currentSource!) ? this.runner.currentSource : path.dirname(this.runner.currentSource!))
@@ -241,53 +239,53 @@ export class Url extends Attribute {
 
     if (this.runner.options.assume_extension && isFile(`${file}${this.runner.options.assume_extension}`)) {
       file = `${file}${this.runner.options.assume_extension}`
-    } else if (isDirectory(file) && !this.unslashed_directory(file)) { // # implicit index support
+    } else if (isDirectory(file) && !this.isUnslashedDirectory(file)) { // # implicit index support
       file = path.join(file, this.runner.options.directory_index_file!)
     }
 
     return file
   }
 
-  unslashed_directory(file: string): boolean {
+  isUnslashedDirectory(file: string): boolean {
     if (!isDirectory(file)) {
       return false
     }
-    return !file.endsWith(path.sep) && !this.follow_location()
+    return !file.endsWith(path.sep) && !this.isFollowLocation()
   }
 
-  follow_location() {
+  private isFollowLocation():boolean {
     return this.runner.options.typhoeus && this.runner.options.typhoeus.followlocation
   }
 
-  is_absolute_path(p: string): boolean {
+  private isAbsolutePath(p: string): boolean {
     return p.startsWith('/')
   }
 
-  get external(): boolean {
-    return !this.internal
+  external(): boolean {
+    return !this.isInternal()
   }
 
-  get internal(): boolean {
-    return this.relative_link() || this.internal_absolute_link() || this.hash_link()
+  isInternal(): boolean {
+    return this.isRelativeLink() || this.isInternalAbsoluteLink() || this.isHashLink()
   }
 
-  internal_absolute_link() {
+  isInternalAbsoluteLink() {
     return this.url!.startsWith('/')
   }
 
-  relative_link(): boolean {
-    if (this.remote()) {
+  isRelativeLink(): boolean {
+    if (this.isRemote()) {
       return false
     }
 
-    return this.hash_link() || this.param_link() || this.url!.startsWith('.') || this.url!.match(/^\S/) != null
+    return this.isHashLink() || this.isParamLink() || this.url!.startsWith('.') || this.url!.match(/^\S/) != null
   }
 
-  hash_link(): boolean {
+  isHashLink(): boolean {
     return this.url!.startsWith('#')
   }
 
-  param_link(): boolean {
+  isParamLink(): boolean {
     return this.url!.startsWith('?')
   }
 

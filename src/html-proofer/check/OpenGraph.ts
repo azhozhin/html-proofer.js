@@ -8,7 +8,7 @@ export class OpenGraph extends Check {
     for (const node of this.html.css('meta[property="og:url"], meta[property="og:image"]')) {
       const openGraph = this.createElement(node)
 
-      if (openGraph.ignore()) {
+      if (openGraph.isIgnore()) {
         continue
       }
 
@@ -17,9 +17,9 @@ export class OpenGraph extends Check {
         this.addFailure('open graph has no content attribute', openGraph.line, null, openGraph.content)
       } else if (this.isEmptyContentAttribute(openGraph)) {
         this.addFailure('open graph content attribute is empty', openGraph.line, null, openGraph.content)
-      } else if (!openGraph.url.valid()) {
+      } else if (!openGraph.url.isValid()) {
         this.addFailure(`${openGraph.src} is an invalid URL`, openGraph.line)
-      } else if (openGraph.url.remote()) {
+      } else if (openGraph.url.isRemote()) {
         this.addToExternalUrls(openGraph.url, openGraph.line)
       } else {
         if (!openGraph.url.exists()) {

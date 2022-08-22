@@ -7,8 +7,8 @@ export class Log implements ILogger {
   private outLogger: log4js.Logger
   private errLogger: log4js.Logger
 
-  constructor() {
-
+  constructor(logLevel?: string | null) {
+    // todo: logLevel is not used
     const inst = log4js.configure({
       appenders: {
         stderr: {type: 'stderr', layout: {type: 'messagePassThrough'}, level: 'error'},

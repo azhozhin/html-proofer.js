@@ -1,10 +1,10 @@
 import fs from 'fs'
 import {Runner} from './html-proofer/Runner'
 import {CheckType} from "./html-proofer/CheckType";
-import {EmptyOptions, IOptions} from "./interfaces/";
+import {EmptyOptions, IOptions, IRunner} from "./interfaces/";
 
 export class HTMLProofer {
-  static check_file(file: string, opts?: IOptions) {
+  static check_file(file: string, opts?: IOptions): IRunner {
     if (file.constructor.name !== 'String') {
       throw new Error('ArgumentError')
     }
@@ -17,7 +17,7 @@ export class HTMLProofer {
     return new Runner([file], options)
   }
 
-  static check_directory(directory: string, opts?: IOptions) {
+  static check_directory(directory: string, opts?: IOptions): IRunner {
     if (!fs.existsSync(directory)) {
       throw new Error(`ArgumentError: ${directory} does not exist`)
     }
@@ -27,7 +27,7 @@ export class HTMLProofer {
     return new Runner([directory], options)
   }
 
-  static check_directories(directories: string[], opts?: IOptions) {
+  static check_directories(directories: string[], opts?: IOptions): IRunner {
     if (!Array.isArray(directories)) {
       throw new Error('ArgumentError')
     }
@@ -42,7 +42,7 @@ export class HTMLProofer {
     return new Runner(directories, options)
   }
 
-  static check_links(links: string[], opts?:IOptions) {
+  static check_links(links: string[], opts?: IOptions): IRunner {
     if (!Array.isArray(links)) {
       throw new Error('ArgumentError')
     }

@@ -10,7 +10,7 @@ export class Favicon extends Check {
     for (const node of this.html.css('link')) {
       el = this.createElement(node)
 
-      if (el.ignore()) {
+      if (el.isIgnore()) {
         continue
       }
 
@@ -24,7 +24,7 @@ export class Favicon extends Check {
       // do nothing
     } else {
       if (found) {
-        if (el!.url.remote()) {
+        if (el!.url.isRemote()) {
           this.addToExternalUrls(el!.url, el!.line)
         } else if (!el!.url.exists()) {
           this.addFailure(`internal favicon ${el!.url.rawAttribute} does not exist`, el!.line, null, el!.content)

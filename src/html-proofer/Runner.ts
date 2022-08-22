@@ -23,7 +23,7 @@ import {
   IIntMetadata,
   IOptions,
   IReporter,
-  IRunner
+  IRunner, IFile
 } from "../interfaces";
 
 
@@ -54,7 +54,7 @@ export class Runner implements IRunner {
     this.sources = sources
 
     this.cache = new Cache(this, this.options)
-    this.logger = new Log(/*this.options['log_level']*/)
+    this.logger = new Log(this.options.log_level)
     this.reporter = new Cli(this.logger)
   }
 
@@ -117,14 +117,14 @@ export class Runner implements IRunner {
   get process_files() {
     // todo: this is partial implementation
     const files = this.files
-    const result = files
-      .map(file => this.load_file(file.path, file.source))
+    const result: ICheckResult[] = files
+      .map(file => this.load_file(file))
     return result
   }
 
-  load_file(p: string, source: string) {
-    const doc = createDocument(p)
-    return this.checkParsed(doc, p, source)
+  load_file(file: IFile): ICheckResult {
+    const doc = createDocument(file.path)
+    return this.checkParsed(doc, file.path, file.source)
   }
 
   // Collects any external URLs found in a directory of files. Also collectes
@@ -166,7 +166,7 @@ export class Runner implements IRunner {
   }
 
   // todo: this should not be property
-  get files(): { source: string, path: string }[] {
+  get files(): IFile[] {
     if (this.type === CheckType.DIRECTORY) {
       // todo: this is too complicated
       const files = this.sources.map((src) => {
@@ -202,14 +202,6 @@ export class Runner implements IRunner {
       }
     }
     return false
-  }
-
-  checkSriOption(): boolean {
-    return this.options.check_sri || false
-  }
-
-  enforceHttpsOption(): boolean {
-    return this.options.enforce_https || false
   }
 
   get checks(): any[] {

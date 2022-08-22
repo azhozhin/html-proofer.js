@@ -8,7 +8,7 @@ export class Scripts extends Check {
     for (const node of this.html.css('script')) {
       const script = this.createElement(node)
 
-      if (script.ignore()) {
+      if (script.isIgnore()) {
         continue
       }
 
@@ -19,9 +19,9 @@ export class Scripts extends Check {
       // does the script exist?
       if (this.isMissingSrc(script)) {
         this.addFailure('script is empty and has no src attribute', script.line, null, script.content)
-      } else if (script.url.remote()) {
+      } else if (script.url.isRemote()) {
         this.addToExternalUrls(script.src, script.line)
-        if (this.runner.checkSriOption()) {
+        if (this.runner.options.check_sri) {
           this.check_sri(script)
         }
       } else if (!script.url.exists()) {

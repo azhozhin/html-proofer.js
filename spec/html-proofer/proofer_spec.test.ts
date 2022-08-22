@@ -8,13 +8,13 @@ import {normalizePath} from "../../src/html-proofer/Utils";
 describe('HTMLProofer', () => {
   describe('#failed_checks', () => {
     it('is an array of Failures', async () => {
-      const broken_link_internal_filepath = path.join(FIXTURES_DIR, 'links', 'broken_link_internal.html')
-      const proofer = await createAndRunProofer(broken_link_internal_filepath, CheckType.FILE, {})
+      const brokenLinkInternalFilepath = path.join(FIXTURES_DIR, 'links', 'broken_link_internal.html')
+      const proofer = await createAndRunProofer(brokenLinkInternalFilepath, CheckType.FILE, {})
       expect(proofer.failedChecks.length).toEqual(2)
 
       const check = proofer.failedChecks[0]
       expect(check.constructor.name).toEqual('Failure')
-      expect(check.path).toEqual(broken_link_internal_filepath)
+      expect(check.path).toEqual(brokenLinkInternalFilepath)
       expect(check.description).toEqual('internally linking to ./notreal.html, which does not exist')
       expect(check.line).toEqual(3)
     })

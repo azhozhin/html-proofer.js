@@ -141,27 +141,26 @@ export interface IRunner {
   options: IOptions
   reporter: IReporter
 
-  currentSource: string | null // todo: is it a real string?
+  currentSource: string | null
   currentFilename: string | null
+
+  // discovered files
+  get files(): IFile[]
 
   run(): void
 
-  checkSriOption(): boolean
+  // results
+  failedChecks: Failure[]
+  externalUrls: Map<string, IExtMetadata[]>
 
-  enforceHttpsOption(): boolean
-
-  loadInternalCache(): any
-
-  loadExternalCache(): any
-
+  // cache related
   checkedPaths: Map<string, boolean>
   checkedHashes: Map<string, Map<string, boolean>>
 
-  failedChecks: Failure[]
-
   addBeforeRequest(block: (request: any) => any): void
 
-  externalUrls: Map<string, IExtMetadata[]>
+  loadInternalCache(): any
+  loadExternalCache(): any
 }
 
 export interface INode {
@@ -179,3 +178,7 @@ export interface INode {
   nativeNode: any,
 }
 
+export interface IFile {
+  source: string,
+  path: string
+}

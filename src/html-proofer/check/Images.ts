@@ -11,19 +11,19 @@ export class Images extends Check {
     for (const node of this.html.css('img')){
       const img = this.createElement(node)
 
-      if (img.ignore()) {
+      if (img.isIgnore()) {
         continue
       }
 
       // screenshot filenames should return because of terrible names
-      if (this.terrible_filename(img)) {
+      if (this.isTerribleFilename(img)) {
         this.addFailure(`image has a terrible filename (${img.url.rawAttribute})`, img.line, null, img.content)
       }
 
       // does the image exist?
-      if (this.missing_src(img)) {
+      if (this.missingSrc(img)) {
         this.addFailure('image has no src or srcset attribute', img.line, null, img.content)
-      } else if (img.url.remote()) {
+      } else if (img.url.isRemote()) {
         this.addToExternalUrls(img.url, img.line)
       } else if (!img.url.exists() && !img.isMultipleSrcsets()) {
         this.addFailure(`internal image ${img.url.rawAttribute} does not exist`, img.line, null, img.content)
@@ -32,7 +32,7 @@ export class Images extends Check {
         for (const srcset of srcsets) {
           const srcsetUrl = new Url(this.runner, srcset, img.baseUrl)
 
-          if (srcsetUrl.remote()) {
+          if (srcsetUrl.isRemote()) {
             this.addToExternalUrls(srcsetUrl, img.line)
           } else if (!srcsetUrl.exists()) {
             this.addFailure(`internal image ${srcset} does not exist`, img.line, null, img.content)
@@ -47,7 +47,7 @@ export class Images extends Check {
           this.addFailure(`image ${img.url.rawAttribute} has an alt attribute, but no content`, img.line, null, img.content)
         }
       }
-      if (this.runner.enforceHttpsOption() && img.url.http()) {
+      if (this.runner.options.enforce_https && img.url.isHttp()) {
         this.addFailure(`image ${img.url.rawAttribute} uses the http scheme`, img.line, null, img.content)
       }
     }
@@ -68,7 +68,7 @@ export class Images extends Check {
   }
 
   private isIgnoreElement(img: Element): boolean {
-    return img.url.ignore() || img.isAriaHidden()
+    return img.url.isIgnore() || img.isAriaHidden()
   }
 
   isMissingAltAttribute(img: Element): boolean {
@@ -83,12 +83,12 @@ export class Images extends Check {
     return !this.isMissingAltAttribute(img) && img.node.attributes.alt.trim() === ''
   }
 
-  terrible_filename(img: Element): boolean {
+  isTerribleFilename(img: Element): boolean {
     const u = img.url.toString()
     return u ? u.match(this.SCREEN_SHOT_REGEX) != null : false
   }
 
-  missing_src(img: Element): boolean {
+  missingSrc(img: Element): boolean {
     return isNullOrEmpty(img.url.toString())
   }
 }

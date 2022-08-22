@@ -57,7 +57,7 @@ describe('HTMLProofer::Element', () => {
       const doc = createDocument('<meta name="twitter:url" data-proofer-ignore content="http://example.com/soon-to-be-published-url">')
       const node = doc.css('meta')[0];
       const element = new Element(context.runner!, doc, node)
-      expect(element.ignore()).toEqual(true)
+      expect(element.isIgnore()).toEqual(true)
     })
 
   })

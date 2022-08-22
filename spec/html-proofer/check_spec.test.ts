@@ -10,7 +10,7 @@ class MailToOctocat extends Check {
     for (const node of this.html.css('a')) {
       const link = this.createElement(node)
 
-      if (link.ignore()) {
+      if (link.isIgnore()) {
         continue
       }
 
