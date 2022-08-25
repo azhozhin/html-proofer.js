@@ -71,9 +71,9 @@ export class External extends UrlValidator {
       url: url.url!,
       options,
       maxRedirects: 5,
-      on_complete: (response) => this.response_handler(response, url, filenames),
-      on_error: (error) => this.failure_handler(error, url, filenames),
-      base_url: () => new URL(url.url!).origin,
+      onComplete: (response) => this.response_handler(response, url, filenames),
+      onError: (error) => this.failure_handler(error, url, filenames),
+      // baseUrl: () => new URL(url.url!).origin,
     }
     for (const callback of this.beforeRequest) {
       callback(request)

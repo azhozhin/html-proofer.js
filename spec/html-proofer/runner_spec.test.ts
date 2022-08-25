@@ -12,7 +12,8 @@ describe('HTMLProofer::Runner', () => {
       let request: any = null
       const auth = 'Bearer <TOKEN>'
       proofer.addBeforeRequest((r: any) => {
-        if (r.base_url() === url) {
+        const baseUrl = new URL(url).origin
+        if (baseUrl === url) {
           r.options.headers['Authorization'] = auth
         }
         request = r

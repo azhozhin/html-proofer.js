@@ -32,16 +32,16 @@ describe('HTMLProofer', () => {
     it('strips out undesired Typhoeus options', async () => {
       const folder = path.join(FIXTURES_DIR, 'links', '_site/folder.html')
       const proofer = HTMLProofer.checkFile(folder, {verbose: true})
-      expect(proofer.options['verbose']).toEqual(true)
-      expect(proofer.options['typhoeus']['verbose']).toBeUndefined()
+      expect(proofer.options.verbose).toEqual(true)
+      expect(proofer.options.typhoeus.verbose).toBeUndefined()
     })
 
     it('takes options for Parallel', async () => {
       const folder = path.join(FIXTURES_DIR, 'links', '_site/folder.html')
       const options = {parallel: {in_processes: 3}}
       const proofer = HTMLProofer.checkFile(folder, options)
-      expect(proofer.options['parallel']['in_processes']).toEqual(3)
-      expect(proofer.options['typhoeus']['in_processes']).toBeUndefined()
+      expect(proofer.options.parallel['in_processes']).toEqual(3)
+      expect(proofer.options.typhoeus['in_processes']).toBeUndefined()
     })
 
     it('only has one UA with file', async () => {

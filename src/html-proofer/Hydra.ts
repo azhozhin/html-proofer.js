@@ -1,22 +1,22 @@
-import axios, {AxiosResponse} from 'axios'
+import axios, {AxiosRequestConfig, AxiosResponse} from 'axios'
 import * as http from 'node:http';
 import * as https from 'node:https'
 import {ILogger, IExternalRequest} from "../interfaces";
 
 export class Hydra {
   private logger: ILogger
-  private requests: IExternalRequest[]
+  private readonly requests: IExternalRequest[]
   private requestVerboseInterceptor: number | null = null
   private responseVerboseInterceptor: number | null = null
 
-  constructor(logger:ILogger) {
+  constructor(logger: ILogger) {
     this.requests = []
     this.logger = logger
   }
 
   injectVerboseInterceptors() {
     this.requestVerboseInterceptor = axios.interceptors.request.use(request => {
-      this.logger.log('info',`Request:
+      this.logger.log('info', `Request:
       ${JSON.stringify(request, null, 2)}`)
       return request
     })
@@ -46,11 +46,11 @@ export class Hydra {
       // axios expects protocol (http/https) and rejects urls without it, so we need to fix urls for it
       const fixedUrl = request.url.slice(0, 4).toLowerCase() !== 'http' ? 'http://' + request.url : request.url
       const httpsAgent = (request.options.ssl_verifypeer != null && request.options.ssl_verifypeer === false)
-          ? httpsInsecureAgent
-          : httpsSecureAgent
+        ? httpsInsecureAgent
+        : httpsSecureAgent
 
       const url = new URL(fixedUrl) // for unicode urls it should be converted to punycode
-      const config = {
+      const config: AxiosRequestConfig = {
         url: url.toString(),
         method: request.options.method,
         timeout: 30000,
@@ -58,7 +58,7 @@ export class Hydra {
         headers: request.options.headers,
         maxRedirects: request.options.followlocation ? 50 : 0,
         // we need promise to be resolved anyway
-        validateStatus(status:any) {
+        validateStatus(status: number): boolean {
           return true
         },
         httpAgent,
@@ -69,9 +69,7 @@ export class Hydra {
         this.injectVerboseInterceptors()
       }
 
-      await axios.request(config).
-          then(response => request.on_complete(response)).
-          catch(error => request.on_error(error))
+      await axios.request(config).then(response => request.onComplete(response)).catch(error => request.onError(error))
 
       if (request.options.verbose) {
         this.ejectVerboseInterceptors()
@@ -79,7 +77,7 @@ export class Hydra {
     }
   }
 
-  queue(request:IExternalRequest) {
+  queue(request: IExternalRequest) {
     this.requests.push(request)
   }
 }

@@ -47,11 +47,9 @@ export interface IExternalRequest {
   options: IOptions
   maxRedirects: number
 
-  on_complete(response: any): void
+  onComplete(response: any): void
 
-  on_error(error: any): void
-
-  base_url(): string
+  onError(error: any): void
 }
 
 
