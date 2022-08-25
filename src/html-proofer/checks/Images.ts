@@ -20,68 +20,76 @@ export class Images extends Check {
       }
 
       // does the image exist?
-      if (this.missingSrc(img)) {
+      if (this.isMissingSrc(img)) {
         this.addFailure('image has no src or srcset attribute', img.line, null, img.content)
       } else if (img.url.isRemote()) {
         this.addToExternalUrls(img.url, img.line)
       } else if (!img.url.exists() && !img.isMultipleSrcsets()) {
         this.addFailure(`internal image ${img.url.rawAttribute} does not exist`, img.line, null, img.content)
       } else if (img.isMultipleSrcsets()) {
-        const srcsets = img.srcset!.split(',').map((x: string) => x.trim())
-        for (const srcset of srcsets) {
-          const srcsetUrl = new Url(this.runner, srcset, img.baseUrl)
-
-          if (srcsetUrl.isRemote()) {
-            this.addToExternalUrls(srcsetUrl, img.line)
-          } else if (!srcsetUrl.exists()) {
-            this.addFailure(`internal image ${srcset} does not exist`, img.line, null, img.content)
-          }
-        }
+        this.processMultipleSrcSets(img)
       }
 
       if (!this.isIgnoreElement(img)) {
-        if (this.isMissingAltAttribute(img) && !this.ignoreMissingAltAttributeOption()) {
-          this.addFailure(`image ${img.url.rawAttribute} does not have an alt attribute`, img.line, null, img.content)
-        } else if ((this.isEmptyAltAttribute(img) || this.alt_all_spaces(img)) && !this.ignoreEmptyAltAttributeOption()) {
-          this.addFailure(`image ${img.url.rawAttribute} has an alt attribute, but no content`, img.line, null, img.content)
-        }
+        this.checkAltAttribute(img)
       }
-      if (this.runner.options.enforce_https && img.url.isHttp()) {
-        this.addFailure(`image ${img.url.rawAttribute} uses the http scheme`, img.line, null, img.content)
-      }
+      this.checkScheme(img)
     }
   }
 
-  private ignoreMissingAltAttributeOption(): boolean {
-    return this.runner.options.ignore_missing_alt || false
+  private checkScheme(img: Element) {
+    if (img.url.isHttp() && this.runner.options.enforce_https) {
+      this.addFailure(`image ${img.url.rawAttribute} uses the http scheme`, img.line, null, img.content)
+    }
   }
 
-  private ignoreEmptyAltAttributeOption(): boolean {
-    return this.runner.options.ignore_empty_alt || false
+  private checkAltAttribute(img: Element) {
+    if (this.isMissingAltAttribute(img) && !this.runner.options.ignore_missing_alt) {
+      this.addFailure(`image ${img.url.rawAttribute} does not have an alt attribute`, img.line, null, img.content)
+    } else if (this.isEmptyAlt(img) && !this.runner.options.ignore_empty_alt) {
+      this.addFailure(`image ${img.url.rawAttribute} has an alt attribute, but no content`, img.line, null, img.content)
+    }
+  }
+
+  private isEmptyAlt(img: Element) {
+    return this.isEmptyAltAttribute(img) || this.isAltAttributeAllSpaces(img)
+  }
+
+  private processMultipleSrcSets(img: Element) {
+    const srcsets = img.srcset!.split(',').map((x: string) => x.trim())
+    for (const srcset of srcsets) {
+      const srcsetUrl = new Url(this.runner, srcset, img.baseUrl)
+
+      if (srcsetUrl.isRemote()) {
+        this.addToExternalUrls(srcsetUrl, img.line)
+      } else if (!srcsetUrl.exists()) {
+        this.addFailure(`internal image ${srcset} does not exist`, img.line, null, img.content)
+      }
+    }
   }
 
   private isIgnoreElement(img: Element): boolean {
     return img.url.isIgnore() || img.isAriaHidden()
   }
 
-  isMissingAltAttribute(img: Element): boolean {
+  private isMissingAltAttribute(img: Element): boolean {
     return img.node.attributes.alt == null
   }
 
-  isEmptyAltAttribute(img: Element): boolean {
+  private isEmptyAltAttribute(img: Element): boolean {
     return !this.isMissingAltAttribute(img) && img.node.attributes.alt === ''
   }
 
-  alt_all_spaces(img: Element): boolean {
+  private isAltAttributeAllSpaces(img: Element): boolean {
     return !this.isMissingAltAttribute(img) && img.node.attributes.alt.trim() === ''
   }
 
-  isTerribleFilename(img: Element): boolean {
+  private isTerribleFilename(img: Element): boolean {
     const u = img.url.toString()
     return u ? u.match(this.SCREEN_SHOT_REGEX) != null : false
   }
 
-  missingSrc(img: Element): boolean {
+  private isMissingSrc(img: Element): boolean {
     return isNullOrEmpty(img.url.toString())
   }
 }

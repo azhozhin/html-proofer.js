@@ -145,10 +145,6 @@ export const unique = (arr: string[]): string[] => {
 }
 
 export const normalizePath = (source: string): string => {
-//  if (source.constructor.name === 'String') {
-  return (source as string).replaceAll('\\', '/')
-//  } else if (source.constructor.name === 'Array') {
-//    return (source as string[]).map(e => e.replaceAll('\\', '/'))
-//  }
+  return source.replaceAll('\\', '/')
 }
 

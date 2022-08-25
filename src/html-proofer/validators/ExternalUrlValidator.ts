@@ -92,7 +92,6 @@ export class ExternalUrlValidator extends UrlValidator {
 
   response_handler(response: any, url: Url, filenames: IExtMetadata[]) {
     const method = response.request.method.toLowerCase()
-    // const href = response.request.base_url.toString()
     const href = url.url
     const responseCode = response.status
     response.data = response.data.replace('\x00', '')
@@ -107,9 +106,7 @@ export class ExternalUrlValidator extends UrlValidator {
       if (!this.check_hash_in_2xx_response(href, url, response, filenames)) {
         this.cache.addExternalUrl(href!, filenames, responseCode, 'OK')
       }
-      // } else if (false/* todo: responseCode.zero()*/) {
-      //   this.handle_connection_failure(href, filenames, responseCode, response.status_message);
-    } else if (method === 'head') { // # some servers don't support HEAD
+    } else if (method === 'head') { // some servers don't support HEAD
       this.queue_request('get', url, filenames)
     } else {
       if (this.runner.options.only_4xx && !(responseCode >= 400 && responseCode <= 499)) {

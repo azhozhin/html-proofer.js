@@ -60,7 +60,7 @@ export class Runner implements IRunner {
     this.exitCodeOneOnFailure = this.options.exitcode_one_on_failure ?? false
   }
 
-  async run() {
+  async run(): Promise<void> {
     const checkText = pluralize(this.checks.length, 'check', 'checks')
     const checkNames = this.formatCheckNames(this.checks)
 
@@ -227,8 +227,7 @@ export class Runner implements IRunner {
   }
 
   get failedChecks(): Failure[] {
-    // todo: should it flatten?
-    return this.reporter.failures.flat().filter(f => f.constructor.name === 'Failure')
+    return [...this.reporter.failureGroups.values()].flat()
   }
 
   private reportFailedChecks() {

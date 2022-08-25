@@ -1,5 +1,3 @@
-// import winston from 'winston'
-// import {format} from 'logform'
 import log4js from 'log4js'
 import {ILogger} from '../interfaces'
 

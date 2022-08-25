@@ -131,7 +131,7 @@ export interface IReporter {
 
   setFailures(failures: Failure[]): void
 
-  failures: Failure[]
+  failureGroups: Map<string, Failure[]>
 }
 
 export interface IRunner {
@@ -146,7 +146,7 @@ export interface IRunner {
   // discovered files
   get files(): IFile[]
 
-  run(): void
+  run(): Promise<void>
 
   // results
   failedChecks: Failure[]

@@ -1,9 +1,9 @@
 import {Check} from './Check'
-import {ICheckResult} from '../../interfaces'
 import {Element} from '../Element'
 
 export class Links extends Check {
-  EMAIL_REGEXP = /^\S+@\S+\.\S+$/
+  private EMAIL_REGEXP = /^\S+@\S+\.\S+$/
+  private SRI_REL_TYPES = ['stylesheet']
 
   internalRun(): void {
     for (const node of this.html.css('a, link, source')) {
@@ -13,20 +13,15 @@ export class Links extends Check {
         continue
       }
 
-      if (!this.runner.options.allow_hash_href && link.node.attributes.href === '#') {
-        this.addFailure('linking to internal hash #, which points to nowhere', link.line, null, link.content)
+      if (this.checkInternalHash(link)) {
         continue
       }
 
       // is there even a href?
-      if (!link.url.rawAttribute) {
-        if (this.runner.options.allow_missing_href) {
-          continue
-        }
-
-        this.addFailure(`'${link.node.name}' tag is missing a reference`, link.line, null, link.content)
+      if (this.checkHref(link)) {
         continue
       }
+
       // is it even a valid URL?
       if (!link.url.isValid()) {
         this.addFailure(`${link.href} is an invalid URL`, link.line, null, link.content)
@@ -40,33 +35,40 @@ export class Links extends Check {
         continue
       }
 
-      if (!link.url.isInternal() && link.url.isRemote()) {
-        if (this.runner.options.check_sri && link.isLinkTag()) {
-          this.checkSri(link)
-        }
-
-        // we need to skip these for now; although the domain main be valid,
-        // curl/Typheous inaccurately return 404s for some links. cc https://git.io/vyCFx
-        if (link.node.attributes.rel === 'dns-prefetch') {
-          continue
-        }
-
-        if (!link.url.isPath()) {
-          this.addFailure(`${link.url.rawAttribute} is an invalid URL`, link.line, null, link.content)
-          continue
-        }
-
-        this.addToExternalUrls(link.url, link.line)
+      if (link.url.isRemote() && !link.url.isInternal()) {
+        this.processRemoteLink(link)
       } else if (link.url.isInternal()) {
-        // does the local directory have a trailing slash?
-        if (link.url.isUnslashedDirectory(link.url.absolutePath)) {
-          this.addFailure(`internally linking to a directory ${link.url.rawAttribute} without trailing slash`,
-            link.line, null, link.content)
-          continue
-        }
-        this.addToInternalUrls(link.url, link.line)
+        this.processInternalLink(link)
       }
     }
+  }
+
+  private processInternalLink(link: Element) {
+    // does the local directory have a trailing slash?
+    if (link.url.isUnslashedDirectory(link.url.absolutePath)) {
+      this.addFailure(`internally linking to a directory ${link.url.rawAttribute} without trailing slash`, link.line, null, link.content)
+      return
+    }
+    this.addToInternalUrls(link.url, link.line)
+  }
+
+  private processRemoteLink(link: Element) {
+    if (this.runner.options.check_sri && link.isLinkTag()) {
+      this.checkSri(link)
+    }
+
+    // we need to skip these for now; although the domain main be valid,
+    // curl/Typheous inaccurately return 404s for some links. cc https://git.io/vyCFx
+    if (link.node.attributes.rel === 'dns-prefetch') {
+      return
+    }
+
+    if (!link.url.isPath()) {
+      this.addFailure(`${link.url.rawAttribute} is an invalid URL`, link.line, null, link.content)
+      return
+    }
+
+    this.addToExternalUrls(link.url, link.line)
   }
 
   private checkSchemes(link: Element) {
@@ -82,6 +84,7 @@ export class Links extends Check {
           return
         }
         this.addFailure(`${link.url.rawAttribute} is not an HTTPS link`, link.line, null, link.content)
+        break
     }
   }
 
@@ -110,7 +113,7 @@ export class Links extends Check {
 
   // Allowed elements from Subresource Integrity specification
   // https://w3c.github.io/webappsec-subresource-integrity/#link-element-for-stylesheets
-  SRI_REL_TYPES = ['stylesheet']
+
 
   private checkSri(link: Element) {
     if (!this.SRI_REL_TYPES.includes(link.node.attributes.rel)) {
@@ -126,4 +129,23 @@ export class Links extends Check {
     }
   }
 
+  private checkInternalHash(link: Element) : boolean {
+    if (link.node.attributes.href === '#' && !this.runner.options.allow_hash_href) {
+      this.addFailure('linking to internal hash #, which points to nowhere', link.line, null, link.content)
+      return true
+    }
+    return false
+  }
+
+  private checkHref(link: Element): boolean {
+    if (!link.url.rawAttribute) {
+      if (this.runner.options.allow_missing_href) {
+        return true
+      }
+
+      this.addFailure(`'${link.node.name}' tag is missing a reference`, link.line, null, link.content)
+      return true
+    }
+    return false
+  }
 }

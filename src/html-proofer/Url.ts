@@ -14,20 +14,20 @@ export class Url extends Attribute {
   constructor(runner: IRunner, linkAttribute: string | null, baseUrl: string | null = null) {
     super(runner, linkAttribute)
 
-    let url
+    let url: string | null
     if (this.rawAttribute == null) {
       url = null
     } else {
-      url = (this.rawAttribute as string).replace('\u200b', '').trim()
+      url = this.rawAttribute.replace('\u200b', '').trim()
       if (baseUrl != null) {
-        url = joinUrl(baseUrl, url as string)
+        url = joinUrl(baseUrl, url)
       }
 
       url = this.swapUrls(url)
       url = this.cleanUrl(url)
 
       // convert "//" links to "https://"
-      if ((url as string).startsWith('//')) {
+      if (url.startsWith('//')) {
         url = `https:${url}`
       }
     }
@@ -99,7 +99,7 @@ export class Url extends Attribute {
   }
 
   isIgnoresPattern(linksToIgnore: (string | RegExp)[]): boolean {
-    if (!(linksToIgnore.constructor.name === 'Array')) {
+    if (linksToIgnore.constructor.name !== 'Array') {
       return false
     }
 
@@ -199,51 +199,54 @@ export class Url extends Attribute {
   }
 
   get absolutePath() {
-    const currentPath = this.file_path || this.runner.currentFilename
+    const currentPath = this.filePath || this.runner.currentFilename
 
     return path.resolve(currentPath!)
   }
 
-  get file_path() {
+  private get filePath(): string | null {
     if (this.path == null || this.path === '') {
       return null
     }
 
+    const base = this.calculateBase()
+
+    let file = path.join(base, this.path)
+
+    const filenameWithAssumedExt = file + this.runner.options.assume_extension
+    if (this.runner.options.assume_extension && isFile(filenameWithAssumedExt)) {
+      file = filenameWithAssumedExt
+    } else if (isDirectory(file) && !this.isUnslashedDirectory(file)) { // implicit index support
+      file = path.join(file, this.runner.options.directory_index_file!)
+    }
+
+    return file
+  }
+
+  private calculateBase() {
     let pathDotExt = ''
 
     if (this.runner.options.assume_extension) {
       pathDotExt = this.path + this.runner.options.assume_extension
     }
 
-    let base
     // path relative to root
     // todo: this is too complicated
-    if (this.isAbsolutePath(this.path)) {
+    if (this.isAbsolutePath(this.path!)) {
       // either overwrite with root_dir; or, if source is directory, use that; or, just get the current file's dirname
-      base = this.runner.options.root_dir ||
-        (isDirectory(this.runner.currentSource!) ? this.runner.currentSource : path.dirname(this.runner.currentSource!))
+      const sourceDirectory = isDirectory(this.runner.currentSource!) ? this.runner.currentSource! : path.dirname(this.runner.currentSource!)
+      return this.runner.options.root_dir || sourceDirectory
       // relative links, path is a file
-    } else if (fs.existsSync(path.resolve(this.runner.currentSource!, this.path)) ||
-      fs.existsSync(path.resolve(this.runner.currentSource!, pathDotExt))) {
-      base = path.dirname(this.runner.currentFilename!)
+    } else if (fs.existsSync(path.resolve(this.runner.currentSource!, this.path!)) || fs.existsSync(path.resolve(this.runner.currentSource!, pathDotExt))) {
+      return path.dirname(this.runner.currentFilename!)
       // relative links in nested dir, path is a file
-    } else if (fs.existsSync(path.join(path.dirname(this.runner.currentFilename!), this.path)) ||
+    } else if (fs.existsSync(path.join(path.dirname(this.runner.currentFilename!), this.path!)) ||
       fs.existsSync(path.join(path.dirname(this.runner.currentFilename!), pathDotExt))) {
-      base = path.dirname(this.runner.currentFilename!)
+      return path.dirname(this.runner.currentFilename!)
       // relative link, path is a directory
     } else {
-      base = this.runner.currentFilename
+      return this.runner.currentFilename!
     }
-
-    let file = path.join(base || '', this.path)
-
-    if (this.runner.options.assume_extension && isFile(`${file}${this.runner.options.assume_extension}`)) {
-      file = `${file}${this.runner.options.assume_extension}`
-    } else if (isDirectory(file) && !this.isUnslashedDirectory(file)) { // # implicit index support
-      file = path.join(file, this.runner.options.directory_index_file!)
-    }
-
-    return file
   }
 
   isUnslashedDirectory(file: string): boolean {
@@ -253,7 +256,7 @@ export class Url extends Attribute {
     return !file.endsWith(path.sep) && !this.isFollowLocation()
   }
 
-  private isFollowLocation():boolean {
+  private isFollowLocation(): boolean {
     return this.runner.options.typhoeus && this.runner.options.typhoeus.followlocation
   }
 

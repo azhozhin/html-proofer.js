@@ -17,15 +17,15 @@ export class InternalUrlValidator extends UrlValidator {
   async validate(): Promise<Failure[]> {
     if (this.cache.isEnabled()) {
       const urlsToCheck = this.runner.loadInternalCache()
-      this.run_internal_link_checker(urlsToCheck)
+      this.runInternalLinkChecker(urlsToCheck)
     } else {
-      this.run_internal_link_checker(this.internalUrls)
+      this.runInternalLinkChecker(this.internalUrls)
     }
 
     return this.failedChecks
   }
 
-  run_internal_link_checker(links: Map<string, IIntMetadata[]>) {
+  private runInternalLinkChecker(links: Map<string, IIntMetadata[]>): void {
     const toAdd = []
     for (const [link, matchedFiles] of links) {
       for (const metadata of matchedFiles) {
@@ -34,14 +34,14 @@ export class InternalUrlValidator extends UrlValidator {
         this.runner.currentSource = metadata.source
         this.runner.currentFilename = metadata.filename
 
-        if (!this.file_exists(url)) {
+        if (!this.fileExists(url)) {
           this.failedChecks.push(new Failure(metadata.filename!, 'Links > Internal',
             `internally linking to ${url}, which does not exist`, metadata.line, null, null))
           toAdd.push([url, metadata, false])
           continue
         }
 
-        if (!this.hash_exists(url)) {
+        if (!this.hashExists(url)) {
           this.failedChecks.push(new Failure(metadata.filename!, 'Links > Internal',
             `internally linking to ${url}; the file exists, but the hash '${url.hash}' does not`, metadata.line,
             null, null))
@@ -57,10 +57,9 @@ export class InternalUrlValidator extends UrlValidator {
       this.cache.addInternalUrl(url.toString(), metadata, exists)
     }
 
-    return this.failedChecks
   }
 
-  file_exists(url: Url): boolean {
+  private fileExists(url: Url): boolean {
     const absolute_path = url.absolutePath
     if (this.runner.checkedPaths.has(absolute_path)) {
       return this.runner.checkedPaths.get(url.absolutePath)!
@@ -71,7 +70,7 @@ export class InternalUrlValidator extends UrlValidator {
   }
 
   // verify the target hash
-  hash_exists(url: Url): boolean {
+  private hashExists(url: Url): boolean {
     const hrefHash = url.hash
     if (!hrefHash) {
       return true
@@ -97,12 +96,12 @@ export class InternalUrlValidator extends UrlValidator {
       this.runner.checkedHashes.set(absolute_path, new Map<string, boolean>())
     }
 
-    const hashExists = fragmentIds.includes('top') || this.find_fragments(fragmentIds, url).length > 0
+    const hashExists = fragmentIds.includes('top') || this.findFragments(fragmentIds, url).length > 0
     this.runner.checkedHashes.get(absolute_path)!.set(cacheKey, hashExists)
     return hashExists
   }
 
-  find_fragments(fragmentIds: string[], url: Url): any[] {
+  private findFragments(fragmentIds: string[], url: Url): any[] {
     const csss = fragmentIds.flatMap(fragId => {
       const escapedFragId = `${fragId}`.replaceAll('"', '\\\"')
       return [
