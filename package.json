@@ -1,6 +1,6 @@
 {
   "name": "html-proofer.js",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "description": "",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
@@ -15,7 +15,6 @@
   "scripts": {
     "prepare": "husky install",
     "build": "npm run build:cjs && npm run build:esm && npm run build:types",
-    "build:cli": "node tools/cleanup cjs/bin && tsc -p tsconfig.cli.json",
     "build:cjs": "node tools/cleanup cjs && tsc -p tsconfig.cjs.json",
     "build:esm": "node tools/cleanup esm && tsc -p tsconfig.esm.json",
     "build:types": "node tools/cleanup types && tsc -p tsconfig.types.json",
