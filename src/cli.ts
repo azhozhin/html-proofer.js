@@ -125,27 +125,27 @@ const processCliOptions = (opts: OptionValues): IOptions => {
   options.enforce_https = opts.enforceHttps
   options.log_level = opts.logLevel
 
-  if (opts.extensions != null) {
+  if (opts.extensions) {
     options.extensions = opts.extensions.split(',')
   }
 
-  if (opts.ignoreFiles != null) {
+  if (opts.ignoreFiles) {
     options.ignore_files = opts.ignoreFiles.split(',')
   }
 
-  if (opts.ignoreUrls != null) {
+  if (opts.ignoreUrls) {
     options.ignore_urls = opts.ignoreUrls.split(',').map((e: string) => (e.startsWith('/') && e.endsWith('/')) ? new RegExp(e.slice(1, -1)) : e)
   }
 
-  if (opts.ignoreStatusCodes != null) {
+  if (opts.ignoreStatusCodes) {
     options.ignore_status_codes = opts.ignoreStatusCodes.split(',')
   }
 
-  if (opts.swapAttributes != null) {
+  if (opts.swapAttributes) {
     options.swap_attributes = Configuration.parse_json_option('swap_attributes', opts.swapAttributes)
   }
 
-  if (opts.typhoeus != null) {
+  if (opts.typhoeus) {
     options.typhoeus = Configuration.parse_json_option('typhoeus', opts.typhoeus)
   }
 
