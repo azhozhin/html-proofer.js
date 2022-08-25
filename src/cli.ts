@@ -45,7 +45,7 @@ program
     true)
   .option('--extensions [extensions]',
     'A comma-separated list of Strings indicating the file extensions you would like to check (including the dot)',
-    ['.html'])
+    '.html')
   .option('--ignore-empty-alt [bool]',
     'If `true`, ignores images with empty/missing alt tags (in other words, `<img alt>` and `<img alt="">` are valid; set this to `false` to flag those)',
     true)
