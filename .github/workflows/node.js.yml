@@ -25,7 +25,7 @@ jobs:
         cache: 'npm'
     - run: npm ci
     - run: npm run build --if-present
-    - run: npm test
+    - run: npm run test
   
   sonarcloud:
     name: SonarCloud
@@ -34,9 +34,14 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+      - name: Use Node.js 16.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.x  # use only one node version for sonar scan
+          cache: 'npm'
       - run: npm ci
       - run: npm run build
-      - run: npm test:cov
+      - run: npm run test:cov
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
         env:
