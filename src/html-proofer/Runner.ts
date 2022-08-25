@@ -62,26 +62,26 @@ export class Runner implements IRunner {
 
   async run() {
     const checkText = pluralize(this.checks.length, 'check', 'checks')
+    const checkNames = this.formatCheckNames(this.checks)
 
     if (this.type === CheckType.LINKS) {
-      this.logger.log('info',
-        `Running ${checkText} (${this.formatCheckNames(this.checks)}) on ${this.sources} ... \n\n`)
+      this.logger.log('info', `Running ${checkText} (${checkNames}) on ${this.sources} ... \n\n`)
       if (!this.options.disable_external) {
         await this.checkListOfLinks()
       }
     } else {
-      const checkNames = this.formatCheckNames(this.checks)
       const localPath = this.sources.map(s => normalizePath(s))
       const extensions = this.options.extensions!.join(', ')
-      if (this.type === CheckType.FILE){
-        this.logger.log('info', `Running ${checkText} (${checkNames}) for ${localPath} ...\n\n`)
-      }
-      else {
-        this.logger.log('info', `Running ${checkText} (${checkNames}) in ${localPath} on *${extensions} files...\n\n`)
-      }
+
+      this.logger.log('info', this.type === CheckType.FILE
+        ? `Running ${checkText} (${checkNames}) for ${localPath} ...\n\n`
+        : `Running ${checkText} (${checkNames}) in ${localPath} on *${extensions} files...\n\n`)
 
       await this.checkFiles()
-      this.logger.log('info', `Ran on ${pluralize(this.files.length, 'file', 'files')}!\n\n`)
+
+      this.logger.log('info', this.type === CheckType.FILE
+        ? `Ran on 1 file!\n\n`
+        : `Ran on ${pluralize(this.files.length, 'file', 'files')}!\n\n`)
     }
 
     this.cache.write()
@@ -93,7 +93,7 @@ export class Runner implements IRunner {
     } else {
       // @failures.uniq!
       this.reportFailedChecks()
-      if (this.exitCodeOneOnFailure){
+      if (this.exitCodeOneOnFailure) {
         process.exitCode = 1
       }
     }
@@ -104,7 +104,6 @@ export class Runner implements IRunner {
       const url = new Url(this, src, null).toString()
       this.externalUrls.set(url, [])
     }
-
     await this.validateExternalUrls()
   }
 
@@ -125,7 +124,6 @@ export class Runner implements IRunner {
   }
 
   private processFiles() {
-    // todo: this is partial implementation
     const files = this.files
     const result: ICheckResult[] = files
       .map(file => this.loadFile(file))
