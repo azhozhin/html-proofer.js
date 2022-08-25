@@ -1,4 +1,4 @@
-import {OpenGraph} from '../../src/html-proofer/check/OpenGraph'
+import {OpenGraph} from '../../src/html-proofer/checks/OpenGraph'
 import {FIXTURES_DIR, createAndRunProofer} from '../spec-helper'
 import * as path from 'path'
 import {CheckType} from "../../src/html-proofer/CheckType"

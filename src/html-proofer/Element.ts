@@ -1,5 +1,5 @@
-import {Url} from './attribute/Url'
-import {IElement, IHtml, INode, IRunner} from "../interfaces";
+import {Url} from './Url'
+import {IElement, IHtml, INode, IRunner} from '../interfaces'
 
 export class Element implements IElement {
   node: INode

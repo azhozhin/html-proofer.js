@@ -1,8 +1,6 @@
 import * as path from 'path'
-import {last} from '../../src/html-proofer/Utils'
+import {CheckType, IOptions, last} from '../../src'
 import {FIXTURES_DIR, createAndRunProofer} from '../spec-helper'
-import {CheckType} from "../../src/html-proofer/CheckType"
-import {IOptions} from "../../src/interfaces"
 
 describe('Links test', () => {
   it('fails for broken internal hash (even if the file exists)', async () => {

@@ -1,6 +1,6 @@
 import * as path from 'path'
 import {FIXTURES_DIR, createAndRunProofer} from '../spec-helper'
-import {Favicon} from '../../src/html-proofer/check/Favicon'
+import {Favicon} from '../../src/html-proofer/checks/Favicon'
 import {CheckType} from "../../src/html-proofer/CheckType"
 import {IOptions} from "../../src/interfaces/"
 

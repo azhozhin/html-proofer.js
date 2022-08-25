@@ -1,7 +1,7 @@
 import axios, {AxiosRequestConfig, AxiosResponse} from 'axios'
 import * as http from 'node:http';
 import * as https from 'node:https'
-import {ILogger, IExternalRequest} from "../interfaces";
+import {ILogger, IExternalRequest} from '../interfaces'
 
 export class Hydra {
   private logger: ILogger
@@ -82,7 +82,7 @@ export class Hydra {
   }
 }
 
-function serialize(response: AxiosResponse<any, any>) {
+const serialize = (response: AxiosResponse<any, any>) => {
   const meta = {
     url: response.config.url,
     method: response.config.method,

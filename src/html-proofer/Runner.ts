@@ -1,30 +1,31 @@
 import {Failure} from './Failure.js'
 import * as path from 'path'
-import {Cli} from './reporter/Cli'
+import {CliReporter} from './reporters/CliReporter'
 import {createDocument, mergeConcat, normalizePath, pluralize} from './Utils'
-import {External} from './url_validator/External'
-import {Internal} from './url_validator/Internal'
-import {Url} from './attribute/Url'
+import {ExternalUrlValidator} from './validators/ExternalUrlValidator'
+import {InternalUrlValidator} from './validators/InternalUrlValidator'
+import {Url} from './Url'
 import {Configuration} from './Configuration'
 import {Cache} from './Cache'
 import glob from 'glob'
 import fs from 'fs'
 import {Log} from './Log'
 import {CheckType} from "./CheckType"
-import {Links} from "./check/Links"
+import {Links} from "./checks/Links"
 import {
   createCheck,
   ICache,
   ICheck,
   ICheckResult,
   IExtMetadata,
+  IFile,
   IHtml,
-  ILogger,
   IIntMetadata,
+  ILogger,
   IOptions,
   IReporter,
-  IRunner, IFile
-} from "../interfaces";
+  IRunner
+} from '../interfaces'
 
 
 export class Runner implements IRunner {
@@ -46,16 +47,17 @@ export class Runner implements IRunner {
   externalUrls: Map<string, IExtMetadata[]> = new Map()
   private beforeRequest: any[] = []
   private _checks: any[] | null = null
+  private readonly exitCodeOneOnFailure: boolean
 
-  constructor(sources: string[], opts: IOptions | null = null) {
-    this.options = Configuration.generate_defaults(opts)
-
-    this.type = this.options.type!
+  constructor(sources: string[], opts: IOptions, reporter?: IReporter, logger?: ILogger) {
     this.sources = sources
+    this.options = Configuration.generateDefaults(opts)
+    this.type = this.options.type!
 
     this.cache = new Cache(this, this.options)
-    this.logger = new Log(this.options.log_level)
-    this.reporter = new Cli(this.logger)
+    this.logger = logger ?? new Log(this.options.log_level)
+    this.reporter = reporter ?? new CliReporter(this.logger)
+    this.exitCodeOneOnFailure = this.options.exitcode_one_on_failure ?? false
   }
 
   async run() {
@@ -65,31 +67,39 @@ export class Runner implements IRunner {
       this.logger.log('info',
         `Running ${checkText} (${this.formatCheckNames(this.checks)}) on ${this.sources} ... \n\n`)
       if (!this.options.disable_external) {
-        await this.check_list_of_links()
+        await this.checkListOfLinks()
       }
     } else {
       const checkNames = this.formatCheckNames(this.checks)
       const localPath = this.sources.map(s => normalizePath(s))
       const extensions = this.options.extensions!.join(', ')
-      this.logger.log('info', `Running ${checkText} (${checkNames}) in ${localPath} on *${extensions} files...\n\n`)
-      await this.check_files()
+      if (this.type === CheckType.FILE){
+        this.logger.log('info', `Running ${checkText} (${checkNames}) for ${localPath} ...\n\n`)
+      }
+      else {
+        this.logger.log('info', `Running ${checkText} (${checkNames}) in ${localPath} on *${extensions} files...\n\n`)
+      }
+
+      await this.checkFiles()
       this.logger.log('info', `Ran on ${pluralize(this.files.length, 'file', 'files')}!\n\n`)
     }
 
     this.cache.write()
 
-    this.reporter.set_failures(this.failures)
+    this.reporter.setFailures(this.failures)
 
     if (this.failures.length === 0) {
       this.logger.log('info', 'HTML-Proofer finished successfully.')
     } else {
       // @failures.uniq!
-      this.report_failed_checks()
-      process.exitCode = 1
+      this.reportFailedChecks()
+      if (this.exitCodeOneOnFailure){
+        process.exitCode = 1
+      }
     }
   }
 
-  async check_list_of_links() {
+  private async checkListOfLinks() {
     for (const src of this.sources) {
       const url = new Url(this, src, null).toString()
       this.externalUrls.set(url, [])
@@ -100,8 +110,8 @@ export class Runner implements IRunner {
 
   // Walks over each implemented check and runs them on the files, in parallel.
   // Sends the collected external URLs to Typhoeus for batch processing.
-  async check_files() {
-    for (const result of this.process_files) {
+  private async checkFiles() {
+    for (const result of this.processFiles()) {
       mergeConcat(this.externalUrls, result.externalUrls)
       mergeConcat(this.internalUrls, result.internalUrls)
       this.failures = this.failures.concat(result.failures)
@@ -114,15 +124,15 @@ export class Runner implements IRunner {
     await this.validateInternalUrls()
   }
 
-  get process_files() {
+  private processFiles() {
     // todo: this is partial implementation
     const files = this.files
     const result: ICheckResult[] = files
-      .map(file => this.load_file(file))
+      .map(file => this.loadFile(file))
     return result
   }
 
-  load_file(file: IFile): ICheckResult {
+  private loadFile(file: IFile): ICheckResult {
     const doc = createDocument(file.path)
     return this.checkParsed(doc, file.path, file.source)
   }
@@ -153,14 +163,14 @@ export class Runner implements IRunner {
   }
 
   private async validateExternalUrls() {
-    const externalUrlValidator = new External(this, this.externalUrls)
+    const externalUrlValidator = new ExternalUrlValidator(this, this.externalUrls)
     externalUrlValidator.beforeRequest = this.beforeRequest
     const validated = await externalUrlValidator.validate()
     this.failures = this.failures.concat(validated)
   }
 
   private async validateInternalUrls() {
-    const internalLinkValidator = new Internal(this, this.internalUrls)
+    const internalLinkValidator = new InternalUrlValidator(this, this.internalUrls)
     const validated = await internalLinkValidator.validate()
     this.failures = this.failures.concat(validated)
   }
@@ -192,7 +202,7 @@ export class Runner implements IRunner {
     return []
   }
 
-  isIgnoreFile(file: string): boolean {
+  private isIgnoreFile(file: string): boolean {
     for (const pattern of this.options.ignore_files!) {
       if (pattern.constructor.name === 'String' && pattern === file) {
         return true
@@ -204,7 +214,7 @@ export class Runner implements IRunner {
     return false
   }
 
-  get checks(): any[] {
+  private get checks(): any[] {
     if (this._checks) {
       return this._checks
     }
@@ -223,24 +233,14 @@ export class Runner implements IRunner {
     return this.reporter.failures.flat().filter(f => f.constructor.name === 'Failure')
   }
 
-  report_failed_checks() {
+  private reportFailedChecks() {
     this.reporter.report()
 
     const failureText = pluralize(this.failures.length, 'failure', 'failures')
     this.logger.log('error', `\nHTML-Proofer found ${failureText}!`)
   }
 
-  // # Set before_request callback.
-  // #
-  // # @example Set before_request.
-  // #   request.before_request { |request| p "yay" }
-  // #
-  // # @param [ Block ] block The block to execute.
-  // #
-  // # @yield [ Typhoeus::Request ]
-  // #
-  // # @return [ Array<Block> ] All before_request blocks.
-  addBeforeRequest(block: any) {
+  public addBeforeRequest(block: any) {
     this.beforeRequest = this.beforeRequest ? this.beforeRequest : []
     if (block) {
       this.beforeRequest.push(block)

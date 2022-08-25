@@ -1,9 +1,9 @@
 import fs from 'fs'
 import * as cheerio from 'cheerio'
 import URI from 'urijs'
-import {IHtml, INode} from "../interfaces";
+import {IHtml, INode} from '../interfaces'
 
-export function isFile(filepath: string): boolean {
+export const isFile = (filepath: string): boolean => {
   try {
     return fs.lstatSync(filepath).isFile()
   } catch (err) {
@@ -11,7 +11,7 @@ export function isFile(filepath: string): boolean {
   }
 }
 
-export function isDirectory(filepath: string): boolean {
+export const isDirectory = (filepath: string): boolean => {
   try {
     return fs.lstatSync(filepath).isDirectory()
   } catch (err) {
@@ -19,12 +19,12 @@ export function isDirectory(filepath: string): boolean {
   }
 }
 
-export function pluralize(count: number, single: string, plural: string): string {
+export const pluralize = (count: number, single: string, plural: string): string => {
   return `${count} ${count === 1 ? single : plural}`
 }
 
 
-export function createDocument(src: string): IHtml {
+export const createDocument = (src: string): IHtml => {
   let content
   if (fs.existsSync(src) && !isDirectory(src)) {
     content = fs.readFileSync(src)
@@ -39,7 +39,7 @@ export function createDocument(src: string): IHtml {
     css: (selector): INode[] => {
       const result: INode[] = []
       $(selector).each((i, node) => {
-        result.push(adapt_nokogiri_node($, node))
+        result.push(adaptNode($, node))
       })
       return result
     },
@@ -52,7 +52,7 @@ export function createDocument(src: string): IHtml {
   }
 }
 
-function getContent($: any, node: any): string | null {
+const getContent = ($: any, node: any): string | null => {
   // we need to decide if it is empty or null, cheerio does not distinguish them
   if (node.children.length === 0) {
     if (node.name === 'script') { // for self-closed script endIndex == startIndex <-- looks like a bug
@@ -65,11 +65,11 @@ function getContent($: any, node: any): string | null {
   return $(node).html()
 }
 
-function adapt_nokogiri_node($: cheerio.CheerioAPI, node: cheerio.Element): INode {
+const adaptNode = ($: cheerio.CheerioAPI, node: cheerio.Element): INode => {
   return {
     name: node.name,
     // todo: this could be performance issue
-    parent: (node.parent != null) ? adapt_nokogiri_node($, node.parent as cheerio.Element) : null,
+    parent: (node.parent != null) ? adaptNode($, node.parent as cheerio.Element) : null,
     attributes: node.attribs,
     text: $(node).text(),
     content: getContent($, node),
@@ -79,11 +79,11 @@ function adapt_nokogiri_node($: cheerio.CheerioAPI, node: cheerio.Element): INod
   }
 }
 
-export function isNullOrEmpty(str: string | null): boolean {
+export const isNullOrEmpty = (str: string | null): boolean => {
   return str == null || str === ''
 }
 
-export function mergeConcat(a: Map<string, any[]>, b: Map<string, any[]>) {
+export const mergeConcat = (a: Map<string, any[]>, b: Map<string, any[]>): void => {
   for (const [k, v] of b) {
     if (!a.has(k)) {
       a.set(k, [])
@@ -92,21 +92,12 @@ export function mergeConcat(a: Map<string, any[]>, b: Map<string, any[]>) {
   }
 }
 
-export function joinUrl(baseUrl: string, url: string): string {
+export const joinUrl = (baseUrl: string, url: string): string => {
   let theUrl = URI(url)
   if (theUrl.is('relative')) {
     theUrl = theUrl.absoluteTo(baseUrl)
   }
   return theUrl.toString()
-}
-
-export function hasUnicode(str: string): boolean {
-  for (let i = 0; i < str.length; i++) {
-    if (str.charCodeAt(i) > 127) {
-      return true
-    }
-  }
-  return false
 }
 
 /**
@@ -120,9 +111,7 @@ export function hasUnicode(str: string): boolean {
  *
  * @returns Map of the array grouped by the grouping function.
  */
-// export function groupBy<K, V>(list: Array<V>, keyGetter: (input: V) => K): Map<K, Array<V>> {
-//    const map = new Map<K, Array<V>>();
-export function groupBy<K, V>(list: V[], keyGetter: (input: V) => K): Map<K, V[]> {
+export const groupBy = <K, V>(list: V[], keyGetter: (input: V) => K): Map<K, V[]> => {
   const map = new Map<K, V[]>()
   list.forEach((item) => {
     const key = keyGetter(item)
@@ -137,28 +126,29 @@ export function groupBy<K, V>(list: V[], keyGetter: (input: V) => K): Map<K, V[]
 }
 
 // Simulation of Ruby
-export function last(arr: any[]): any {
+export const last = (arr: any[]): any => {
   if (arr.length === 0) {
     return null
   }
   return arr[arr.length - 1]
 }
 
-export function first(arr: any[]): any {
+export const first = (arr: any[]): any => {
   if (arr.length === 0) {
     return null
   }
   return arr[0]
 }
 
-export function unique(arr: string[]): string[] {
+export const unique = (arr: string[]): string[] => {
   return [...new Set(arr)]
 }
 
-export function normalizePath(source: string): string {
+export const normalizePath = (source: string): string => {
 //  if (source.constructor.name === 'String') {
   return (source as string).replaceAll('\\', '/')
 //  } else if (source.constructor.name === 'Array') {
 //    return (source as string[]).map(e => e.replaceAll('\\', '/'))
 //  }
 }
+

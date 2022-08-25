@@ -1,9 +1,9 @@
-import {Links} from './check/Links'
-import {Scripts} from './check/Scripts'
-import {Images} from './check/Images'
+import {Links} from './checks/Links'
+import {Scripts} from './checks/Scripts'
+import {Images} from './checks/Images'
 import {VERSION} from './Version'
 import {isNullOrEmpty} from './Utils'
-import {IOptions} from "../interfaces";
+import {IOptions} from '../interfaces'
 
 export class Configuration {
 
@@ -51,7 +51,7 @@ export class Configuration {
 
   static CACHE_DEFAULTS = {}
 
-  static generate_defaults(opts: IOptions | null): IOptions {
+  static generateDefaults(opts?: IOptions): IOptions {
     const options = Object.assign({}, this.PROOFER_DEFAULTS, opts)
 
     options.typhoeus = Object.assign({}, this.TYPHOEUS_DEFAULTS, opts?.typhoeus)

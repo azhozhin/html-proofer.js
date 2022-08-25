@@ -1,7 +1,6 @@
-import {Failure} from "../html-proofer/Failure"
-import {CheckType} from "../html-proofer/CheckType"
-import * as cheerio from "cheerio";
-import {Url} from "../html-proofer/attribute/Url";
+import {Failure} from '../html-proofer/Failure'
+import {CheckType} from '../html-proofer/CheckType'
+import {Url} from '../html-proofer/Url'
 
 export interface ICache {
   addInternalUrl(url: string, metadata: any, found: any): void
@@ -22,7 +21,7 @@ export interface ICheck {
 }
 
 
-export function createCheck(ctor: ICheckConstructor, runner: IRunner, html: IHtml): ICheck {
+export const createCheck = (ctor: ICheckConstructor, runner: IRunner, html: IHtml): ICheck => {
   return new ctor(runner, html)
 }
 
@@ -83,7 +82,8 @@ export interface IExtMetadata {
 export interface IOptions {
   type?: CheckType
   checks?: any[]
-  cache?: ICache
+
+  cache?: any
 
   extensions?: string[]
   ignore_files?: (string | RegExp)[]
@@ -93,7 +93,7 @@ export interface IOptions {
   typhoeus?: any // todo: make it strongly typed
   hydra?: any // todo: make it strongly typed
   parallel?: any
-  swap_urls?: Map<string, string> // todo: make it strongly typed
+  swap_urls?: Map<string, string>
 
   root_dir?: string
   directory_index_file?: string
@@ -113,6 +113,7 @@ export interface IOptions {
 
   check_opengraph?: boolean
 
+  exitcode_one_on_failure?: boolean
   // todo: this is DEV only option
   use_vcr?: boolean
   verbose?: boolean
@@ -128,7 +129,7 @@ export const EmptyOptions: IOptions = {}
 export interface IReporter {
   report(): void
 
-  set_failures(failures: Failure[]): void
+  setFailures(failures: Failure[]): void
 
   failures: Failure[]
 }
@@ -158,6 +159,7 @@ export interface IRunner {
   addBeforeRequest(block: (request: any) => any): void
 
   loadInternalCache(): any
+
   loadExternalCache(): any
 }
 

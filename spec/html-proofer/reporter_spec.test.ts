@@ -1,6 +1,6 @@
 import {captureProoferStderr, FIXTURES_DIR, createProofer} from '../spec-helper'
 import * as path from 'path'
-import {Reporter} from '../../src/html-proofer/Reporter'
+import {Reporter} from '../../src/html-proofer/reporters/Reporter'
 import {CheckType} from "../../src/html-proofer/CheckType";
 
 class CustomReporter extends Reporter {

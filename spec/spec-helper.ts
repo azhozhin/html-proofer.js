@@ -1,4 +1,4 @@
-import {HTMLProofer} from '../src/html-proofer'
+import {HTMLProofer} from '../src'
 import {exec} from 'node:child_process'
 // @ts-ignore
 import * as VCR from 'axios-vcr'
@@ -47,7 +47,7 @@ export const captureProoferStderr = async (block: any): Promise<string> => {
   return stderrOutput
 }
 
-export function createProofer(item: any, type: CheckType, opts: any): IRunner {
+export const createProofer = (item: any, type: CheckType, opts: any): IRunner => {
   switch (type) {
     case CheckType.FILE:
       return HTMLProofer.checkFile(item, opts)
@@ -60,7 +60,7 @@ export function createProofer(item: any, type: CheckType, opts: any): IRunner {
   }
 }
 
-export async function createAndRunProofer(item: any, type: CheckType, opts?: IOptions) {
+export const createAndRunProofer = async (item: any, type: CheckType, opts?: IOptions): Promise<IRunner> => {
   const proofer = createProofer(item, type, opts)
   // const cassette_name = make_cassette_name(item, opts)
   // VCR.mountCassette(cassette_name/*, record: :new_episodes*/)
@@ -116,7 +116,7 @@ export const captureProoferHttp = async (item: any, type: CheckType, opts: any =
 }
 
 export const runProoferCli = async (args: string) => {
-  const {stdout, stderr, exitCode} = await Executor.exec(`node dist/cjs/bin/htmlproofer.js ${args}`)
+  const {stdout, stderr, exitCode} = await Executor.exec(`node dist/cjs/cli.js ${args}`)
   return {output: `${stdout}\n${stderr}`, exitCode}
 }
 

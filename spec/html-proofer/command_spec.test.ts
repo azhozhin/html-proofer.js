@@ -161,9 +161,9 @@ describe('Command test', () => {
   })
 })
 
-async function match_command_help(config: IOptions) {
+const match_command_help = async (config: IOptions) => {
   const configKeys = Object.keys(config)
-  const binFile = fs.readFileSync('bin/htmlproofer.ts').toString()
+  const binFile = fs.readFileSync('src/cli.ts').toString()
   const {output, exitCode} = await runProoferCli('--help')
   expect(exitCode).toBe(0)
   const readme = fs.readFileSync('README.md').toString()

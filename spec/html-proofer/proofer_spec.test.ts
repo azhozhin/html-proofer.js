@@ -1,9 +1,6 @@
 import * as path from 'path'
-import {captureProoferHttp, captureProoferOutput, FIXTURES_DIR, createAndRunProofer} from '../spec-helper'
-import {HTMLProofer} from '../../src/html-proofer'
-import {CheckType} from "../../src/html-proofer/CheckType"
-import {IOptions} from "../../src/interfaces/"
-import {normalizePath} from "../../src/html-proofer/Utils";
+import {captureProoferHttp, captureProoferOutput, createAndRunProofer, FIXTURES_DIR} from '../spec-helper'
+import {IOptions, HTMLProofer, CheckType, normalizePath} from '../../src'
 
 describe('HTMLProofer', () => {
   describe('#failed_checks', () => {

@@ -1,8 +1,8 @@
-import {Check} from '../../src/html-proofer/Check'
+import {Check} from '../../src'
 import {FIXTURES_DIR, createProofer} from '../spec-helper'
 import * as path from 'path'
-import {Element} from '../../src/html-proofer/Element'
-import {CheckType} from '../../src/html-proofer/CheckType'
+import {Element} from '../../src'
+import {CheckType} from '../../src'
 
 class MailToOctocat extends Check {
   internalRun(): void {

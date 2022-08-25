@@ -12,7 +12,7 @@ describe('HTMLProofer::Element', () => {
   const context: { runner: IRunner | null } = {runner: null}
 
   beforeEach(() => {
-    context.runner = new Runner([''])
+    context.runner = new Runner([''], {})
     // # @check = HTMLProofer::Check.new('', '', Nokogiri::HTML5(''), nil, nil, HTMLProofer::Configuration::PROOFER_DEFAULTS)
   })
 

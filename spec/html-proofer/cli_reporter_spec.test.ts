@@ -1,10 +1,6 @@
-import {Favicon} from '../../src/html-proofer/check/Favicon'
-import {Scripts} from '../../src/html-proofer/check/Scripts'
-import {Images} from '../../src/html-proofer/check/Images'
-import {Links} from '../../src/html-proofer/check/Links'
+import {Favicon, Scripts, Images, Links, CheckType} from '../../src'
 import {captureProoferOutput, FIXTURES_DIR} from '../spec-helper'
 import * as path from 'path'
-import {CheckType} from "../../src/html-proofer/CheckType";
 
 
 describe('HTMLProofer::Reporter::Cli', () => {

@@ -1,5 +1,5 @@
 import {createAndRunProofer} from '../spec-helper'
-import {CheckType} from "../../src/html-proofer/CheckType";
+import {CheckType} from '../../src'
 
 describe('Maliciousness test', () => {
   it('does not accept non-string input for single file', async () => {
