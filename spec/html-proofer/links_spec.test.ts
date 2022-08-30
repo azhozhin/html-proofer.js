@@ -625,6 +625,12 @@ describe('Links test', () => {
     expect(proofer.failedChecks).toEqual([])
   })
 
+  it('catches links when the parent element is ignored but ancestors_ignorable false', async () => {
+    const parentIgnore = path.join(FIXTURES_DIR, 'links', 'ignored_by_parent.html')
+    const proofer = await createAndRunProofer(parentIgnore, CheckType.FILE, {ancestors_ignorable: false})
+    expect(proofer.failedChecks[0].description).toMatch(/failed with something very wrong/)
+  })
+
   it('does not cgi encode link', async () => {
     const prefetch = path.join(FIXTURES_DIR, 'links', 'do_not_cgi_encode.html')
     const proofer = await createAndRunProofer(prefetch, CheckType.FILE)
@@ -634,7 +640,7 @@ describe('Links test', () => {
   it('works with quotes in the hash href', async () => {
     const hashHref = path.join(FIXTURES_DIR, 'links', 'quote.html')
     const proofer = await createAndRunProofer(hashHref, CheckType.FILE, {allow_hash_href: true})
-    expect(proofer.failedChecks.length).toEqual(0)
+    expect(proofer.failedChecks).toEqual([])
   })
 
   it('works with base without href', async () => {

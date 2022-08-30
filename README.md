@@ -156,3 +156,4 @@ The `HTMLProofer` constructor takes an optional hash of additional options:
 | `root_dir`             | The absolute path to the directory serving your html-files.                                                                                         | `""`                   |
 | `swap_attributes`      | JSON-formatted config that maps element names to the preferred attribute to check                                                                   | `{}`                   |
 | `swap_urls`            | A hash containing key-value pairs of `RegExp => String`. It transforms URLs that match `RegExp` into `String` via `gsub`.                           | `{}`                   |
+| `ancestors_ignorable`  | Check ancestor elements for `data-proofer-ignore` attribute, this could cause performance degradation for large sites (disable it if not required)  | `true`                 | 

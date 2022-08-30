@@ -1,7 +1,10 @@
 import {Url} from './Url'
 import {IElement, IHtml, INode, IRunner} from '../interfaces'
+import {ElementType} from "domelementtype";
 
 export class Element implements IElement {
+  DATA_PROOFER_IGNORE = 'data-proofer-ignore'
+
   node: INode
   url: Url
   line: number | null
@@ -101,16 +104,15 @@ export class Element implements IElement {
   }
 
   isIgnore(): boolean {
-    if (this.node.attributes['data-proofer-ignore'] != null) {
+    if (this.node.attributes[this.DATA_PROOFER_IGNORE] != null) {
       return true
     }
-    if (this.ancestors_ignorable()) {
+    if (this.runner.options.ancestors_ignorable && this.ancestorsIgnorable()) {
       return true
     }
     if (this.url && this.url.isIgnore()) {
       return true
     }
-
     return false
   }
 
@@ -145,29 +147,15 @@ export class Element implements IElement {
     return this.node.attributes[newAttr]
   }
 
-  private nodeAncestors(node: INode) {
-    if (!node) {
-      return []
-    }
-
-    let currentNode = node
-    const ancestors = []
-    while (true) {
-      if (currentNode.parent == null) {
-        break
+  private ancestorsIgnorable() {
+    let currentNode = this.node.nativeParentNode
+    while (currentNode) {
+      if (currentNode.type === ElementType.Tag && currentNode.attribs[this.DATA_PROOFER_IGNORE] != null) {
+        return true
       }
-      ancestors.push(currentNode)
       currentNode = currentNode.parent
     }
-    return ancestors.reverse()
-  }
-
-  ancestors_ignorable() {
-    // todo: do we want to traverse to the top if we got ignore on lower level?
-    const ancestorsAttributes = this.nodeAncestors(this.node).map(a => a.attributes)
-    ancestorsAttributes.pop() // remove document at the end
-    const anyAncestor = ancestorsAttributes.some(a => a['data-proofer-ignore'] != null)
-    return anyAncestor
+    return false
   }
 
 }

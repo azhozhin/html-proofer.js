@@ -28,6 +28,7 @@ export class Configuration {
     log_level: 'info',
     only_4xx: false,
     swap_attributes: {},
+    ancestors_ignorable: true,
   }
 
   static TYPHOEUS_DEFAULTS = {

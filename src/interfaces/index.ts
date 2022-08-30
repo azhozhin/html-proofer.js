@@ -1,6 +1,8 @@
 import {Failure} from '../html-proofer/Failure'
 import {CheckType} from '../html-proofer/CheckType'
 import {Url} from '../html-proofer/Url'
+import * as cheerio from 'cheerio'
+
 
 export interface ICache {
   addInternalUrl(url: string, metadata: any, found: any): void
@@ -112,6 +114,7 @@ export interface IOptions {
   check_sri?: boolean
 
   check_opengraph?: boolean
+  ancestors_ignorable?: boolean
 
   exitcode_one_on_failure?: boolean
   // todo: this is DEV only option
@@ -170,12 +173,12 @@ export interface INode {
   attributes: {
     [name: string]: string;
   }
-  parent: INode | null,
+  nativeParentNode: cheerio.ParentNode | null,
   // technical details from parser, this is very reduced version
   sourceCodeLocation?: {
     startLine: number
   } | null,
-  nativeNode: any,
+  nativeNode: cheerio.Element,
 }
 
 export interface IFile {

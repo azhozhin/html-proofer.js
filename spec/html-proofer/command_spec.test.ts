@@ -128,7 +128,7 @@ describe('Command test', () => {
   })
 
   it('has every option for proofer defaults', async () => {
-    await match_command_help(Configuration.PROOFER_DEFAULTS)
+    await matchCommandHelp(Configuration.PROOFER_DEFAULTS)
   })
 
   describe('nested options', () => {
@@ -161,7 +161,7 @@ describe('Command test', () => {
   })
 })
 
-const match_command_help = async (config: IOptions) => {
+const matchCommandHelp = async (config: IOptions) => {
   const configKeys = Object.keys(config)
   const binFile = fs.readFileSync('src/cli.ts').toString()
   const {output, exitCode} = await runProoferCli('--help')

@@ -68,8 +68,7 @@ const getContent = ($: any, node: any): string | null => {
 const adaptNode = ($: cheerio.CheerioAPI, node: cheerio.Element): INode => {
   return {
     name: node.name,
-    // todo: this could be performance issue
-    parent: (node.parent != null) ? adaptNode($, node.parent as cheerio.Element) : null,
+    nativeParentNode: node.parent,
     attributes: node.attribs,
     text: $(node).text(),
     content: getContent($, node),

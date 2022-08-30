@@ -85,6 +85,9 @@ program
     'JSON-formatted string of Parallel config. Will override the html-proofer defaults.')
   .option('--cache [config]',
     'JSON-formatted string of cache config. Will override the html-proofer defaults.')
+  .option('--ancestors-ignorable [bool]',
+    'Check ancestor elements for `data-proofer-ignore` attribute, this could cause performance degradation for large sites (disable it if not required)',
+    true)
   // .command('scan [path]', {isDefault: true})
   .action(async () => {
     const opts = program.opts()
@@ -124,6 +127,7 @@ const processCliOptions = (opts: OptionValues): IOptions => {
   options.root_dir = opts.rootDir
   options.enforce_https = opts.enforceHttps
   options.log_level = opts.logLevel
+  options.ancestors_ignorable = opts.ancestorsIgnorable
 
   if (opts.extensions) {
     options.extensions = opts.extensions.split(',')
